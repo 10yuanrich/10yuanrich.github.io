@@ -1,0 +1,844 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>拾贝 · 个人知识 Wiki</title>
+  <meta name="description" content="拾贝个人知识 Wiki，整理指定信息源形成可阅读、可追溯的知识页面。">
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#top" aria-label="拾贝首页">
+        <span class="brand-mark">拾</span>
+        <span>
+          <strong>拾贝</strong>
+          <small>LLM Wiki</small>
+        </span>
+      </a>
+      <nav class="nav-list" aria-label="页面导航">
+        <a href="#knowledge-map">知识地图</a>
+        <a href="#llm-agent">LLM / Agent</a>
+        <a href="#source-list">来源清单</a>
+      </nav>
+      <div class="sidebar-stats">
+        <div><strong>52</strong><span>文章</span></div>
+        <div><strong>2017-2026</strong><span>跨度</span></div>
+      </div>
+    </aside>
+
+    <main id="top" class="main">
+      <section class="topbar">
+        <div>
+          <p class="eyebrow">第一批来源 · Lilian Weng</p>
+          <h1>个人 AI/ML 知识 Wiki</h1>
+        </div>
+        <a class="source-link" href="https://lilianweng.github.io/" target="_blank" rel="noreferrer">打开原始博客</a>
+      </section>
+
+      <section class="overview-grid" aria-label="概览">
+        <div class="stat">
+          <span>已整理来源</span>
+          <strong>Lil'Log</strong>
+          <small>June 21, 2017 到 July 4, 2026</small>
+        </div>
+        <div class="stat">
+          <span>当前主题页</span>
+          <strong>LLM、Agent 与 AI 安全</strong>
+          <small>从语言模型基础到 harness engineering</small>
+        </div>
+        <canvas id="knowledgeCanvas" width="420" height="180" aria-label="知识网络示意"></canvas>
+      </section>
+
+      <section id="knowledge-map" class="section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Knowledge Map</p>
+            <h2>Lilian Weng 博客知识地图</h2>
+          </div>
+          <label class="search-box">
+            <span>搜索</span>
+            <input id="articleSearch" type="search" placeholder="标题、标签、主题">
+          </label>
+        </div>
+        <div class="topic-filter" aria-label="主题筛选">
+          <button class="topic-button active" type="button" data-topic="全部主题">全部主题</button>
+<button class="topic-button" type="button" data-topic="其他">其他</button>
+<button class="topic-button" type="button" data-topic="强化学习与决策">强化学习与决策</button>
+<button class="topic-button" type="button" data-topic="深度学习基础与表征">深度学习基础与表征</button>
+<button class="topic-button" type="button" data-topic="生成模型">生成模型</button>
+<button class="topic-button" type="button" data-topic="视觉与目标检测">视觉与目标检测</button>
+<button class="topic-button" type="button" data-topic="数据与低资源学习">数据与低资源学习</button>
+<button class="topic-button" type="button" data-topic="LLM、Agent 与 AI 安全">LLM、Agent 与 AI 安全</button>
+        </div>
+        <div id="articleGrid" class="article-grid">
+          <article class="article-card" data-topic="LLM、Agent 与 AI 安全" data-search="harness engineering for self-improvement language-model agent auto-research self-improvement prompting llm、agent 与 ai 安全">
+  <div class="article-date">July 4, 2026 · 28 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2026-07-04-harness/" target="_blank" rel="noreferrer">Harness Engineering for Self-Improvement</a></h3>
+  <div class="article-topic">LLM、Agent 与 AI 安全</div>
+  <div class="tag-row"><span>language-model</span><span>agent</span><span>auto-research</span><span>self-improvement</span><span>prompting</span></div>
+</article>
+<article class="article-card" data-topic="LLM、Agent 与 AI 安全" data-search="scaling laws, carefully language-model foundation pretraining transformer learning-dynamics llm、agent 与 ai 安全">
+  <div class="article-date">June 24, 2026 · 25 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2026-06-24-scaling-laws/" target="_blank" rel="noreferrer">Scaling Laws, Carefully</a></h3>
+  <div class="article-topic">LLM、Agent 与 AI 安全</div>
+  <div class="tag-row"><span>language-model</span><span>foundation</span><span>pretraining</span><span>transformer</span><span>learning-dynamics</span></div>
+</article>
+<article class="article-card" data-topic="LLM、Agent 与 AI 安全" data-search="why we think language-model reinforcement-learning reasoning long-read llm、agent 与 ai 安全">
+  <div class="article-date">May 1, 2025 · 40 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2025-05-01-thinking/" target="_blank" rel="noreferrer">Why We Think</a></h3>
+  <div class="article-topic">LLM、Agent 与 AI 安全</div>
+  <div class="tag-row"><span>language-model</span><span>reinforcement-learning</span><span>reasoning</span><span>long-read</span></div>
+</article>
+<article class="article-card" data-topic="LLM、Agent 与 AI 安全" data-search="reward hacking in reinforcement learning language-model rlhf alignment safety reinforcement-learning long-read llm、agent 与 ai 安全">
+  <div class="article-date">November 28, 2024 · 37 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2024-11-28-reward-hacking/" target="_blank" rel="noreferrer">Reward Hacking in Reinforcement Learning</a></h3>
+  <div class="article-topic">LLM、Agent 与 AI 安全</div>
+  <div class="tag-row"><span>language-model</span><span>rlhf</span><span>alignment</span><span>safety</span><span>reinforcement-learning</span><span>long-read</span></div>
+</article>
+<article class="article-card" data-topic="LLM、Agent 与 AI 安全" data-search="extrinsic hallucinations in llms nlp language-model safety hallucination factuality llm、agent 与 ai 安全">
+  <div class="article-date">July 7, 2024 · 29 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2024-07-07-hallucination/" target="_blank" rel="noreferrer">Extrinsic Hallucinations in LLMs</a></h3>
+  <div class="article-topic">LLM、Agent 与 AI 安全</div>
+  <div class="tag-row"><span>nlp</span><span>language-model</span><span>safety</span><span>hallucination</span><span>factuality</span></div>
+</article>
+<article class="article-card" data-topic="生成模型" data-search="diffusion models for video generation generative-model video-generation 生成模型">
+  <div class="article-date">April 12, 2024 · 20 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2024-04-12-diffusion-video/" target="_blank" rel="noreferrer">Diffusion Models for Video Generation</a></h3>
+  <div class="article-topic">生成模型</div>
+  <div class="tag-row"><span>generative-model</span><span>video-generation</span></div>
+</article>
+<article class="article-card" data-topic="数据与低资源学习" data-search="thinking about high-quality human data data data-quality human-ai 数据与低资源学习">
+  <div class="article-date">February 5, 2024 · 20 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2024-02-05-human-data-quality/" target="_blank" rel="noreferrer">Thinking about High-Quality Human Data</a></h3>
+  <div class="article-topic">数据与低资源学习</div>
+  <div class="tag-row"><span>data</span><span>data-quality</span><span>human-ai</span></div>
+</article>
+<article class="article-card" data-topic="LLM、Agent 与 AI 安全" data-search="adversarial attacks on llms nlp language-model safety adversarial attacks robustness redteam llm、agent 与 ai 安全">
+  <div class="article-date">October 25, 2023 · 33 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2023-10-25-adv-attack-llm/" target="_blank" rel="noreferrer">Adversarial Attacks on LLMs</a></h3>
+  <div class="article-topic">LLM、Agent 与 AI 安全</div>
+  <div class="tag-row"><span>nlp</span><span>language-model</span><span>safety</span><span>adversarial attacks</span><span>robustness</span><span>redteam</span></div>
+</article>
+<article class="article-card" data-topic="LLM、Agent 与 AI 安全" data-search="llm powered autonomous agents nlp language-model agent steerability prompting llm、agent 与 ai 安全">
+  <div class="article-date">June 23, 2023 · 31 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2023-06-23-agent/" target="_blank" rel="noreferrer">LLM Powered Autonomous Agents</a></h3>
+  <div class="article-topic">LLM、Agent 与 AI 安全</div>
+  <div class="tag-row"><span>nlp</span><span>language-model</span><span>agent</span><span>steerability</span><span>prompting</span></div>
+</article>
+<article class="article-card" data-topic="LLM、Agent 与 AI 安全" data-search="prompt engineering nlp language-model alignment steerability prompting llm、agent 与 ai 安全">
+  <div class="article-date">March 15, 2023 · 21 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2023-03-15-prompt-engineering/" target="_blank" rel="noreferrer">Prompt Engineering</a></h3>
+  <div class="article-topic">LLM、Agent 与 AI 安全</div>
+  <div class="tag-row"><span>nlp</span><span>language-model</span><span>alignment</span><span>steerability</span><span>prompting</span></div>
+</article>
+<article class="article-card" data-topic="深度学习基础与表征" data-search="the transformer family version 2.0 architecture attention transformer foundation long-read reinforcement-learning 深度学习基础与表征">
+  <div class="article-date">January 27, 2023 · 45 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2023-01-27-the-transformer-family-v2/" target="_blank" rel="noreferrer">The Transformer Family Version 2.0</a></h3>
+  <div class="article-topic">深度学习基础与表征</div>
+  <div class="tag-row"><span>architecture</span><span>attention</span><span>transformer</span><span>foundation</span><span>long-read</span><span>reinforcement-learning</span></div>
+</article>
+<article class="article-card" data-topic="LLM、Agent 与 AI 安全" data-search="large transformer model inference optimization language-model long-read architecture attention transformer foundation llm、agent 与 ai 安全">
+  <div class="article-date">January 10, 2023 · 9 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2023-01-10-inference-optimization/" target="_blank" rel="noreferrer">Large Transformer Model Inference Optimization</a></h3>
+  <div class="article-topic">LLM、Agent 与 AI 安全</div>
+  <div class="tag-row"><span>language-model</span><span>long-read</span><span>architecture</span><span>attention</span><span>transformer</span><span>foundation</span></div>
+</article>
+<article class="article-card" data-topic="深度学习基础与表征" data-search="some math behind neural tangent kernel foundation neural-tangent-kernel learning-dynamics 深度学习基础与表征">
+  <div class="article-date">September 8, 2022 · 17 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2022-09-08-ntk/" target="_blank" rel="noreferrer">Some Math behind Neural Tangent Kernel</a></h3>
+  <div class="article-topic">深度学习基础与表征</div>
+  <div class="tag-row"><span>foundation</span><span>neural-tangent-kernel</span><span>learning-dynamics</span></div>
+</article>
+<article class="article-card" data-topic="LLM、Agent 与 AI 安全" data-search="generalized visual language models language-model vision-language-model vision-model llm、agent 与 ai 安全">
+  <div class="article-date">June 9, 2022 · 24 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2022-06-09-vlm/" target="_blank" rel="noreferrer">Generalized Visual Language Models</a></h3>
+  <div class="article-topic">LLM、Agent 与 AI 安全</div>
+  <div class="tag-row"><span>language-model</span><span>vision-language-model</span><span>vision-model</span></div>
+</article>
+<article class="article-card" data-topic="数据与低资源学习" data-search="learning with not enough data part 3: data generation data data-generation data-augmentation data-quality 数据与低资源学习">
+  <div class="article-date">April 15, 2022 · 28 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2022-04-15-data-gen/" target="_blank" rel="noreferrer">Learning with not Enough Data Part 3: Data Generation</a></h3>
+  <div class="article-topic">数据与低资源学习</div>
+  <div class="tag-row"><span>data</span><span>data-generation</span><span>data-augmentation</span><span>data-quality</span></div>
+</article>
+<article class="article-card" data-topic="数据与低资源学习" data-search="learning with not enough data part 2: active learning data active-learning 数据与低资源学习">
+  <div class="article-date">February 20, 2022 · 22 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2022-02-20-active-learning/" target="_blank" rel="noreferrer">Learning with not Enough Data Part 2: Active Learning</a></h3>
+  <div class="article-topic">数据与低资源学习</div>
+  <div class="tag-row"><span>data</span><span>active-learning</span></div>
+</article>
+<article class="article-card" data-topic="数据与低资源学习" data-search="learning with not enough data part 1: semi-supervised learning data unsupervised-learning 数据与低资源学习">
+  <div class="article-date">December 5, 2021 · 26 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2021-12-05-semi-supervised/" target="_blank" rel="noreferrer">Learning with not Enough Data Part 1: Semi-Supervised Learning</a></h3>
+  <div class="article-topic">数据与低资源学习</div>
+  <div class="tag-row"><span>data</span><span>unsupervised-learning</span></div>
+</article>
+<article class="article-card" data-topic="深度学习基础与表征" data-search="how to train really large models on many gpus? architecture transformer foundation 深度学习基础与表征">
+  <div class="article-date">September 24, 2021 · 21 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2021-09-25-train-large/" target="_blank" rel="noreferrer">How to Train Really Large Models on Many GPUs?</a></h3>
+  <div class="article-topic">深度学习基础与表征</div>
+  <div class="tag-row"><span>architecture</span><span>transformer</span><span>foundation</span></div>
+</article>
+<article class="article-card" data-topic="生成模型" data-search="what are diffusion models? generative-model math-heavy image-generation 生成模型">
+  <div class="article-date">July 11, 2021 · 31 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/" target="_blank" rel="noreferrer">What are Diffusion Models?</a></h3>
+  <div class="article-topic">生成模型</div>
+  <div class="tag-row"><span>generative-model</span><span>math-heavy</span><span>image-generation</span></div>
+</article>
+<article class="article-card" data-topic="LLM、Agent 与 AI 安全" data-search="contrastive representation learning representation-learning long-read language-model unsupervised-learning data-augmentation llm、agent 与 ai 安全">
+  <div class="article-date">May 31, 2021 · 39 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2021-05-31-contrastive/" target="_blank" rel="noreferrer">Contrastive Representation Learning</a></h3>
+  <div class="article-topic">LLM、Agent 与 AI 安全</div>
+  <div class="tag-row"><span>representation-learning</span><span>long-read</span><span>language-model</span><span>unsupervised-learning</span><span>data-augmentation</span></div>
+</article>
+<article class="article-card" data-topic="LLM、Agent 与 AI 安全" data-search="reducing toxicity in language models nlp language-model alignment steerability safety llm、agent 与 ai 安全">
+  <div class="article-date">March 21, 2021 · 22 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2021-03-21-lm-toxicity/" target="_blank" rel="noreferrer">Reducing Toxicity in Language Models</a></h3>
+  <div class="article-topic">LLM、Agent 与 AI 安全</div>
+  <div class="tag-row"><span>nlp</span><span>language-model</span><span>alignment</span><span>steerability</span><span>safety</span></div>
+</article>
+<article class="article-card" data-topic="LLM、Agent 与 AI 安全" data-search="controllable neural text generation nlp language-model alignment steerability reinforcement-learning long-read llm、agent 与 ai 安全">
+  <div class="article-date">January 2, 2021 · 42 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2021-01-02-controllable-text-generation/" target="_blank" rel="noreferrer">Controllable Neural Text Generation</a></h3>
+  <div class="article-topic">LLM、Agent 与 AI 安全</div>
+  <div class="tag-row"><span>nlp</span><span>language-model</span><span>alignment</span><span>steerability</span><span>reinforcement-learning</span><span>long-read</span></div>
+</article>
+<article class="article-card" data-topic="LLM、Agent 与 AI 安全" data-search="how to build an open-domain question answering system? nlp language-model attention transformer llm、agent 与 ai 安全">
+  <div class="article-date">October 29, 2020 · 33 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2020-10-29-odqa/" target="_blank" rel="noreferrer">How to Build an Open-Domain Question Answering System?</a></h3>
+  <div class="article-topic">LLM、Agent 与 AI 安全</div>
+  <div class="tag-row"><span>nlp</span><span>language-model</span><span>attention</span><span>transformer</span></div>
+</article>
+<article class="article-card" data-topic="深度学习基础与表征" data-search="neural architecture search architecture reinforcement-learning evolution auto-ml 深度学习基础与表征">
+  <div class="article-date">August 6, 2020 · 32 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2020-08-06-nas/" target="_blank" rel="noreferrer">Neural Architecture Search</a></h3>
+  <div class="article-topic">深度学习基础与表征</div>
+  <div class="tag-row"><span>architecture</span><span>reinforcement-learning</span><span>evolution</span><span>auto-ml</span></div>
+</article>
+<article class="article-card" data-topic="强化学习与决策" data-search="exploration strategies in deep reinforcement learning reinforcement-learning exploration long-read 强化学习与决策">
+  <div class="article-date">June 7, 2020 · 36 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2020-06-07-exploration-drl/" target="_blank" rel="noreferrer">Exploration Strategies in Deep Reinforcement Learning</a></h3>
+  <div class="article-topic">强化学习与决策</div>
+  <div class="tag-row"><span>reinforcement-learning</span><span>exploration</span><span>long-read</span></div>
+</article>
+<article class="article-card" data-topic="深度学习基础与表征" data-search="the transformer family architecture attention transformer foundation reinforcement-learning 深度学习基础与表征">
+  <div class="article-date">April 7, 2020 · 25 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2020-04-07-the-transformer-family/" target="_blank" rel="noreferrer">The Transformer Family</a></h3>
+  <div class="article-topic">深度学习基础与表征</div>
+  <div class="tag-row"><span>architecture</span><span>attention</span><span>transformer</span><span>foundation</span><span>reinforcement-learning</span></div>
+</article>
+<article class="article-card" data-topic="生成模型" data-search="curriculum for reinforcement learning reinforcement-learning generative-model meta-learning 生成模型">
+  <div class="article-date">January 29, 2020 · 24 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2020-01-29-curriculum-rl/" target="_blank" rel="noreferrer">Curriculum for Reinforcement Learning</a></h3>
+  <div class="article-topic">生成模型</div>
+  <div class="tag-row"><span>reinforcement-learning</span><span>generative-model</span><span>meta-learning</span></div>
+</article>
+<article class="article-card" data-topic="深度学习基础与表征" data-search="self-supervised representation learning representation-learning long-read generative-model object-recognition reinforcement-learning unsupervised-learning 深度学习基础与表征">
+  <div class="article-date">November 10, 2019 · 38 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2019-11-10-self-supervised/" target="_blank" rel="noreferrer">Self-Supervised Representation Learning</a></h3>
+  <div class="article-topic">深度学习基础与表征</div>
+  <div class="tag-row"><span>representation-learning</span><span>long-read</span><span>generative-model</span><span>object-recognition</span><span>reinforcement-learning</span><span>unsupervised-learning</span></div>
+</article>
+<article class="article-card" data-topic="强化学习与决策" data-search="evolution strategies evolution reinforcement-learning 强化学习与决策">
+  <div class="article-date">September 5, 2019 · 22 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2019-09-05-evolution-strategies/" target="_blank" rel="noreferrer">Evolution Strategies</a></h3>
+  <div class="article-topic">强化学习与决策</div>
+  <div class="tag-row"><span>evolution</span><span>reinforcement-learning</span></div>
+</article>
+<article class="article-card" data-topic="强化学习与决策" data-search="meta reinforcement learning meta-learning reinforcement-learning 强化学习与决策">
+  <div class="article-date">June 23, 2019 · 22 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2019-06-23-meta-rl/" target="_blank" rel="noreferrer">Meta Reinforcement Learning</a></h3>
+  <div class="article-topic">强化学习与决策</div>
+  <div class="tag-row"><span>meta-learning</span><span>reinforcement-learning</span></div>
+</article>
+<article class="article-card" data-topic="强化学习与决策" data-search="domain randomization for sim2real transfer robotics meta-learning reinforcement-learning 强化学习与决策">
+  <div class="article-date">May 5, 2019 · 14 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2019-05-05-domain-randomization/" target="_blank" rel="noreferrer">Domain Randomization for Sim2Real Transfer</a></h3>
+  <div class="article-topic">强化学习与决策</div>
+  <div class="tag-row"><span>robotics</span><span>meta-learning</span><span>reinforcement-learning</span></div>
+</article>
+<article class="article-card" data-topic="深度学习基础与表征" data-search="are deep neural networks dramatically overfitted? information-theory foundation learning-dynamics 深度学习基础与表征">
+  <div class="article-date">March 14, 2019 · 21 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2019-03-14-overfit/" target="_blank" rel="noreferrer">Are Deep Neural Networks Dramatically Overfitted?</a></h3>
+  <div class="article-topic">深度学习基础与表征</div>
+  <div class="tag-row"><span>information-theory</span><span>foundation</span><span>learning-dynamics</span></div>
+</article>
+<article class="article-card" data-topic="LLM、Agent 与 AI 安全" data-search="generalized language models architecture nlp long-read transformer attention language-model llm、agent 与 ai 安全">
+  <div class="article-date">January 31, 2019 · 36 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2019-01-31-lm/" target="_blank" rel="noreferrer">Generalized Language Models</a></h3>
+  <div class="article-topic">LLM、Agent 与 AI 安全</div>
+  <div class="tag-row"><span>architecture</span><span>nlp</span><span>long-read</span><span>transformer</span><span>attention</span><span>language-model</span></div>
+</article>
+<article class="article-card" data-topic="视觉与目标检测" data-search="object detection part 4: fast detection models object-detection object-recognition vision-model 视觉与目标检测">
+  <div class="article-date">December 27, 2018 · 19 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2018-12-27-object-recognition-part-4/" target="_blank" rel="noreferrer">Object Detection Part 4: Fast Detection Models</a></h3>
+  <div class="article-topic">视觉与目标检测</div>
+  <div class="tag-row"><span>object-detection</span><span>object-recognition</span><span>vision-model</span></div>
+</article>
+<article class="article-card" data-topic="其他" data-search="meta-learning: learning to learn fast meta-learning long-read 其他">
+  <div class="article-date">November 30, 2018 · 30 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2018-11-30-meta-learning/" target="_blank" rel="noreferrer">Meta-Learning: Learning to Learn Fast</a></h3>
+  <div class="article-topic">其他</div>
+  <div class="tag-row"><span>meta-learning</span><span>long-read</span></div>
+</article>
+<article class="article-card" data-topic="深度学习基础与表征" data-search="flow-based deep generative models architecture generative-model image-generation math-heavy 深度学习基础与表征">
+  <div class="article-date">October 13, 2018 · 21 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2018-10-13-flow-models/" target="_blank" rel="noreferrer">Flow-based Deep Generative Models</a></h3>
+  <div class="article-topic">深度学习基础与表征</div>
+  <div class="tag-row"><span>architecture</span><span>generative-model</span><span>image-generation</span><span>math-heavy</span></div>
+</article>
+<article class="article-card" data-topic="生成模型" data-search="from autoencoder to beta-vae autoencoder generative-model image-generation 生成模型">
+  <div class="article-date">August 12, 2018 · 21 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2018-08-12-vae/" target="_blank" rel="noreferrer">From Autoencoder to Beta-VAE</a></h3>
+  <div class="article-topic">生成模型</div>
+  <div class="tag-row"><span>autoencoder</span><span>generative-model</span><span>image-generation</span></div>
+</article>
+<article class="article-card" data-topic="深度学习基础与表征" data-search="attention? attention! architecture attention transformer rnn 深度学习基础与表征">
+  <div class="article-date">June 24, 2018 · 21 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2018-06-24-attention/" target="_blank" rel="noreferrer">Attention? Attention!</a></h3>
+  <div class="article-topic">深度学习基础与表征</div>
+  <div class="tag-row"><span>architecture</span><span>attention</span><span>transformer</span><span>rnn</span></div>
+</article>
+<article class="article-card" data-topic="生成模型" data-search="implementing deep reinforcement learning models with tensorflow + openai gym tutorial tensorflow reinforcement-learning 生成模型">
+  <div class="article-date">May 5, 2018 · 13 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2018-05-05-drl-implementation/" target="_blank" rel="noreferrer">Implementing Deep Reinforcement Learning Models with Tensorflow + OpenAI Gym</a></h3>
+  <div class="article-topic">生成模型</div>
+  <div class="tag-row"><span>tutorial</span><span>tensorflow</span><span>reinforcement-learning</span></div>
+</article>
+<article class="article-card" data-topic="强化学习与决策" data-search="policy gradient algorithms reinforcement-learning long-read math-heavy 强化学习与决策">
+  <div class="article-date">April 8, 2018 · 52 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2018-04-08-policy-gradient/" target="_blank" rel="noreferrer">Policy Gradient Algorithms</a></h3>
+  <div class="article-topic">强化学习与决策</div>
+  <div class="tag-row"><span>reinforcement-learning</span><span>long-read</span><span>math-heavy</span></div>
+</article>
+<article class="article-card" data-topic="强化学习与决策" data-search="a (long) peek into reinforcement learning reinforcement-learning long-read math-heavy 强化学习与决策">
+  <div class="article-date">February 19, 2018 · 31 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2018-02-19-rl-overview/" target="_blank" rel="noreferrer">A (Long) Peek into Reinforcement Learning</a></h3>
+  <div class="article-topic">强化学习与决策</div>
+  <div class="tag-row"><span>reinforcement-learning</span><span>long-read</span><span>math-heavy</span></div>
+</article>
+<article class="article-card" data-topic="强化学习与决策" data-search="the multi-armed bandit problem and its solutions exploration math-heavy reinforcement-learning 强化学习与决策">
+  <div class="article-date">January 23, 2018 · 10 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2018-01-23-multi-armed-bandit/" target="_blank" rel="noreferrer">The Multi-Armed Bandit Problem and Its Solutions</a></h3>
+  <div class="article-topic">强化学习与决策</div>
+  <div class="tag-row"><span>exploration</span><span>math-heavy</span><span>reinforcement-learning</span></div>
+</article>
+<article class="article-card" data-topic="视觉与目标检测" data-search="object detection for dummies part 3: r-cnn family object-detection object-recognition vision-model 视觉与目标检测">
+  <div class="article-date">December 31, 2017 · 13 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2017-12-31-object-recognition-part-3/" target="_blank" rel="noreferrer">Object Detection for Dummies Part 3: R-CNN Family</a></h3>
+  <div class="article-topic">视觉与目标检测</div>
+  <div class="tag-row"><span>object-detection</span><span>object-recognition</span><span>vision-model</span></div>
+</article>
+<article class="article-card" data-topic="视觉与目标检测" data-search="object detection for dummies part 2: cnn, dpm and overfeat object-detection object-recognition vision-model 视觉与目标检测">
+  <div class="article-date">December 15, 2017 · 7 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2017-12-15-object-recognition-part-2/" target="_blank" rel="noreferrer">Object Detection for Dummies Part 2: CNN, DPM and Overfeat</a></h3>
+  <div class="article-topic">视觉与目标检测</div>
+  <div class="tag-row"><span>object-detection</span><span>object-recognition</span><span>vision-model</span></div>
+</article>
+<article class="article-card" data-topic="视觉与目标检测" data-search="object detection for dummies part 1: gradient vector, hog, and ss object-detection object-recognition vision-model 视觉与目标检测">
+  <div class="article-date">October 29, 2017 · 15 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2017-10-29-object-recognition-part-1/" target="_blank" rel="noreferrer">Object Detection for Dummies Part 1: Gradient Vector, HOG, and SS</a></h3>
+  <div class="article-topic">视觉与目标检测</div>
+  <div class="tag-row"><span>object-detection</span><span>object-recognition</span><span>vision-model</span></div>
+</article>
+<article class="article-card" data-topic="LLM、Agent 与 AI 安全" data-search="learning word embedding nlp language-model llm、agent 与 ai 安全">
+  <div class="article-date">October 15, 2017 · 18 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2017-10-15-word-embedding/" target="_blank" rel="noreferrer">Learning Word Embedding</a></h3>
+  <div class="article-topic">LLM、Agent 与 AI 安全</div>
+  <div class="tag-row"><span>nlp</span><span>language-model</span></div>
+</article>
+<article class="article-card" data-topic="深度学习基础与表征" data-search="anatomize deep learning with information theory information-theory foundation 深度学习基础与表征">
+  <div class="article-date">September 28, 2017 · 9 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2017-09-28-information-bottleneck/" target="_blank" rel="noreferrer">Anatomize Deep Learning with Information Theory</a></h3>
+  <div class="article-topic">深度学习基础与表征</div>
+  <div class="tag-row"><span>information-theory</span><span>foundation</span></div>
+</article>
+<article class="article-card" data-topic="生成模型" data-search="from gan to wgan gan long-read generative-model image-generation math-heavy 生成模型">
+  <div class="article-date">August 20, 2017 · 21 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2017-08-20-gan/" target="_blank" rel="noreferrer">From GAN to WGAN</a></h3>
+  <div class="article-topic">生成模型</div>
+  <div class="tag-row"><span>gan</span><span>long-read</span><span>generative-model</span><span>image-generation</span><span>math-heavy</span></div>
+</article>
+<article class="article-card" data-topic="深度学习基础与表征" data-search="how to explain the prediction of a machine learning model? foundation 深度学习基础与表征">
+  <div class="article-date">August 1, 2017 · 18 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2017-08-01-interpretation/" target="_blank" rel="noreferrer">How to Explain the Prediction of a Machine Learning Model?</a></h3>
+  <div class="article-topic">深度学习基础与表征</div>
+  <div class="tag-row"><span>foundation</span></div>
+</article>
+<article class="article-card" data-topic="生成模型" data-search="predict stock prices using rnn: part 2 tutorial rnn tensorflow 生成模型">
+  <div class="article-date">July 22, 2017 · 9 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2017-07-22-stock-rnn-part-2/" target="_blank" rel="noreferrer">Predict Stock Prices Using RNN: Part 2</a></h3>
+  <div class="article-topic">生成模型</div>
+  <div class="tag-row"><span>tutorial</span><span>rnn</span><span>tensorflow</span></div>
+</article>
+<article class="article-card" data-topic="生成模型" data-search="predict stock prices using rnn: part 1 tutorial rnn tensorflow 生成模型">
+  <div class="article-date">July 8, 2017 · 12 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2017-07-08-stock-rnn-part-1/" target="_blank" rel="noreferrer">Predict Stock Prices Using RNN: Part 1</a></h3>
+  <div class="article-topic">生成模型</div>
+  <div class="tag-row"><span>tutorial</span><span>rnn</span><span>tensorflow</span></div>
+</article>
+<article class="article-card" data-topic="深度学习基础与表征" data-search="an overview of deep learning for curious people foundation tutorial 深度学习基础与表征">
+  <div class="article-date">June 21, 2017 · 12 min</div>
+  <h3><a href="https://lilianweng.github.io/posts/2017-06-21-overview/" target="_blank" rel="noreferrer">An Overview of Deep Learning for Curious People</a></h3>
+  <div class="article-topic">深度学习基础与表征</div>
+  <div class="tag-row"><span>foundation</span><span>tutorial</span></div>
+</article>
+        </div>
+      </section>
+
+      <section id="llm-agent" class="section reading">
+        <h1 id="llmagent-与-ai-安全">LLM、Agent 与 AI 安全</h1>
+<h2 id="核心摘要">核心摘要</h2>
+<p>Lilian Weng 博客里的 LLM 主线不是从 2023 年突然开始的。它可以追溯到早期的 <span class="wiki-token">Learning Word Embedding</span>、<span class="wiki-token">Generalized Language Models</span>、<span class="wiki-token">Open-Domain Question Answering</span> 和 <span class="wiki-token">Controllable Neural Text Generation</span>：先理解语言表示和预训练，再进入可控生成、检索问答、prompt、agent、推理时计算、安全、奖励黑客和自我改进。</p>
+<p>这条主线适合作为本知识库的第一批核心知识，因为它同时覆盖“模型如何获得能力”“如何把能力组织成系统”“系统为什么会失败”“如何用工程 harness 改善系统表现”。</p>
+<h2 id="演进脉络">演进脉络</h2>
+<h3 id="1-表示和语言模型基础">1. 表示和语言模型基础</h3>
+<p>早期文章从词向量、语言模型和 Transformer 前后的表示学习开始，核心问题是：文本如何被表示成可学习、可迁移、可组合的结构。</p>
+<p>相关来源：</p>
+<ul>
+<li><a href="https://lilianweng.github.io/posts/2017-10-15-word-embedding/">Learning Word Embedding</a></li>
+<li><a href="https://lilianweng.github.io/posts/2019-01-31-lm/">Generalized Language Models</a></li>
+<li><a href="https://lilianweng.github.io/posts/2020-10-29-odqa/">How to Build an Open-Domain Question Answering System?</a></li>
+</ul>
+<h3 id="2-可控生成和对齐入口">2. 可控生成和对齐入口</h3>
+<p>在 LLM 变得通用之前，可控文本生成已经提出了同一个问题：如何让模型输出符合指定属性、风格、偏好或约束。这里出现了 prompt 设计、guided decoding、fine-tuning、RL fine-tuning 和 human preferences 等后续 alignment 主题的前身。</p>
+<p>相关来源：</p>
+<ul>
+<li><a href="https://lilianweng.github.io/posts/2021-01-02-controllable-text-generation/">Controllable Neural Text Generation</a></li>
+<li><a href="https://lilianweng.github.io/posts/2021-03-21-lm-toxicity/">Reducing Toxicity in Language Models</a></li>
+</ul>
+<h3 id="3-prompt-engineering-到-agent">3. Prompt Engineering 到 Agent</h3>
+<p>Prompt engineering 把“控制模型行为”推进到不改模型权重的接口层：通过 zero-shot、few-shot、instruction、CoT、self-consistency、tool use 等方法让模型完成任务。Agent 文章进一步把 LLM 放进系统结构里：LLM 是控制器，外部系统提供 planning、memory、tool use 和 action。</p>
+<p>这一步的关键变化是：知识不再只存在于模型参数或 prompt 中，而开始进入外部记忆、工具、检索和执行循环。</p>
+<p>相关来源：</p>
+<ul>
+<li><a href="https://lilianweng.github.io/posts/2023-03-15-prompt-engineering/">Prompt Engineering</a></li>
+<li><a href="https://lilianweng.github.io/posts/2023-06-23-agent/">LLM Powered Autonomous Agents</a></li>
+</ul>
+<h3 id="4-推理时计算">4. 推理时计算</h3>
+<p><code>Why We Think</code> 把 LLM 的“思考”拆成计算资源问题：模型可以通过 token 形式的中间推理、分支采样、顺序修订、RL 和工具使用，在推理时花更多计算换取更好结果。它和 Agent 主线相连，因为 agent 的计划、反思、工具调用和状态管理都可以被看作推理时计算的外部化。</p>
+<p>相关来源：</p>
+<ul>
+<li><a href="https://lilianweng.github.io/posts/2025-05-01-thinking/">Why We Think</a></li>
+</ul>
+<h3 id="5-幻觉攻击和奖励黑客">5. 幻觉、攻击和奖励黑客</h3>
+<p>能力增强带来三类系统风险：</p>
+<ul>
+<li>幻觉：模型输出没有被上下文或外部事实支撑。</li>
+<li>对抗攻击：用户或环境通过 token 操作、jailbreak、red-teaming 等方式诱导模型产生不安全行为。</li>
+<li>奖励黑客：模型优化了奖励函数或评估器的漏洞，而不是完成真实目标。</li>
+</ul>
+<p>这三类问题共同说明：LLM 系统不能只看 benchmark 分数，还要看事实性、可归因性、鲁棒性、评估器可靠性和环境约束。</p>
+<p>相关来源：</p>
+<ul>
+<li><a href="https://lilianweng.github.io/posts/2023-10-25-adv-attack-llm/">Adversarial Attacks on LLMs</a></li>
+<li><a href="https://lilianweng.github.io/posts/2024-07-07-hallucination/">Extrinsic Hallucinations in LLMs</a></li>
+<li><a href="https://lilianweng.github.io/posts/2024-11-28-reward-hacking/">Reward Hacking in Reinforcement Learning</a></li>
+</ul>
+<h3 id="6-scaling-laws-和-harness-engineering">6. Scaling Laws 和 Harness Engineering</h3>
+<p><code>Scaling Laws, Carefully</code> 关注模型、数据、算力和 loss 的经验关系，回答“能力如何随规模增长”。<code>Harness Engineering for Self-Improvement</code> 则关注基础模型外面的系统层：workflow、文件系统持久记忆、sub-agent、backend jobs、context engineering、evaluation 和 self-improving harness。</p>
+<p>这和 Karpathy LLM Wiki 方法有直接关系：把文件系统作为持久记忆，把原始来源编译成可维护 wiki，本质上也是一种 harness 设计。</p>
+<p>相关来源：</p>
+<ul>
+<li><a href="https://lilianweng.github.io/posts/2026-06-24-scaling-laws/">Scaling Laws, Carefully</a></li>
+<li><a href="https://lilianweng.github.io/posts/2026-07-04-harness/">Harness Engineering for Self-Improvement</a></li>
+</ul>
+<h2 id="概念关系">概念关系</h2>
+<ul>
+<li><span class="wiki-token">Language Model</span> 是基础能力层。</li>
+<li><span class="wiki-token">Prompt Engineering</span> 是接口控制层。</li>
+<li><span class="wiki-token">LLM Agent</span> 是系统组织层。</li>
+<li><span class="wiki-token">Test-Time Compute</span> 是推理预算层。</li>
+<li><span class="wiki-token">Hallucination</span> 是事实性失败模式。</li>
+<li><span class="wiki-token">Adversarial Attack</span> 是交互安全失败模式。</li>
+<li><span class="wiki-token">Reward Hacking</span> 是目标设定和评估失败模式。</li>
+<li><span class="wiki-token">Harness Engineering</span> 是把模型能力、工具、状态、评估和执行循环组织起来的工程层。</li>
+</ul>
+<h2 id="阅读路径">阅读路径</h2>
+<ol type="1">
+<li>从语言模型基础开始：<code>Learning Word Embedding</code> -&gt; <code>Generalized Language Models</code>。</li>
+<li>进入可控生成：<code>Controllable Neural Text Generation</code> -&gt; <code>Reducing Toxicity in Language Models</code>。</li>
+<li>理解接口和系统：<code>Prompt Engineering</code> -&gt; <code>LLM Powered Autonomous Agents</code>。</li>
+<li>理解能力扩展：<code>Why We Think</code> -&gt; <code>Scaling Laws, Carefully</code>。</li>
+<li>理解风险：<code>Adversarial Attacks on LLMs</code> -&gt; <code>Extrinsic Hallucinations in LLMs</code> -&gt; <code>Reward Hacking in Reinforcement Learning</code>。</li>
+<li>回到工程组织：<code>Harness Engineering for Self-Improvement</code>。</li>
+</ol>
+<h2 id="对拾贝的启发">对拾贝的启发</h2>
+<p>拾贝本身应该按 harness 思路建设：</p>
+<ul>
+<li>原始来源放在 <code>raw/</code>，避免每次重新联网和重新理解。</li>
+<li>知识页放在 <code>wiki/</code>，作为可阅读、可维护、可链接的中间层。</li>
+<li><code>wiki/index.md</code> 和 <code>wiki/log.md</code> 承担导航和审计。</li>
+<li>每次 ingest 不只新增摘要，还要更新已有主题页。</li>
+<li>每次 query 如果产生有长期价值的综合判断，应回写成 wiki 页面。</li>
+<li>定期 lint，检查断链、重复概念、陈旧结论和缺失来源。</li>
+</ul>
+<h2 id="待继续拆解">待继续拆解</h2>
+<ul>
+<li><span class="wiki-token">Prompt Engineering</span> 独立概念页。</li>
+<li><span class="wiki-token">LLM Agent</span> 独立概念页。</li>
+<li><span class="wiki-token">Hallucination</span> 独立概念页。</li>
+<li><span class="wiki-token">Reward Hacking</span> 独立概念页。</li>
+<li><span class="wiki-token">Harness Engineering</span> 独立方法页。</li>
+<li><span class="wiki-token">Scaling Laws</span> 独立概念页。</li>
+</ul>
+<h2 id="来源">来源</h2>
+<ul>
+<li>Lilian Weng, <code>Learning Word Embedding</code>, 2017-10-15.</li>
+<li>Lilian Weng, <code>Generalized Language Models</code>, 2019-01-31.</li>
+<li>Lilian Weng, <code>How to Build an Open-Domain Question Answering System?</code>, 2020-10-29.</li>
+<li>Lilian Weng, <code>Controllable Neural Text Generation</code>, 2021-01-02.</li>
+<li>Lilian Weng, <code>Reducing Toxicity in Language Models</code>, 2021-03-21.</li>
+<li>Lilian Weng, <code>Prompt Engineering</code>, 2023-03-15.</li>
+<li>Lilian Weng, <code>LLM Powered Autonomous Agents</code>, 2023-06-23.</li>
+<li>Lilian Weng, <code>Adversarial Attacks on LLMs</code>, 2023-10-25.</li>
+<li>Lilian Weng, <code>Extrinsic Hallucinations in LLMs</code>, 2024-07-07.</li>
+<li>Lilian Weng, <code>Reward Hacking in Reinforcement Learning</code>, 2024-11-28.</li>
+<li>Lilian Weng, <code>Why We Think</code>, 2025-05-01.</li>
+<li>Lilian Weng, <code>Scaling Laws, Carefully</code>, 2026-06-24.</li>
+<li>Lilian Weng, <code>Harness Engineering for Self-Improvement</code>, 2026-07-04.</li>
+</ul>
+
+      </section>
+
+      <section id="source-list" class="section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Sources</p>
+            <h2>来源清单</h2>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>文章</th>
+                <th>主题</th>
+                <th>日期</th>
+                <th>阅读时间</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+  <td><a href="https://lilianweng.github.io/posts/2026-07-04-harness/" target="_blank" rel="noreferrer">Harness Engineering for Self-Improvement</a></td>
+  <td>LLM、Agent 与 AI 安全</td>
+  <td>July 4, 2026</td>
+  <td>28 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2026-06-24-scaling-laws/" target="_blank" rel="noreferrer">Scaling Laws, Carefully</a></td>
+  <td>LLM、Agent 与 AI 安全</td>
+  <td>June 24, 2026</td>
+  <td>25 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2025-05-01-thinking/" target="_blank" rel="noreferrer">Why We Think</a></td>
+  <td>LLM、Agent 与 AI 安全</td>
+  <td>May 1, 2025</td>
+  <td>40 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2024-11-28-reward-hacking/" target="_blank" rel="noreferrer">Reward Hacking in Reinforcement Learning</a></td>
+  <td>LLM、Agent 与 AI 安全</td>
+  <td>November 28, 2024</td>
+  <td>37 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2024-07-07-hallucination/" target="_blank" rel="noreferrer">Extrinsic Hallucinations in LLMs</a></td>
+  <td>LLM、Agent 与 AI 安全</td>
+  <td>July 7, 2024</td>
+  <td>29 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2024-04-12-diffusion-video/" target="_blank" rel="noreferrer">Diffusion Models for Video Generation</a></td>
+  <td>生成模型</td>
+  <td>April 12, 2024</td>
+  <td>20 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2024-02-05-human-data-quality/" target="_blank" rel="noreferrer">Thinking about High-Quality Human Data</a></td>
+  <td>数据与低资源学习</td>
+  <td>February 5, 2024</td>
+  <td>20 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2023-10-25-adv-attack-llm/" target="_blank" rel="noreferrer">Adversarial Attacks on LLMs</a></td>
+  <td>LLM、Agent 与 AI 安全</td>
+  <td>October 25, 2023</td>
+  <td>33 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2023-06-23-agent/" target="_blank" rel="noreferrer">LLM Powered Autonomous Agents</a></td>
+  <td>LLM、Agent 与 AI 安全</td>
+  <td>June 23, 2023</td>
+  <td>31 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2023-03-15-prompt-engineering/" target="_blank" rel="noreferrer">Prompt Engineering</a></td>
+  <td>LLM、Agent 与 AI 安全</td>
+  <td>March 15, 2023</td>
+  <td>21 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2023-01-27-the-transformer-family-v2/" target="_blank" rel="noreferrer">The Transformer Family Version 2.0</a></td>
+  <td>深度学习基础与表征</td>
+  <td>January 27, 2023</td>
+  <td>45 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2023-01-10-inference-optimization/" target="_blank" rel="noreferrer">Large Transformer Model Inference Optimization</a></td>
+  <td>LLM、Agent 与 AI 安全</td>
+  <td>January 10, 2023</td>
+  <td>9 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2022-09-08-ntk/" target="_blank" rel="noreferrer">Some Math behind Neural Tangent Kernel</a></td>
+  <td>深度学习基础与表征</td>
+  <td>September 8, 2022</td>
+  <td>17 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2022-06-09-vlm/" target="_blank" rel="noreferrer">Generalized Visual Language Models</a></td>
+  <td>LLM、Agent 与 AI 安全</td>
+  <td>June 9, 2022</td>
+  <td>24 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2022-04-15-data-gen/" target="_blank" rel="noreferrer">Learning with not Enough Data Part 3: Data Generation</a></td>
+  <td>数据与低资源学习</td>
+  <td>April 15, 2022</td>
+  <td>28 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2022-02-20-active-learning/" target="_blank" rel="noreferrer">Learning with not Enough Data Part 2: Active Learning</a></td>
+  <td>数据与低资源学习</td>
+  <td>February 20, 2022</td>
+  <td>22 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2021-12-05-semi-supervised/" target="_blank" rel="noreferrer">Learning with not Enough Data Part 1: Semi-Supervised Learning</a></td>
+  <td>数据与低资源学习</td>
+  <td>December 5, 2021</td>
+  <td>26 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2021-09-25-train-large/" target="_blank" rel="noreferrer">How to Train Really Large Models on Many GPUs?</a></td>
+  <td>深度学习基础与表征</td>
+  <td>September 24, 2021</td>
+  <td>21 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/" target="_blank" rel="noreferrer">What are Diffusion Models?</a></td>
+  <td>生成模型</td>
+  <td>July 11, 2021</td>
+  <td>31 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2021-05-31-contrastive/" target="_blank" rel="noreferrer">Contrastive Representation Learning</a></td>
+  <td>LLM、Agent 与 AI 安全</td>
+  <td>May 31, 2021</td>
+  <td>39 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2021-03-21-lm-toxicity/" target="_blank" rel="noreferrer">Reducing Toxicity in Language Models</a></td>
+  <td>LLM、Agent 与 AI 安全</td>
+  <td>March 21, 2021</td>
+  <td>22 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2021-01-02-controllable-text-generation/" target="_blank" rel="noreferrer">Controllable Neural Text Generation</a></td>
+  <td>LLM、Agent 与 AI 安全</td>
+  <td>January 2, 2021</td>
+  <td>42 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2020-10-29-odqa/" target="_blank" rel="noreferrer">How to Build an Open-Domain Question Answering System?</a></td>
+  <td>LLM、Agent 与 AI 安全</td>
+  <td>October 29, 2020</td>
+  <td>33 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2020-08-06-nas/" target="_blank" rel="noreferrer">Neural Architecture Search</a></td>
+  <td>深度学习基础与表征</td>
+  <td>August 6, 2020</td>
+  <td>32 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2020-06-07-exploration-drl/" target="_blank" rel="noreferrer">Exploration Strategies in Deep Reinforcement Learning</a></td>
+  <td>强化学习与决策</td>
+  <td>June 7, 2020</td>
+  <td>36 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2020-04-07-the-transformer-family/" target="_blank" rel="noreferrer">The Transformer Family</a></td>
+  <td>深度学习基础与表征</td>
+  <td>April 7, 2020</td>
+  <td>25 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2020-01-29-curriculum-rl/" target="_blank" rel="noreferrer">Curriculum for Reinforcement Learning</a></td>
+  <td>生成模型</td>
+  <td>January 29, 2020</td>
+  <td>24 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2019-11-10-self-supervised/" target="_blank" rel="noreferrer">Self-Supervised Representation Learning</a></td>
+  <td>深度学习基础与表征</td>
+  <td>November 10, 2019</td>
+  <td>38 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2019-09-05-evolution-strategies/" target="_blank" rel="noreferrer">Evolution Strategies</a></td>
+  <td>强化学习与决策</td>
+  <td>September 5, 2019</td>
+  <td>22 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2019-06-23-meta-rl/" target="_blank" rel="noreferrer">Meta Reinforcement Learning</a></td>
+  <td>强化学习与决策</td>
+  <td>June 23, 2019</td>
+  <td>22 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2019-05-05-domain-randomization/" target="_blank" rel="noreferrer">Domain Randomization for Sim2Real Transfer</a></td>
+  <td>强化学习与决策</td>
+  <td>May 5, 2019</td>
+  <td>14 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2019-03-14-overfit/" target="_blank" rel="noreferrer">Are Deep Neural Networks Dramatically Overfitted?</a></td>
+  <td>深度学习基础与表征</td>
+  <td>March 14, 2019</td>
+  <td>21 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2019-01-31-lm/" target="_blank" rel="noreferrer">Generalized Language Models</a></td>
+  <td>LLM、Agent 与 AI 安全</td>
+  <td>January 31, 2019</td>
+  <td>36 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2018-12-27-object-recognition-part-4/" target="_blank" rel="noreferrer">Object Detection Part 4: Fast Detection Models</a></td>
+  <td>视觉与目标检测</td>
+  <td>December 27, 2018</td>
+  <td>19 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2018-11-30-meta-learning/" target="_blank" rel="noreferrer">Meta-Learning: Learning to Learn Fast</a></td>
+  <td>其他</td>
+  <td>November 30, 2018</td>
+  <td>30 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2018-10-13-flow-models/" target="_blank" rel="noreferrer">Flow-based Deep Generative Models</a></td>
+  <td>深度学习基础与表征</td>
+  <td>October 13, 2018</td>
+  <td>21 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2018-08-12-vae/" target="_blank" rel="noreferrer">From Autoencoder to Beta-VAE</a></td>
+  <td>生成模型</td>
+  <td>August 12, 2018</td>
+  <td>21 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2018-06-24-attention/" target="_blank" rel="noreferrer">Attention? Attention!</a></td>
+  <td>深度学习基础与表征</td>
+  <td>June 24, 2018</td>
+  <td>21 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2018-05-05-drl-implementation/" target="_blank" rel="noreferrer">Implementing Deep Reinforcement Learning Models with Tensorflow + OpenAI Gym</a></td>
+  <td>生成模型</td>
+  <td>May 5, 2018</td>
+  <td>13 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2018-04-08-policy-gradient/" target="_blank" rel="noreferrer">Policy Gradient Algorithms</a></td>
+  <td>强化学习与决策</td>
+  <td>April 8, 2018</td>
+  <td>52 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2018-02-19-rl-overview/" target="_blank" rel="noreferrer">A (Long) Peek into Reinforcement Learning</a></td>
+  <td>强化学习与决策</td>
+  <td>February 19, 2018</td>
+  <td>31 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2018-01-23-multi-armed-bandit/" target="_blank" rel="noreferrer">The Multi-Armed Bandit Problem and Its Solutions</a></td>
+  <td>强化学习与决策</td>
+  <td>January 23, 2018</td>
+  <td>10 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2017-12-31-object-recognition-part-3/" target="_blank" rel="noreferrer">Object Detection for Dummies Part 3: R-CNN Family</a></td>
+  <td>视觉与目标检测</td>
+  <td>December 31, 2017</td>
+  <td>13 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2017-12-15-object-recognition-part-2/" target="_blank" rel="noreferrer">Object Detection for Dummies Part 2: CNN, DPM and Overfeat</a></td>
+  <td>视觉与目标检测</td>
+  <td>December 15, 2017</td>
+  <td>7 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2017-10-29-object-recognition-part-1/" target="_blank" rel="noreferrer">Object Detection for Dummies Part 1: Gradient Vector, HOG, and SS</a></td>
+  <td>视觉与目标检测</td>
+  <td>October 29, 2017</td>
+  <td>15 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2017-10-15-word-embedding/" target="_blank" rel="noreferrer">Learning Word Embedding</a></td>
+  <td>LLM、Agent 与 AI 安全</td>
+  <td>October 15, 2017</td>
+  <td>18 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2017-09-28-information-bottleneck/" target="_blank" rel="noreferrer">Anatomize Deep Learning with Information Theory</a></td>
+  <td>深度学习基础与表征</td>
+  <td>September 28, 2017</td>
+  <td>9 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2017-08-20-gan/" target="_blank" rel="noreferrer">From GAN to WGAN</a></td>
+  <td>生成模型</td>
+  <td>August 20, 2017</td>
+  <td>21 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2017-08-01-interpretation/" target="_blank" rel="noreferrer">How to Explain the Prediction of a Machine Learning Model?</a></td>
+  <td>深度学习基础与表征</td>
+  <td>August 1, 2017</td>
+  <td>18 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2017-07-22-stock-rnn-part-2/" target="_blank" rel="noreferrer">Predict Stock Prices Using RNN: Part 2</a></td>
+  <td>生成模型</td>
+  <td>July 22, 2017</td>
+  <td>9 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2017-07-08-stock-rnn-part-1/" target="_blank" rel="noreferrer">Predict Stock Prices Using RNN: Part 1</a></td>
+  <td>生成模型</td>
+  <td>July 8, 2017</td>
+  <td>12 min</td>
+</tr>
+<tr>
+  <td><a href="https://lilianweng.github.io/posts/2017-06-21-overview/" target="_blank" rel="noreferrer">An Overview of Deep Learning for Curious People</a></td>
+  <td>深度学习基础与表征</td>
+  <td>June 21, 2017</td>
+  <td>12 min</td>
+</tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="assets/app.js"></script>
+</body>
+</html>

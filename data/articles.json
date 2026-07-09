@@ -1,0 +1,712 @@
+[
+  {
+    "slug": "2026-07-04-harness",
+    "title": "Harness Engineering for Self-Improvement",
+    "date": "July 4, 2026",
+    "readingTime": "28 min",
+    "tags": [
+      "language-model",
+      "agent",
+      "auto-research",
+      "self-improvement",
+      "prompting"
+    ],
+    "url": "https://lilianweng.github.io/posts/2026-07-04-harness/",
+    "topic": "LLM、Agent 与 AI 安全"
+  },
+  {
+    "slug": "2026-06-24-scaling-laws",
+    "title": "Scaling Laws, Carefully",
+    "date": "June 24, 2026",
+    "readingTime": "25 min",
+    "tags": [
+      "language-model",
+      "foundation",
+      "pretraining",
+      "transformer",
+      "learning-dynamics"
+    ],
+    "url": "https://lilianweng.github.io/posts/2026-06-24-scaling-laws/",
+    "topic": "LLM、Agent 与 AI 安全"
+  },
+  {
+    "slug": "2025-05-01-thinking",
+    "title": "Why We Think",
+    "date": "May 1, 2025",
+    "readingTime": "40 min",
+    "tags": [
+      "language-model",
+      "reinforcement-learning",
+      "reasoning",
+      "long-read"
+    ],
+    "url": "https://lilianweng.github.io/posts/2025-05-01-thinking/",
+    "topic": "LLM、Agent 与 AI 安全"
+  },
+  {
+    "slug": "2024-11-28-reward-hacking",
+    "title": "Reward Hacking in Reinforcement Learning",
+    "date": "November 28, 2024",
+    "readingTime": "37 min",
+    "tags": [
+      "language-model",
+      "rlhf",
+      "alignment",
+      "safety",
+      "reinforcement-learning",
+      "long-read"
+    ],
+    "url": "https://lilianweng.github.io/posts/2024-11-28-reward-hacking/",
+    "topic": "LLM、Agent 与 AI 安全"
+  },
+  {
+    "slug": "2024-07-07-hallucination",
+    "title": "Extrinsic Hallucinations in LLMs",
+    "date": "July 7, 2024",
+    "readingTime": "29 min",
+    "tags": [
+      "nlp",
+      "language-model",
+      "safety",
+      "hallucination",
+      "factuality"
+    ],
+    "url": "https://lilianweng.github.io/posts/2024-07-07-hallucination/",
+    "topic": "LLM、Agent 与 AI 安全"
+  },
+  {
+    "slug": "2024-04-12-diffusion-video",
+    "title": "Diffusion Models for Video Generation",
+    "date": "April 12, 2024",
+    "readingTime": "20 min",
+    "tags": [
+      "generative-model",
+      "video-generation"
+    ],
+    "url": "https://lilianweng.github.io/posts/2024-04-12-diffusion-video/",
+    "topic": "生成模型"
+  },
+  {
+    "slug": "2024-02-05-human-data-quality",
+    "title": "Thinking about High-Quality Human Data",
+    "date": "February 5, 2024",
+    "readingTime": "20 min",
+    "tags": [
+      "data",
+      "data-quality",
+      "human-ai"
+    ],
+    "url": "https://lilianweng.github.io/posts/2024-02-05-human-data-quality/",
+    "topic": "数据与低资源学习"
+  },
+  {
+    "slug": "2023-10-25-adv-attack-llm",
+    "title": "Adversarial Attacks on LLMs",
+    "date": "October 25, 2023",
+    "readingTime": "33 min",
+    "tags": [
+      "nlp",
+      "language-model",
+      "safety",
+      "adversarial attacks",
+      "robustness",
+      "redteam"
+    ],
+    "url": "https://lilianweng.github.io/posts/2023-10-25-adv-attack-llm/",
+    "topic": "LLM、Agent 与 AI 安全"
+  },
+  {
+    "slug": "2023-06-23-agent",
+    "title": "LLM Powered Autonomous Agents",
+    "date": "June 23, 2023",
+    "readingTime": "31 min",
+    "tags": [
+      "nlp",
+      "language-model",
+      "agent",
+      "steerability",
+      "prompting"
+    ],
+    "url": "https://lilianweng.github.io/posts/2023-06-23-agent/",
+    "topic": "LLM、Agent 与 AI 安全"
+  },
+  {
+    "slug": "2023-03-15-prompt-engineering",
+    "title": "Prompt Engineering",
+    "date": "March 15, 2023",
+    "readingTime": "21 min",
+    "tags": [
+      "nlp",
+      "language-model",
+      "alignment",
+      "steerability",
+      "prompting"
+    ],
+    "url": "https://lilianweng.github.io/posts/2023-03-15-prompt-engineering/",
+    "topic": "LLM、Agent 与 AI 安全"
+  },
+  {
+    "slug": "2023-01-27-the-transformer-family-v2",
+    "title": "The Transformer Family Version 2.0",
+    "date": "January 27, 2023",
+    "readingTime": "45 min",
+    "tags": [
+      "architecture",
+      "attention",
+      "transformer",
+      "foundation",
+      "long-read",
+      "reinforcement-learning"
+    ],
+    "url": "https://lilianweng.github.io/posts/2023-01-27-the-transformer-family-v2/",
+    "topic": "深度学习基础与表征"
+  },
+  {
+    "slug": "2023-01-10-inference-optimization",
+    "title": "Large Transformer Model Inference Optimization",
+    "date": "January 10, 2023",
+    "readingTime": "9 min",
+    "tags": [
+      "language-model",
+      "long-read",
+      "architecture",
+      "attention",
+      "transformer",
+      "foundation"
+    ],
+    "url": "https://lilianweng.github.io/posts/2023-01-10-inference-optimization/",
+    "topic": "LLM、Agent 与 AI 安全"
+  },
+  {
+    "slug": "2022-09-08-ntk",
+    "title": "Some Math behind Neural Tangent Kernel",
+    "date": "September 8, 2022",
+    "readingTime": "17 min",
+    "tags": [
+      "foundation",
+      "neural-tangent-kernel",
+      "learning-dynamics"
+    ],
+    "url": "https://lilianweng.github.io/posts/2022-09-08-ntk/",
+    "topic": "深度学习基础与表征"
+  },
+  {
+    "slug": "2022-06-09-vlm",
+    "title": "Generalized Visual Language Models",
+    "date": "June 9, 2022",
+    "readingTime": "24 min",
+    "tags": [
+      "language-model",
+      "vision-language-model",
+      "vision-model"
+    ],
+    "url": "https://lilianweng.github.io/posts/2022-06-09-vlm/",
+    "topic": "LLM、Agent 与 AI 安全"
+  },
+  {
+    "slug": "2022-04-15-data-gen",
+    "title": "Learning with not Enough Data Part 3: Data Generation",
+    "date": "April 15, 2022",
+    "readingTime": "28 min",
+    "tags": [
+      "data",
+      "data-generation",
+      "data-augmentation",
+      "data-quality"
+    ],
+    "url": "https://lilianweng.github.io/posts/2022-04-15-data-gen/",
+    "topic": "数据与低资源学习"
+  },
+  {
+    "slug": "2022-02-20-active-learning",
+    "title": "Learning with not Enough Data Part 2: Active Learning",
+    "date": "February 20, 2022",
+    "readingTime": "22 min",
+    "tags": [
+      "data",
+      "active-learning"
+    ],
+    "url": "https://lilianweng.github.io/posts/2022-02-20-active-learning/",
+    "topic": "数据与低资源学习"
+  },
+  {
+    "slug": "2021-12-05-semi-supervised",
+    "title": "Learning with not Enough Data Part 1: Semi-Supervised Learning",
+    "date": "December 5, 2021",
+    "readingTime": "26 min",
+    "tags": [
+      "data",
+      "unsupervised-learning"
+    ],
+    "url": "https://lilianweng.github.io/posts/2021-12-05-semi-supervised/",
+    "topic": "数据与低资源学习"
+  },
+  {
+    "slug": "2021-09-25-train-large",
+    "title": "How to Train Really Large Models on Many GPUs?",
+    "date": "September 24, 2021",
+    "readingTime": "21 min",
+    "tags": [
+      "architecture",
+      "transformer",
+      "foundation"
+    ],
+    "url": "https://lilianweng.github.io/posts/2021-09-25-train-large/",
+    "topic": "深度学习基础与表征"
+  },
+  {
+    "slug": "2021-07-11-diffusion-models",
+    "title": "What are Diffusion Models?",
+    "date": "July 11, 2021",
+    "readingTime": "31 min",
+    "tags": [
+      "generative-model",
+      "math-heavy",
+      "image-generation"
+    ],
+    "url": "https://lilianweng.github.io/posts/2021-07-11-diffusion-models/",
+    "topic": "生成模型"
+  },
+  {
+    "slug": "2021-05-31-contrastive",
+    "title": "Contrastive Representation Learning",
+    "date": "May 31, 2021",
+    "readingTime": "39 min",
+    "tags": [
+      "representation-learning",
+      "long-read",
+      "language-model",
+      "unsupervised-learning",
+      "data-augmentation"
+    ],
+    "url": "https://lilianweng.github.io/posts/2021-05-31-contrastive/",
+    "topic": "LLM、Agent 与 AI 安全"
+  },
+  {
+    "slug": "2021-03-21-lm-toxicity",
+    "title": "Reducing Toxicity in Language Models",
+    "date": "March 21, 2021",
+    "readingTime": "22 min",
+    "tags": [
+      "nlp",
+      "language-model",
+      "alignment",
+      "steerability",
+      "safety"
+    ],
+    "url": "https://lilianweng.github.io/posts/2021-03-21-lm-toxicity/",
+    "topic": "LLM、Agent 与 AI 安全"
+  },
+  {
+    "slug": "2021-01-02-controllable-text-generation",
+    "title": "Controllable Neural Text Generation",
+    "date": "January 2, 2021",
+    "readingTime": "42 min",
+    "tags": [
+      "nlp",
+      "language-model",
+      "alignment",
+      "steerability",
+      "reinforcement-learning",
+      "long-read"
+    ],
+    "url": "https://lilianweng.github.io/posts/2021-01-02-controllable-text-generation/",
+    "topic": "LLM、Agent 与 AI 安全"
+  },
+  {
+    "slug": "2020-10-29-odqa",
+    "title": "How to Build an Open-Domain Question Answering System?",
+    "date": "October 29, 2020",
+    "readingTime": "33 min",
+    "tags": [
+      "nlp",
+      "language-model",
+      "attention",
+      "transformer"
+    ],
+    "url": "https://lilianweng.github.io/posts/2020-10-29-odqa/",
+    "topic": "LLM、Agent 与 AI 安全"
+  },
+  {
+    "slug": "2020-08-06-nas",
+    "title": "Neural Architecture Search",
+    "date": "August 6, 2020",
+    "readingTime": "32 min",
+    "tags": [
+      "architecture",
+      "reinforcement-learning",
+      "evolution",
+      "auto-ml"
+    ],
+    "url": "https://lilianweng.github.io/posts/2020-08-06-nas/",
+    "topic": "深度学习基础与表征"
+  },
+  {
+    "slug": "2020-06-07-exploration-drl",
+    "title": "Exploration Strategies in Deep Reinforcement Learning",
+    "date": "June 7, 2020",
+    "readingTime": "36 min",
+    "tags": [
+      "reinforcement-learning",
+      "exploration",
+      "long-read"
+    ],
+    "url": "https://lilianweng.github.io/posts/2020-06-07-exploration-drl/",
+    "topic": "强化学习与决策"
+  },
+  {
+    "slug": "2020-04-07-the-transformer-family",
+    "title": "The Transformer Family",
+    "date": "April 7, 2020",
+    "readingTime": "25 min",
+    "tags": [
+      "architecture",
+      "attention",
+      "transformer",
+      "foundation",
+      "reinforcement-learning"
+    ],
+    "url": "https://lilianweng.github.io/posts/2020-04-07-the-transformer-family/",
+    "topic": "深度学习基础与表征"
+  },
+  {
+    "slug": "2020-01-29-curriculum-rl",
+    "title": "Curriculum for Reinforcement Learning",
+    "date": "January 29, 2020",
+    "readingTime": "24 min",
+    "tags": [
+      "reinforcement-learning",
+      "generative-model",
+      "meta-learning"
+    ],
+    "url": "https://lilianweng.github.io/posts/2020-01-29-curriculum-rl/",
+    "topic": "生成模型"
+  },
+  {
+    "slug": "2019-11-10-self-supervised",
+    "title": "Self-Supervised Representation Learning",
+    "date": "November 10, 2019",
+    "readingTime": "38 min",
+    "tags": [
+      "representation-learning",
+      "long-read",
+      "generative-model",
+      "object-recognition",
+      "reinforcement-learning",
+      "unsupervised-learning"
+    ],
+    "url": "https://lilianweng.github.io/posts/2019-11-10-self-supervised/",
+    "topic": "深度学习基础与表征"
+  },
+  {
+    "slug": "2019-09-05-evolution-strategies",
+    "title": "Evolution Strategies",
+    "date": "September 5, 2019",
+    "readingTime": "22 min",
+    "tags": [
+      "evolution",
+      "reinforcement-learning"
+    ],
+    "url": "https://lilianweng.github.io/posts/2019-09-05-evolution-strategies/",
+    "topic": "强化学习与决策"
+  },
+  {
+    "slug": "2019-06-23-meta-rl",
+    "title": "Meta Reinforcement Learning",
+    "date": "June 23, 2019",
+    "readingTime": "22 min",
+    "tags": [
+      "meta-learning",
+      "reinforcement-learning"
+    ],
+    "url": "https://lilianweng.github.io/posts/2019-06-23-meta-rl/",
+    "topic": "强化学习与决策"
+  },
+  {
+    "slug": "2019-05-05-domain-randomization",
+    "title": "Domain Randomization for Sim2Real Transfer",
+    "date": "May 5, 2019",
+    "readingTime": "14 min",
+    "tags": [
+      "robotics",
+      "meta-learning",
+      "reinforcement-learning"
+    ],
+    "url": "https://lilianweng.github.io/posts/2019-05-05-domain-randomization/",
+    "topic": "强化学习与决策"
+  },
+  {
+    "slug": "2019-03-14-overfit",
+    "title": "Are Deep Neural Networks Dramatically Overfitted?",
+    "date": "March 14, 2019",
+    "readingTime": "21 min",
+    "tags": [
+      "information-theory",
+      "foundation",
+      "learning-dynamics"
+    ],
+    "url": "https://lilianweng.github.io/posts/2019-03-14-overfit/",
+    "topic": "深度学习基础与表征"
+  },
+  {
+    "slug": "2019-01-31-lm",
+    "title": "Generalized Language Models",
+    "date": "January 31, 2019",
+    "readingTime": "36 min",
+    "tags": [
+      "architecture",
+      "nlp",
+      "long-read",
+      "transformer",
+      "attention",
+      "language-model"
+    ],
+    "url": "https://lilianweng.github.io/posts/2019-01-31-lm/",
+    "topic": "LLM、Agent 与 AI 安全"
+  },
+  {
+    "slug": "2018-12-27-object-recognition-part-4",
+    "title": "Object Detection Part 4: Fast Detection Models",
+    "date": "December 27, 2018",
+    "readingTime": "19 min",
+    "tags": [
+      "object-detection",
+      "object-recognition",
+      "vision-model"
+    ],
+    "url": "https://lilianweng.github.io/posts/2018-12-27-object-recognition-part-4/",
+    "topic": "视觉与目标检测"
+  },
+  {
+    "slug": "2018-11-30-meta-learning",
+    "title": "Meta-Learning: Learning to Learn Fast",
+    "date": "November 30, 2018",
+    "readingTime": "30 min",
+    "tags": [
+      "meta-learning",
+      "long-read"
+    ],
+    "url": "https://lilianweng.github.io/posts/2018-11-30-meta-learning/",
+    "topic": "其他"
+  },
+  {
+    "slug": "2018-10-13-flow-models",
+    "title": "Flow-based Deep Generative Models",
+    "date": "October 13, 2018",
+    "readingTime": "21 min",
+    "tags": [
+      "architecture",
+      "generative-model",
+      "image-generation",
+      "math-heavy"
+    ],
+    "url": "https://lilianweng.github.io/posts/2018-10-13-flow-models/",
+    "topic": "深度学习基础与表征"
+  },
+  {
+    "slug": "2018-08-12-vae",
+    "title": "From Autoencoder to Beta-VAE",
+    "date": "August 12, 2018",
+    "readingTime": "21 min",
+    "tags": [
+      "autoencoder",
+      "generative-model",
+      "image-generation"
+    ],
+    "url": "https://lilianweng.github.io/posts/2018-08-12-vae/",
+    "topic": "生成模型"
+  },
+  {
+    "slug": "2018-06-24-attention",
+    "title": "Attention? Attention!",
+    "date": "June 24, 2018",
+    "readingTime": "21 min",
+    "tags": [
+      "architecture",
+      "attention",
+      "transformer",
+      "rnn"
+    ],
+    "url": "https://lilianweng.github.io/posts/2018-06-24-attention/",
+    "topic": "深度学习基础与表征"
+  },
+  {
+    "slug": "2018-05-05-drl-implementation",
+    "title": "Implementing Deep Reinforcement Learning Models with Tensorflow + OpenAI Gym",
+    "date": "May 5, 2018",
+    "readingTime": "13 min",
+    "tags": [
+      "tutorial",
+      "tensorflow",
+      "reinforcement-learning"
+    ],
+    "url": "https://lilianweng.github.io/posts/2018-05-05-drl-implementation/",
+    "topic": "生成模型"
+  },
+  {
+    "slug": "2018-04-08-policy-gradient",
+    "title": "Policy Gradient Algorithms",
+    "date": "April 8, 2018",
+    "readingTime": "52 min",
+    "tags": [
+      "reinforcement-learning",
+      "long-read",
+      "math-heavy"
+    ],
+    "url": "https://lilianweng.github.io/posts/2018-04-08-policy-gradient/",
+    "topic": "强化学习与决策"
+  },
+  {
+    "slug": "2018-02-19-rl-overview",
+    "title": "A (Long) Peek into Reinforcement Learning",
+    "date": "February 19, 2018",
+    "readingTime": "31 min",
+    "tags": [
+      "reinforcement-learning",
+      "long-read",
+      "math-heavy"
+    ],
+    "url": "https://lilianweng.github.io/posts/2018-02-19-rl-overview/",
+    "topic": "强化学习与决策"
+  },
+  {
+    "slug": "2018-01-23-multi-armed-bandit",
+    "title": "The Multi-Armed Bandit Problem and Its Solutions",
+    "date": "January 23, 2018",
+    "readingTime": "10 min",
+    "tags": [
+      "exploration",
+      "math-heavy",
+      "reinforcement-learning"
+    ],
+    "url": "https://lilianweng.github.io/posts/2018-01-23-multi-armed-bandit/",
+    "topic": "强化学习与决策"
+  },
+  {
+    "slug": "2017-12-31-object-recognition-part-3",
+    "title": "Object Detection for Dummies Part 3: R-CNN Family",
+    "date": "December 31, 2017",
+    "readingTime": "13 min",
+    "tags": [
+      "object-detection",
+      "object-recognition",
+      "vision-model"
+    ],
+    "url": "https://lilianweng.github.io/posts/2017-12-31-object-recognition-part-3/",
+    "topic": "视觉与目标检测"
+  },
+  {
+    "slug": "2017-12-15-object-recognition-part-2",
+    "title": "Object Detection for Dummies Part 2: CNN, DPM and Overfeat",
+    "date": "December 15, 2017",
+    "readingTime": "7 min",
+    "tags": [
+      "object-detection",
+      "object-recognition",
+      "vision-model"
+    ],
+    "url": "https://lilianweng.github.io/posts/2017-12-15-object-recognition-part-2/",
+    "topic": "视觉与目标检测"
+  },
+  {
+    "slug": "2017-10-29-object-recognition-part-1",
+    "title": "Object Detection for Dummies Part 1: Gradient Vector, HOG, and SS",
+    "date": "October 29, 2017",
+    "readingTime": "15 min",
+    "tags": [
+      "object-detection",
+      "object-recognition",
+      "vision-model"
+    ],
+    "url": "https://lilianweng.github.io/posts/2017-10-29-object-recognition-part-1/",
+    "topic": "视觉与目标检测"
+  },
+  {
+    "slug": "2017-10-15-word-embedding",
+    "title": "Learning Word Embedding",
+    "date": "October 15, 2017",
+    "readingTime": "18 min",
+    "tags": [
+      "nlp",
+      "language-model"
+    ],
+    "url": "https://lilianweng.github.io/posts/2017-10-15-word-embedding/",
+    "topic": "LLM、Agent 与 AI 安全"
+  },
+  {
+    "slug": "2017-09-28-information-bottleneck",
+    "title": "Anatomize Deep Learning with Information Theory",
+    "date": "September 28, 2017",
+    "readingTime": "9 min",
+    "tags": [
+      "information-theory",
+      "foundation"
+    ],
+    "url": "https://lilianweng.github.io/posts/2017-09-28-information-bottleneck/",
+    "topic": "深度学习基础与表征"
+  },
+  {
+    "slug": "2017-08-20-gan",
+    "title": "From GAN to WGAN",
+    "date": "August 20, 2017",
+    "readingTime": "21 min",
+    "tags": [
+      "gan",
+      "long-read",
+      "generative-model",
+      "image-generation",
+      "math-heavy"
+    ],
+    "url": "https://lilianweng.github.io/posts/2017-08-20-gan/",
+    "topic": "生成模型"
+  },
+  {
+    "slug": "2017-08-01-interpretation",
+    "title": "How to Explain the Prediction of a Machine Learning Model?",
+    "date": "August 1, 2017",
+    "readingTime": "18 min",
+    "tags": [
+      "foundation"
+    ],
+    "url": "https://lilianweng.github.io/posts/2017-08-01-interpretation/",
+    "topic": "深度学习基础与表征"
+  },
+  {
+    "slug": "2017-07-22-stock-rnn-part-2",
+    "title": "Predict Stock Prices Using RNN: Part 2",
+    "date": "July 22, 2017",
+    "readingTime": "9 min",
+    "tags": [
+      "tutorial",
+      "rnn",
+      "tensorflow"
+    ],
+    "url": "https://lilianweng.github.io/posts/2017-07-22-stock-rnn-part-2/",
+    "topic": "生成模型"
+  },
+  {
+    "slug": "2017-07-08-stock-rnn-part-1",
+    "title": "Predict Stock Prices Using RNN: Part 1",
+    "date": "July 8, 2017",
+    "readingTime": "12 min",
+    "tags": [
+      "tutorial",
+      "rnn",
+      "tensorflow"
+    ],
+    "url": "https://lilianweng.github.io/posts/2017-07-08-stock-rnn-part-1/",
+    "topic": "生成模型"
+  },
+  {
+    "slug": "2017-06-21-overview",
+    "title": "An Overview of Deep Learning for Curious People",
+    "date": "June 21, 2017",
+    "readingTime": "12 min",
+    "tags": [
+      "foundation",
+      "tutorial"
+    ],
+    "url": "https://lilianweng.github.io/posts/2017-06-21-overview/",
+    "topic": "深度学习基础与表征"
+  }
+]
