@@ -1,4 +1,4 @@
-# 10yuanrich.github.io
+# richyuan10.github.io
 
 拾贝个人知识 Wiki 的 GitHub Pages 发布仓库。
 
