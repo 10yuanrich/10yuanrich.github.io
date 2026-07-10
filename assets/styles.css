@@ -889,6 +889,124 @@ h2 {
   font-size: 14px;
 }
 
+.reading-route {
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+
+.reading-route li {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: baseline;
+  max-width: none;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.reading-route li > span {
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.reading-route a {
+  color: var(--ink);
+  font-family: ui-serif, Georgia, serif;
+  font-size: 18px;
+  text-decoration: none;
+}
+
+.reading-route a:hover {
+  color: var(--blue);
+}
+
+.reading-route small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.note-page {
+  background: var(--bg);
+}
+
+.note-shell {
+  width: min(920px, 100%);
+  margin: 0 auto;
+  padding: 28px 36px 72px;
+}
+
+.note-header,
+.note-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+}
+
+.note-brand {
+  color: var(--ink);
+  font-family: ui-serif, Georgia, serif;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.note-brand span,
+.note-back,
+.note-footer {
+  color: var(--muted);
+}
+
+.note-brand:hover,
+.note-back:hover {
+  color: var(--green);
+  text-decoration: none;
+}
+
+.note-content {
+  max-width: none;
+  padding: 56px 0 50px;
+  border-bottom: 1px solid var(--line);
+}
+
+.note-content > h1 {
+  max-width: 760px;
+  margin-top: 8px;
+  font-size: 46px;
+}
+
+.note-content > blockquote {
+  max-width: 720px;
+  margin: 24px 0 34px;
+  padding: 14px 18px;
+  border-left: 3px solid var(--green);
+  background: var(--soft-green);
+  color: #2d4a3f;
+}
+
+.note-content > blockquote p {
+  margin: 0;
+}
+
+.note-content h2 {
+  max-width: 790px;
+}
+
+.note-content p,
+.note-content li {
+  max-width: 760px;
+  font-size: 16px;
+}
+
+.note-footer {
+  border-bottom: 0;
+}
+
 .section-kicker {
   margin-bottom: 12px;
   color: var(--green);
@@ -1169,6 +1287,32 @@ tbody tr:hover {
 
   .article-card {
     min-height: 185px;
+  }
+
+  .reading-route li {
+    grid-template-columns: 30px minmax(0, 1fr);
+  }
+
+  .reading-route small {
+    grid-column: 2;
+  }
+
+  .note-shell {
+    padding: 18px 20px 48px;
+  }
+
+  .note-header,
+  .note-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .note-content {
+    padding: 40px 0 38px;
+  }
+
+  .note-content > h1 {
+    font-size: 34px;
   }
 
   .reading h1 {

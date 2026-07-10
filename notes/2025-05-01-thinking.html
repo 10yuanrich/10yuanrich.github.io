@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Why We Think · 拾贝</title>
+  <meta name="description" content="拾贝对 Why We Think 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">LILIAN WENG / CURATED NOTE</div>
+      <h1 id="为什么模型需要思考把推理看作可分配的计算资源">为什么模型需要“思考”：把推理看作可分配的计算资源</h1>
+<blockquote>
+<p>主题：推理时计算、搜索、修订、工具使用</p>
+<p>对应原文：Lilian Weng, <em>Why We Think</em>（2025）</p>
+</blockquote>
+<h2 id="这篇文章在回答什么">这篇文章在回答什么</h2>
+<p>为什么有些任务值得让模型在回答前花更多 token、做更多分支采样、修订或调用工具。文章把“思考”视为推理阶段额外投入的计算资源，而不是神秘的内在体验。</p>
+<h2 id="原作者的论证骨架">原作者的论证骨架</h2>
+<ol type="1">
+<li>思考的动机可以从心理学类比、计算资源分配和潜变量建模理解。</li>
+<li>模型可以在 token 层面展开推理，并通过并行采样、分支搜索和顺序修订探索更多候选路径。</li>
+<li>强化学习可以训练更好的推理行为；外部工具进一步扩展可用计算。</li>
+<li>文章同时讨论“思考是否忠实”：可见的推理文本不必然完整反映模型实际的决策机制。</li>
+</ol>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>推理时计算的价值不在于让每个回答都变长，而在于把预算投给<strong>不确定、可验证、且收益明显</strong>的步骤。一个合理的系统应当按任务路由：</p>
+<ul>
+<li>简单检索或格式转换：直接完成。</li>
+<li>多约束规划或数学问题：允许分解与复核。</li>
+<li>可调用外部工具的问题：优先计算、检索或执行，而不是纯文本猜测。</li>
+<li>无法验证的主观判断：说明不确定性，不伪造长链推理。</li>
+</ul>
+<h2 id="可直接采用的做法">可直接采用的做法</h2>
+<ol type="1">
+<li>为复杂任务设置“草稿 -&gt; 验证 -&gt; 最终答案”的阶段，而不是只增加一次性输出长度。</li>
+<li>多候选采样应与选择器配套；没有可靠选择规则，更多候选只会增加噪声。</li>
+<li>外部工具的结果优先于语言模型内部猜测，但仍要检查工具输入和证据来源。</li>
+<li>不把可见思维链当作真实性证明；以可验证中间产物为准。</li>
+</ol>
+<h2 id="与知识库的关系">与知识库的关系</h2>
+<ul>
+<li><span class="wiki-token">LLM Agent</span>：推理、工具和状态管理共同构成多步任务的执行过程。</li>
+<li><span class="wiki-token">奖励黑客</span>：选择器若奖励表面化推理，会诱导模型制造冗长但无效的过程。</li>
+<li><span class="wiki-token">Harness Engineering</span>：把验证步骤固定到工作流中，比要求模型“多想想”更可靠。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始文章：<a href="https://lilianweng.github.io/posts/2025-05-01-thinking/">Why We Think</a></li>
+<li>本地快照：<code>raw/lilian-weng/markdown/2025-05-01-thinking.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://lilianweng.github.io/posts/2025-05-01-thinking/" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

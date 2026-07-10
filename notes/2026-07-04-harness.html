@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Harness Engineering for Self-Improvement · 拾贝</title>
+  <meta name="description" content="拾贝对 Harness Engineering for Self-Improvement 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">LILIAN WENG / CURATED NOTE</div>
+      <h1 id="harness-engineering把模型放进可积累可验证的工作环境">Harness Engineering：把模型放进可积累、可验证的工作环境</h1>
+<blockquote>
+<p>主题：Agent 运行环境、持久记忆、工作流、持续改进</p>
+<p>对应原文：Lilian Weng, <em>Harness Engineering for Self-Improvement</em>（2026）</p>
+</blockquote>
+<h2 id="这篇文章在回答什么">这篇文章在回答什么</h2>
+<p>当基础模型能力已足够时，为什么实际产出仍高度依赖它所处的运行环境。文章把 harness 定义为围绕模型的工作流、文件、工具、子任务和评估机制，并讨论它怎样支持持续改进。</p>
+<h2 id="原作者的论证骨架">原作者的论证骨架</h2>
+<ol type="1">
+<li><strong>设计模式</strong>：工作流自动化、把文件系统作为持久记忆、子 agent 与后台作业，构成可重复的外部执行环境。</li>
+<li><strong>案例</strong>：编码 agent 的 harness 展示了模型核心能力与任务环境如何分层协作。</li>
+<li><strong>优化对象</strong>：上下文工程、工作流设计、自我改进、进化式搜索与模型权重联合优化，都是可被系统化调整的部分。</li>
+<li><strong>挑战</strong>：改进需要可靠评估、成本控制和安全边界，不能只依赖“循环运行更久”。</li>
+</ol>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>Harness 是让模型能力变成组织能力的地方。它把原本一次性的对话变成可回放、可检查、可重启的系统：</p>
+<ul>
+<li>文件承接长期记忆和中间产物；</li>
+<li>工作流定义任务顺序、失败处理与停止条件；</li>
+<li>评估决定什么样的结果值得保留；</li>
+<li>人的确认点控制不可逆动作和知识质量。</li>
+</ul>
+<p>对个人知识库来说，这正是关键：原始快照、来源登记、wiki 页面、操作日志和待确认列表都应该是 harness 的一部分，而不是临时聊天的副产品。</p>
+<h2 id="可直接采用的做法">可直接采用的做法</h2>
+<ol type="1">
+<li>为每个来源保留不可变原始快照，并将加工结果与快照分层保存。</li>
+<li>把“抓取、整理、校验、发布”写成可重复脚本，任何一步失败都能从状态恢复。</li>
+<li>在高影响写入前保留人工确认，例如论文是否纳入、结论是否升级为正式页面。</li>
+<li>以用户阅读质量、引用完整度和错误率评估流程，不以生成篇数作为主要指标。</li>
+</ol>
+<h2 id="与知识库的关系">与知识库的关系</h2>
+<ul>
+<li><span class="wiki-token">LLM Agent</span>：agent 是执行者，harness 是它执行任务的环境与约束。</li>
+<li><span class="wiki-token">提示工程</span>：提示模板应与文件、工具和验收规则一起版本化。</li>
+<li><span class="wiki-token">奖励黑客</span>：评估与人工确认是防止系统只优化表面产出的必要护栏。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始文章：<a href="https://lilianweng.github.io/posts/2026-07-04-harness/">Harness Engineering for Self-Improvement</a></li>
+<li>本地快照：<code>raw/lilian-weng/markdown/2026-07-04-harness.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://lilianweng.github.io/posts/2026-07-04-harness/" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LLM Powered Autonomous Agents · 拾贝</title>
+  <meta name="description" content="拾贝对 LLM Powered Autonomous Agents 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">LILIAN WENG / CURATED NOTE</div>
+      <h1 id="llm-agent规划记忆工具三件事如何协作">LLM Agent：规划、记忆、工具三件事如何协作</h1>
+<blockquote>
+<p>主题：Agent 架构、任务分解、检索记忆、工具调用</p>
+<p>对应原文：Lilian Weng, <em>LLM Powered Autonomous Agents</em>（2023）</p>
+</blockquote>
+<h2 id="这篇文章在回答什么">这篇文章在回答什么</h2>
+<p>语言模型如何从“给一句输入、回一句输出”变成能完成多步任务的 agent？文章给出的经典答案是：在模型外建立规划、记忆和工具调用三个组件，并让模型在循环中决定下一步。</p>
+<h2 id="原作者的论证骨架">原作者的论证骨架</h2>
+<ol type="1">
+<li><strong>规划</strong>：通过任务分解把长任务拆成可执行步骤；通过自我反思对中间答案进行批评和修订。</li>
+<li><strong>记忆</strong>：短期记忆保存当前上下文，长期记忆用向量检索等方式把相关历史重新带回当前任务。</li>
+<li><strong>工具</strong>：搜索、代码执行、API 与软件操作扩展了模型的感知和行动能力。</li>
+<li><strong>案例与挑战</strong>：文章用科学发现 agent、生成式社会模拟等案例说明架构，同时指出有限上下文、可靠性、成本和安全仍是核心难题。</li>
+</ol>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>“Agent”不是一个更大的 prompt，而是一个<strong>带状态的控制循环</strong>。一个可落地的 agent 至少要回答四个问题：</p>
+<ul>
+<li>当前任务的状态保存在哪里？</li>
+<li>下一步由谁决定，模型还是确定性规则？</li>
+<li>工具调用的输入、权限和失败处理是什么？</li>
+<li>什么时候停止，怎样知道结果可靠？</li>
+</ul>
+<p>规划、记忆和工具不是必选套餐。任务很短时，只需工具调用；需要跨轮积累时再引入记忆；只有确实存在分支决策或长链条依赖时，才值得增加规划与反思循环。</p>
+<h2 id="实践检查单">实践检查单</h2>
+<ol type="1">
+<li>将任务状态写入文件或数据库，不能只依赖对话窗口。</li>
+<li>每个工具定义输入 schema、超时、重试条件和可验证的输出。</li>
+<li>给循环设预算：最大步数、最大工具调用数、最大上下文长度。</li>
+<li>把“完成”定义为可检验的产物，例如测试通过、引用齐全或结构化字段完整。</li>
+</ol>
+<h2 id="与知识库的关系">与知识库的关系</h2>
+<ul>
+<li><span class="wiki-token">提示工程</span>：提示约束单步决策，agent 架构约束多步执行。</li>
+<li><span class="wiki-token">Harness Engineering</span>：文件系统、子任务和后台作业是 agent 运行环境的具体化。</li>
+<li><span class="wiki-token">幻觉治理</span>：工具结果与记忆检索都需要来源、时效和置信度管理。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始文章：<a href="https://lilianweng.github.io/posts/2023-06-23-agent/">LLM Powered Autonomous Agents</a></li>
+<li>本地快照：<code>raw/lilian-weng/markdown/2023-06-23-agent.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://lilianweng.github.io/posts/2023-06-23-agent/" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

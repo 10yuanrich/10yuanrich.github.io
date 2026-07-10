@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Extrinsic Hallucinations in LLMs · 拾贝</title>
+  <meta name="description" content="拾贝对 Extrinsic Hallucinations in LLMs 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">LILIAN WENG / CURATED NOTE</div>
+      <h1 id="幻觉治理把看似可信拆成可检测可缓解的问题">幻觉治理：把“看似可信”拆成可检测、可缓解的问题</h1>
+<blockquote>
+<p>主题：事实性、检索增强、校准、引用</p>
+<p>对应原文：Lilian Weng, <em>Extrinsic Hallucinations in LLMs</em>（2024）</p>
+</blockquote>
+<h2 id="这篇文章在回答什么">这篇文章在回答什么</h2>
+<p>模型生成的内容为何会与外部世界不一致，以及系统怎样发现、减少并归因这类错误。文章聚焦外在事实性，而不把“语言流畅”误当成“事实正确”。</p>
+<h2 id="原作者的论证骨架">原作者的论证骨架</h2>
+<ol type="1">
+<li><strong>成因</strong>：预训练数据中的缺失、噪声与过时信息，以及微调阶段注入新知识的困难，都会造成事实偏差。</li>
+<li><strong>检测</strong>：可以借助检索结果核验、对同一问题多次采样、估计未知知识，以及间接提问来发现不一致。</li>
+<li><strong>缓解</strong>：RAG、对答案进行编辑并提供归因、行动链、采样策略和面向事实性的微调，分别从知识供给、生成过程与训练目标切入。</li>
+<li><strong>评估</strong>：需要使用任务相匹配的事实性基准，而不是只看通用语言质量。</li>
+</ol>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>幻觉不是一个单点 bug，而是三层失配：</p>
+<ul>
+<li><strong>知识失配</strong>：模型没有、忘了或混淆了相关事实。</li>
+<li><strong>证据失配</strong>：模型即使能答，也没有把答案绑定到可核验材料。</li>
+<li><strong>表达失配</strong>：模型不知道自己的不确定性，仍以确定语气输出。</li>
+</ul>
+<p>因此，知识库型产品不应承诺“永不出错”，而应把回答设计成“结论、证据、未知项”三部分。没有证据时，最好的行为往往是标出待验证，而不是补全一个顺滑的故事。</p>
+<h2 id="可直接采用的做法">可直接采用的做法</h2>
+<ol type="1">
+<li>事实问答先检索用户指定来源；找不到证据时明确说“来源中未验证”。</li>
+<li>每个关键结论附最小充分证据：原文链接、段落位置或可复查的材料名。</li>
+<li>对长答案拆成可核验的原子主张，不让一条引用覆盖一整段推理。</li>
+<li>把“回答无法确认”当成有效结果，在界面中与普通答案并列呈现。</li>
+</ol>
+<h2 id="与知识库的关系">与知识库的关系</h2>
+<ul>
+<li><span class="wiki-token">提示工程</span>：要求引用、限定证据范围，是降低无依据生成的第一道门。</li>
+<li><span class="wiki-token">LLM Agent</span>：检索和工具调用必须把返回内容、时间和来源保存为状态。</li>
+<li><span class="wiki-token">奖励黑客</span>：如果只奖励“回答像真的”，评估系统会反向鼓励幻觉。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始文章：<a href="https://lilianweng.github.io/posts/2024-07-07-hallucination/">Extrinsic Hallucinations in LLMs</a></li>
+<li>本地快照：<code>raw/lilian-weng/markdown/2024-07-07-hallucination.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://lilianweng.github.io/posts/2024-07-07-hallucination/" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

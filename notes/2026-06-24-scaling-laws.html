@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scaling Laws, Carefully · 拾贝</title>
+  <meta name="description" content="拾贝对 Scaling Laws, Carefully 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">LILIAN WENG / CURATED NOTE</div>
+      <h1 id="scaling-laws用小实验估计大训练的资源边界">Scaling Laws：用小实验估计大训练的资源边界</h1>
+<blockquote>
+<p>主题：预训练、数据预算、算力预算、实验外推</p>
+<p>对应原文：Lilian Weng, <em>Scaling Laws, Carefully</em>（2026）</p>
+</blockquote>
+<h2 id="这篇文章在回答什么">这篇文章在回答什么</h2>
+<p>当模型、数据和算力都不可能无限试验时，怎样从一组较小实验推断更大规模训练的损失和资源配置。文章既梳理 Kaplan 与 Chinchilla 路线，也强调真实拟合中的条件和陷阱。</p>
+<h2 id="原作者的论证骨架">原作者的论证骨架</h2>
+<ol type="1">
+<li>早期工作展示了机器学习损失对规模的可预测性。</li>
+<li>在数据充足区域，Kaplan 路线与 Chinchilla 路线分别讨论模型参数、训练 token 和计算量之间的幂律关系。</li>
+<li>文中解释固定模型大小改变 token、等算力曲线和参数化拟合等估计方法，并讨论两套结论为何看似不同。</li>
+<li>在数据受限与真实工程环境中，拟合会受到数据质量、训练稳定性、变量耦合和外推范围的影响。</li>
+</ol>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>Scaling law 不是“规模越大越好”的口号，而是一种<strong>实验预算分配工具</strong>。它的作用是帮助回答：下一单位算力应该投在模型、数据还是训练 token 上；哪些小规模实验足以排除坏路线；在哪个规模开始，当前假设已经不可信。</p>
+<p>关键前提是实验族保持可比。数据配方、训练目标、优化器、序列长度等条件改变后，拟合曲线不应被当作可直接迁移的自然规律。</p>
+<h2 id="实践检查单">实践检查单</h2>
+<ol type="1">
+<li>在拟合前写清自变量、固定变量、数据配方和测量指标。</li>
+<li>采用多个规模点与重复实验，避免用两三个点画出“漂亮曲线”。</li>
+<li>报告外推区间与不确定性；把拟合结果视为决策依据，而不是确定性承诺。</li>
+<li>当数据质量或训练算法发生大变化时，重新做小规模校准。</li>
+</ol>
+<h2 id="与知识库的关系">与知识库的关系</h2>
+<ul>
+<li><span class="wiki-token">Why We Think</span>：推理时计算也是资源分配问题，但评估目标不同于预训练损失。</li>
+<li><span class="wiki-token">提示工程</span>：更好的系统设计有时比盲目增加模型规模更划算。</li>
+<li><span class="wiki-token">Harness Engineering</span>：实验记录、评估集与可复现工作流是可靠外推的基础设施。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始文章：<a href="https://lilianweng.github.io/posts/2026-06-24-scaling-laws/">Scaling Laws, Carefully</a></li>
+<li>本地快照：<code>raw/lilian-weng/markdown/2026-06-24-scaling-laws.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://lilianweng.github.io/posts/2026-06-24-scaling-laws/" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>
