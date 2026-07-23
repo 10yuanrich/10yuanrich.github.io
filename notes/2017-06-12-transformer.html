@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Transformer：用自注意力重写序列建模 · 拾贝</title>
+  <meta name="description" content="拾贝对 Transformer：用自注意力重写序列建模 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Google Research / arXiv / CURATED NOTE</div>
+      <h1 id="transformer用自注意力重写序列建模">Transformer：用自注意力重写序列建模</h1>
+<blockquote>
+<p>主题：Transformer、自注意力、QKV、多头注意力、位置编码、序列建模</p>
+<p>对应论文：Ashish Vaswani 等，<em>Attention Is All You Need</em>（NeurIPS，2017）</p>
+</blockquote>
+<h2 id="这篇论文解决了什么问题">这篇论文解决了什么问题</h2>
+<p>2017 年的主流机器翻译模型大多用 RNN 或 CNN 做 encoder-decoder。RNN 必须按 token 顺序计算，训练并行性差；两个相距很远的 token 要经过很多步才能彼此影响，长期依赖难学。CNN 可并行，但要靠堆叠或更大卷积核扩大感受野。</p>
+<p>论文提出 Transformer：<strong>不再使用循环或卷积，让每个 token 直接通过注意力读取其他 token。</strong> 这把“建模序列关系”从逐步状态传递改成了可并行的关系计算。</p>
+<h2 id="一句话结论">一句话结论</h2>
+<p>Transformer 的关键不是“有 attention”，而是把 attention 变成网络的主体，并配合位置编码、残差连接、层归一化和逐位置前馈层，形成可以稳定堆叠、并行训练的通用序列计算块。</p>
+<h2 id="原作者的论证骨架">原作者的论证骨架</h2>
+<ol type="1">
+<li>RNN 的时间步依赖妨碍并行训练，且远距离 token 的信息路径较长。</li>
+<li>self-attention 让一个位置在单层内连接到任意其他位置，顺序计算次数为常数。</li>
+<li>多头机制让模型在不同表征子空间中同时建立关系；位置编码补回顺序信息。</li>
+<li>在 WMT 2014 英德翻译上，Transformer big 得到 28.4 BLEU；在英法翻译上，单模型得到 41.0 BLEU，并以八张 P100 GPU 训练 3.5 天完成。</li>
+</ol>
+<p>论文的直接证据是翻译与句法分析；Transformer 后来成为大模型基础架构，则是它的并行训练能力与可扩展性在后续预训练范式中被不断验证的结果。</p>
+<h2 id="transformer-的一个计算块">Transformer 的一个计算块</h2>
+<p>原论文的 Transformer 是 encoder-decoder 结构：encoder 把输入序列编码成上下文表示，decoder 在生成目标序列时既看已生成 token，也 cross-attend 到 encoder 输出。每一层不是只有 attention，而是以下组件的组合。</p>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>它做什么</th>
+<th>为什么需要它</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>多头注意力</td>
+<td>让 token 从其他 token 聚合相关信息</td>
+<td>建立跨位置关系</td>
+</tr>
+<tr>
+<td>逐位置前馈网络（FFN）</td>
+<td>对每个位置独立做非线性变换</td>
+<td>扩展每个 token 的特征处理能力</td>
+</tr>
+<tr>
+<td>残差连接</td>
+<td>将子层输入加回输出</td>
+<td>保留信息并让深层优化更稳定</td>
+</tr>
+<tr>
+<td>LayerNorm</td>
+<td>规范化层内激活</td>
+<td>稳定训练尺度</td>
+</tr>
+<tr>
+<td>位置编码</td>
+<td>加到 token embedding 上</td>
+<td>让模型知道先后顺序</td>
+</tr>
+</tbody>
+</table>
+<p>现代实现的归一化位置、激活函数和位置编码形式已有很多变化，但“注意力混合 token 信息，FFN 处理每个 token，残差保证深层信息流”的核心分工仍然存在。</p>
+<h2 id="自注意力qkv-在做什么">自注意力：Q、K、V 在做什么</h2>
+<p>对每个 token 表示，模型通过三组可学习线性投影得到 Query（Q）、Key（K）和 Value（V）。可以把它理解成：</p>
+<ul>
+<li><strong>Q</strong>：当前位置想找什么信息；</li>
+<li><strong>K</strong>：每个候选位置可被怎样匹配；</li>
+<li><strong>V</strong>：匹配成功后实际取回什么内容。</li>
+</ul>
+<p>先计算一个 Q 与所有 K 的点积相似度，再除以 <code>sqrt(d_k)</code>，做 softmax 得到权重，最后对 V 加权求和：</p>
+<p><code>Attention(Q, K, V) = softmax(QK^T / sqrt(d_k)) V</code></p>
+<p>缩放并非装饰。若维度变大，未缩放的点积会让 softmax 过于尖锐，梯度变小；除以 <code>sqrt(d_k)</code> 是为了保持数值尺度适合训练。</p>
+<h3 id="一个直觉例子">一个直觉例子</h3>
+<p>在“它放在桌上，因为它很重”中，后一个“它”可能需要注意“某个物体”而非“桌”。自注意力不是依赖固定窗口，而是为当前 token 动态分配对所有位置的读取权重。模型是否真正学到正确指代取决于数据与参数，但结构允许这种直接连接。</p>
+<h2 id="为什么需要多头注意力">为什么需要多头注意力</h2>
+<p>单个注意力头只在一个投影空间里计算关系，容易把不同类型的关系混在一起。多头注意力先把 Q、K、V 投影到多个较低维子空间，各头独立做 attention，再拼接并投影回来。</p>
+<p>这让不同头可以分别侧重局部搭配、长距离依赖、语法关系或位置模式。不能把每个头机械地解释为某种人类可读规则，但多头提供了同时表达多种关系的容量，而不是让一种相似度承担全部语义。</p>
+<h2 id="没有-rnn模型如何知道顺序">没有 RNN，模型如何知道顺序</h2>
+<p>纯注意力对输入排列本身没有顺序偏好：若只交换 token 的位置而不提供位置信息，注意力计算无法知道顺序变了。因此原论文把 sinusoidal positional encoding 加到输入 embedding 上。</p>
+<p>不同维度使用不同频率的正弦与余弦函数，既标记绝对位置，也让模型可以通过线性关系推断相对位移。后续模型常改用学习式位置嵌入、相对位置偏置或 RoPE，但目标相同：把“第几个 token”和“相隔多远”显式提供给网络。</p>
+<h2 id="decoder-的因果遮罩">Decoder 的因果遮罩</h2>
+<p>原论文 decoder 的 self-attention 使用 mask：位置 <code>t</code> 不能读取未来位置。否则训练时模型会偷看正确答案，推理时却拿不到未来 token，形成训练与生成不一致。</p>
+<p>GPT 类 decoder-only 模型继承的正是这部分：用 causal mask 让每个 token 只看左侧上下文，再以“预测下一个 token”的目标进行自回归预训练。今天的 LLM 并不是原论文完整 encoder-decoder 架构的简单放大，但它们继承了 Transformer 的核心计算范式。</p>
+<h2 id="这项设计带来了什么">这项设计带来了什么</h2>
+<h3 id="训练可并行">训练可并行</h3>
+<p>RNN 要依次计算 <code>h_1, h_2, ...</code>；训练 Transformer 时，一层中所有位置的 Q、K、V 和注意力矩阵都能并行计算。这是它能有效利用 GPU/TPU 扩大训练规模的关键。</p>
+<h3 id="任意位置的最短路径更短">任意位置的最短路径更短</h3>
+<p>在一层全注意力中，任意两个 token 可以直接交互，顺序路径长度为 1；RNN 中远距离关系需要经过许多时间步。更短的计算路径不保证自动学好长依赖，但降低了信息传递和优化的结构障碍。</p>
+<h3 id="代价长序列的二次复杂度">代价：长序列的二次复杂度</h3>
+<p>全注意力需要计算 <code>n x n</code> 的 token 对关系，随序列长度增长，计算和内存都接近 O(n^2)。所以 Transformer 并没有消灭序列系统成本，只是将主要瓶颈从串行深度转成了注意力矩阵规模。长上下文、稀疏注意力、滑动窗口、KV cache 与高效 attention 内核，都是围绕这个边界展开的工程与研究。</p>
+<h2 id="给实际系统的判断框架">给实际系统的判断框架</h2>
+<ol type="1">
+<li><strong>短中等长度、需要全局关联</strong>：全注意力通常是强基线，适合文本理解、生成与多模态 token 融合。</li>
+<li><strong>超长上下文</strong>：先计算 token 数带来的 attention 矩阵成本；不要只看模型标称上下文窗口。</li>
+<li><strong>训练吞吐优先</strong>：Transformer 的并行性是优势，但显存、通信、序列长度和 batch 设计会决定实际速度。</li>
+<li><strong>生成延迟优先</strong>：自回归 decoder 每次生成仍要逐 token 进行；KV cache 减少重复计算，但不能取消生成的串行性质。</li>
+<li><strong>理解模型差异</strong>：BERT 类通常依赖 encoder；GPT 类以 masked decoder 为核心；encoder-decoder 模型适合显式输入到输出的变换任务。</li>
+</ol>
+<h2 id="容易误解的地方">容易误解的地方</h2>
+<ol type="1">
+<li><strong>Transformer 不等于只有注意力。</strong> FFN、残差、归一化、位置机制和掩码同样是可训练深层网络的关键部分。</li>
+<li><strong>全局 attention 不等于自动理解全局。</strong> 它提供连接能力，但是否利用取决于训练目标、数据、规模和优化。</li>
+<li><strong>并行训练不等于并行生成。</strong> 训练可同时处理所有已知 token；自回归推理仍然按 token 产生。</li>
+<li><strong>原论文并未直接研究今天的 LLM。</strong> 它解决的是机器翻译的序列变换问题；其成为 LLM 基座是后续路线的延伸。</li>
+</ol>
+<h2 id="与现有知识页的关系">与现有知识页的关系</h2>
+<ul>
+<li><span class="wiki-token">InstructGPT：SFT 如何让预训练模型开始遵循指令</span>：Transformer 提供基座模型的序列计算结构，SFT 在预训练后改变它的行为接口。</li>
+<li><span class="wiki-token">提示工程</span>：提示会变成 Transformer 读取的上下文 token；上下文组织直接影响注意力可利用的信息。</li>
+<li><span class="wiki-token">Scaling Laws</span>：Transformer 的并行可扩展性使参数、数据与计算规模的规律具有工程价值。</li>
+<li><span class="wiki-token">LLM Agent</span>：Agent 的规划、记忆与工具调用最终都要被编码进 Transformer 的上下文窗口与 token 序列。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/1706.03762">arXiv:1706.03762</a></li>
+<li>官方论文页：<a href="https://research.google/pubs/attention-is-all-you-need/">Google Research - Attention is All You Need</a></li>
+<li>本地 PDF 快照：<code>raw/papers/transformer/1706.03762v5.pdf</code></li>
+<li>本地文本快照：<code>raw/papers/transformer/1706.03762v5.txt</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

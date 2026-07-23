@@ -1,5 +1,23 @@
 [
   {
+    "slug": "2017-06-12-transformer",
+    "title": "Transformer：用自注意力重写序列建模",
+    "date": "2017-06-12",
+    "readingTime": "20 分钟",
+    "tags": [
+      "Transformer",
+      "自注意力",
+      "QKV",
+      "位置编码",
+      "模型架构"
+    ],
+    "topic": "Transformer 与模型架构",
+    "url": "https://arxiv.org/abs/1706.03762",
+    "sourceId": "google-paper",
+    "sourceName": "Google Research / arXiv",
+    "wikiUrl": "notes/2017-06-12-transformer.html"
+  },
+  {
     "slug": "2023-03-15-prompt-engineering",
     "title": "Prompt Engineering",
     "date": "March 15, 2023",
