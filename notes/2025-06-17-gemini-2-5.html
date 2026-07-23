@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gemini 2.5：推理预算、长上下文与 Agent 工作流 · 拾贝</title>
+  <meta name="description" content="拾贝对 Gemini 2.5：推理预算、长上下文与 Agent 工作流 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Google DeepMind / CURATED NOTE</div>
+      <h1 id="gemini-25推理预算长上下文与-agent-工作流">Gemini 2.5：推理预算、长上下文与 Agent 工作流</h1>
+<blockquote>
+<p>文档类型：技术报告（Google，2025）<br />
+主题：主流模型技术报告、推理模型、工具使用、Agent</p>
+</blockquote>
+<h2 id="解决什么问题">解决什么问题</h2>
+<p>Agent 既要处理代码、文本、图像、音频和视频，又要在复杂任务上投入推理、在常规任务上控制延迟与成本。Gemini 2.5 报告将这一矛盾表述为一条能力-成本 Pareto 前沿：2.5 Pro 承担最强推理与编码，2.5 Flash 提供可控的混合推理，2.0 Flash 和 Flash-Lite 覆盖低延迟、高规模路径。</p>
+<h2 id="原作者的论证与方法">原作者的论证与方法</h2>
+<p>作者把 Gemini 2.X 定义为原生多模态、支持超过 100 万 token 长上下文与原生工具调用的一组模型。2.5 Pro 是 thinking model，2.5 Flash 是可控制 thinking budget 的混合推理模型；2.0 Flash 与 Flash-Lite 则是非 thinking 的快速模型。报告称 Pro 在前沿编码与推理基准领先，且可处理至三小时视频；核心方法论不是“一个模型总是更强”，而是在不同预算下调度不同模型与推理深度。</p>
+<h2 id="核心机制">核心机制</h2>
+<ol type="1">
+<li><strong>可控推理预算</strong>：将质量、成本和延迟变成显式取舍，适合把难题升级处理、把批量任务留在快速路径。</li>
+<li><strong>长上下文加原生工具</strong>：模型可在大量多模态资料与代码库中理解任务，并通过 function call 调用搜索、执行或其他外部工具。</li>
+<li><strong>Agent 工作流组合</strong>：长上下文提供任务状态和证据，推理负责计划与纠错，工具负责改变外部世界；三者缺一不可。</li>
+</ol>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>报告列出代码、推理、多模态和代理式任务，并用 interactive web app、代码库理解及视频处理说明场景。表格还给出各版本输入输出长度、是否 thinking、是否支持工具的发布时状态。实际适合复杂代码库分析、长视频资料审阅、研究型检索和可验证的多步自动化。应当根据任务配置最大思考预算、最大工具步数和失败回退，而不是让所有任务无限制“想更久”。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>Gemini 2.5 说明主流模型的竞争单位已经从单个 checkpoint 变为<strong>可调度的能力族</strong>。建立 Agent 时，模型选择器要读懂任务风险：高影响但可验证的任务可使用更深推理并要求证据；低价值的批处理优先 Flash；不可逆动作必须在工具层做权限与确认。这样“推理能力”才会转化为稳定的端到端产出，而非不受控的长轨迹。</p>
+<h2 id="限制">限制</h2>
+<p>报告的能力、上下文、工具支持和 preview 标签以发布日期为准，后续 API 行为可能变化。benchmark 的领先不能直接转为长期自主成功率；工具调用增加了提示注入、权限滥用、状态不同步和成本失控风险。不同模型的输入输出模态也不完全相同，不能用家族名称掩盖差异。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li><span class="wiki-token">Gemini 1.5：百万级上下文如何成为可用工作记忆</span>：2.5 延续长上下文，但把它与 thinking 和工具调用合成 Agent 基础。</li>
+<li><span class="wiki-token">GPT-5：路由式统一系统与安全完成策略</span>：两者都将能力-成本取舍交给运行时调度。</li>
+<li><span class="wiki-token">Harness Engineering</span>：模型家族只能提供候选能力，任务状态、验证器、权限和重试策略仍属于 harness。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始报告：<a href="https://storage.googleapis.com/deepmind-media/gemini/gemini_v2_5_report.pdf">Gemini 2.5 Technical Report</a></li>
+<li>本地快照：<code>raw/papers/m09/source.pdf</code>、<code>raw/papers/m09/source.txt</code></li>
+<li>来源卡片：<code>sources/papers/cards/m09-gemini-2-5.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://storage.googleapis.com/deepmind-media/gemini/gemini_v2_5_report.pdf" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

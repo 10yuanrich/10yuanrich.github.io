@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DeepSeek-Coder-V2：用持续预训练构建代码与数学能力 · 拾贝</title>
+  <meta name="description" content="拾贝对 DeepSeek-Coder-V2：用持续预训练构建代码与数学能力 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">DeepSeek-AI / arXiv / CURATED NOTE</div>
+      <h1 id="deepseek-coder-v2用持续预训练把通用-moe-变成代码与数学模型">DeepSeek-Coder-V2：用持续预训练把通用 MoE 变成代码与数学模型</h1>
+<blockquote>
+<p>主题：代码模型、持续预训练、Fill-in-the-Middle、可验证 RL、长上下文</p>
+<p>对应材料：DeepSeek-AI，<em>DeepSeek-Coder-V2: Breaking the Barrier of Closed-Source Models in Code Intelligence</em>（arXiv:2406.11931，2024）</p>
+</blockquote>
+<h2 id="这篇报告解决了什么问题">这篇报告解决了什么问题</h2>
+<p>通用语言模型能写代码，不等于能处理跨文件上下文、补全代码中间空洞、在测试约束下迭代修复。代码专用模型若只追逐代码 token，又容易牺牲自然语言和数学推理。报告从 V2 的中间 checkpoint 出发，以持续预训练把代码、数学和通用语言同时保住，并把上下文扩到 128K。</p>
+<h2 id="原作者的论证方法与核心机制">原作者的论证、方法与核心机制</h2>
+<p>数据配比为 60% 源码、10% 数学、30% 自然语言，新增 6T token；连同 V2 已训练的 4.2T token，总暴露量为 10.2T。代码部分从 GitHub 与 Common Crawl 收集，进行文件规则过滤、近重复去除和领域迭代召回，覆盖语言从 86 种扩至 338 种。论文用 1B 消融说明新语料在 HumanEval 与 MBPP 上优于早期代码语料，但这只能说明该实验设置下的数据改进，不等价于所有代码质量都已被解决。</p>
+<p>结构沿用 V2 的 MLA 与 MoE：16B 版本每 token 激活 2.4B，236B 版本激活 21B。训练目标方面，16B 使用 next-token prediction 与 FIM；FIM 以 Prefix-Suffix-Middle 顺序重排代码，要求模型在已知前缀和后缀时补出中段，适合 IDE 补全与局部修改。236B 仅使用 next-token 目标。后训练先混合代码、数学与通用指令做 SFT，再以 GRPO 优化偏好；代码奖励会利用编译器反馈和测试用例。</p>
+<h2 id="实验或适用场景">实验或适用场景</h2>
+<p>原作者报告 236B 模型在 HumanEval、MBPP、LiveCodeBench、SWE-bench 等代码指标和数学指标上与当时闭源系统比较，并声称保持了相近的通用语言表现。真实应用上，FIM 面向编辑器内补全；128K 面向较大仓库片段、文档和测试上下文；测试驱动 RL 则面向可执行验证的修复任务。它们仍需要把相关文件、依赖、环境和测试正确送入上下文。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>代码智能的核心不是“训练数据里代码更多”，而是将三种闭环接起来：语料覆盖真实语言与工程文本，FIM 学会局部编辑接口，验证器把最终程序行为反馈给后训练。对 Agent 系统，这也意味着 benchmark 的单函数 pass@1 与真实仓库修复不同，后者还依赖检索、沙箱、测试选择和多步状态管理。</p>
+<h2 id="限制">限制</h2>
+<p>公开仓库语料可能包含许可证、重复和测试泄漏风险；论文虽描述过滤，无法从报告判断所有风险已消除。HumanEval 等有限测试集不证明安全、可维护或无依赖问题。编译与单测奖励也可能让模型只迎合测试，不能代替代码审查、集成测试和安全验证。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li><span class="wiki-token">DeepSeek-V2：以 MLA 和细粒度 MoE 降低训练与推理成本</span>：Coder-V2 在 V2 架构和中间 checkpoint 上持续预训练。</li>
+<li><span class="wiki-token">DeepSeek-R1：用可验证奖励驱动长链推理，而非先模仿推理过程</span>：二者都将可验证反馈用于 RL，但 Coder-V2 的验证器是编译与测试。</li>
+<li><span class="wiki-token">Transformer：用自注意力重写序列建模</span>：FIM 改变训练样本的 token 顺序，底层仍是自回归 Transformer。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/2406.11931">arXiv:2406.11931</a></li>
+<li>本地 PDF：<code>raw/papers/m24-deepseek-coder-v2/2406.11931.pdf</code></li>
+<li>本地文本：<code>raw/papers/m24-deepseek-coder-v2/2406.11931.txt</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2406.11931" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

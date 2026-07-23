@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GPT-2：规模化语言模型的零样本迁移信号 · 拾贝</title>
+  <meta name="description" content="拾贝对 GPT-2：规模化语言模型的零样本迁移信号 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">OpenAI / CURATED NOTE</div>
+      <h1 id="gpt-2规模化语言模型的零样本迁移信号">GPT-2：规模化语言模型的零样本迁移信号</h1>
+<blockquote>
+<p>主题：语言模型规模、WebText、零样本迁移、decoder-only</p>
+<p>对应论文：Alec Radford 等，<em>Language Models are Unsupervised Multitask Learners</em>（2019）</p>
+</blockquote>
+<h2 id="这篇论文解决了什么问题">这篇论文解决了什么问题</h2>
+<p>在 GPT-1 中，预训练模型仍主要靠每个任务的参数微调完成迁移。GPT-2 提出更激进的问题：若只训练通用下一个 token 预测，增加数据和模型规模后，模型能否仅通过输入中的任务描述或格式，在<strong>不更新参数</strong>的情况下处理翻译、问答、摘要等任务？这不是要证明语言模型已经完全理解所有任务，而是测量这种零样本迁移是否随着规模出现。</p>
+<h2 id="原作者的论证与方法">原作者的论证与方法</h2>
+<p>论文构建 WebText：从被 Reddit 外链且达到一定互动门槛的网页中抽取正文，得到超过八百万文档；它特别排除了 Wikipedia，以便将后者作为测试数据之一。作者训练四种规模的 byte-level decoder-only Transformer，最大为约 15 亿参数，并始终使用自回归语言模型目标。</p>
+<p>下游评测不做任务微调。作者把问题、文章、候选答案或提示语写进同一文本上下文，比较模型对不同续写的条件概率，或直接生成后续文本。原文报告随规模增大，多个阅读理解、翻译、摘要等零样本结果改善；最大模型在 WebText 验证损失仍未完全拟合。后者是“还有未吸收的训练分布”的实验观察，不等同于继续变大必然解决所有能力缺口。</p>
+<h2 id="核心机制任务被表示成条件续写">核心机制：任务被表示成条件续写</h2>
+<p>GPT-2 的统一接口是 <code>context -&gt; next token</code>。例如多选题不需要新的分类头：把题目和候选项放入上下文，比较各候选补全的对数概率；翻译则给出若干源语到目标语的文本格式，让模型继续产生目标语。模型没有在推理时“学习新权重”，它只根据当前窗口内的模式选择续写。</p>
+<p>这一机制是后来提示工程和 <span class="wiki-token">GPT-3：上下文学习如何改变任务适配方式</span> 的前身。它的关键约束也很清楚：任务描述、示例格式、顺序与 token 预算都会改变条件分布。零样本不是无需设计输入，而是把适配成本从训练阶段移到上下文表达阶段。</p>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>论文覆盖语言建模、阅读理解、翻译、摘要与常识问答等，强调“没有显式监督或任务微调”。适合用作早期能力评估的信号：面对标签难取得、任务变化快、只需快速试验的场景，可以先验证一个统一语言模型是否能由 prompt 完成工作。</p>
+<p>但生产系统不能只读“零样本”标签。需要独立测试模板敏感性、事实错误、长度控制与领域偏移；有稳定标签和高准确率要求时，微调、SFT、检索或外部校验往往更合适。论文并未证明其输出可直接用于高风险决策。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>GPT-2 把能力路线从“表示迁移”推进到“接口迁移”：GPT-1 的任务差异主要由微调权重承接，GPT-2 开始让自然语言上下文承接。真正可复用的工程判断是：先确认任务能否描述为文本条件化，再测量基线提示；当提示不稳定时，再用 <span class="wiki-token">InstructGPT：SFT 如何让预训练模型开始遵循指令</span> 一类后训练把行为固化。</p>
+<h2 id="限制与容易误解">限制与容易误解</h2>
+<ul>
+<li>论文的“无监督多任务”是对语言模型训练目标的描述，不意味着数据无偏、无版权或无测试泄漏风险。</li>
+<li>零样本结果会受 prompt 格式影响，不能与专门微调模型做不加控制的横向比较。</li>
+<li>WebText 的网页采样规则会塑造语言、主题和质量分布；它不是互联网的无偏样本。</li>
+<li>较强的续写能力不等于具备可验证的事实性、指令服从或安全边界。</li>
+</ul>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li><span class="wiki-token">GPT-1：预训练加微调如何成为通用 NLP 迁移范式</span>：同为 decoder-only 预训练，GPT-2 把任务适配更大程度移到输入文本。</li>
+<li><span class="wiki-token">GPT-3：上下文学习如何改变任务适配方式</span>：GPT-3 用更大规模系统检验 zero/one/few-shot 的变化。</li>
+<li><span class="wiki-token">提示工程</span>：提示即 GPT-2 所依赖的任务接口，不能仅被视为表面措辞。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf">OpenAI PDF</a></li>
+<li>本地 PDF：<code>raw/papers/p04-gpt-2/language_models_are_unsupervised_multitask_learners.pdf</code></li>
+<li>本地 UTF-8 文本：<code>raw/papers/p04-gpt-2/language_models_are_unsupervised_multitask_learners.txt</code></li>
+<li>来源卡片：<code>sources/papers/cards/p04-gpt-2.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

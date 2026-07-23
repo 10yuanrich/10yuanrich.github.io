@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QLoRA：在冻结的 4-bit 基座上训练 LoRA · 拾贝</title>
+  <meta name="description" content="拾贝对 QLoRA：在冻结的 4-bit 基座上训练 LoRA 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">University of Washington / arXiv / CURATED NOTE</div>
+      <h1 id="qlora在冻结的-4-bit-基座上训练-lora">QLoRA：在冻结的 4-bit 基座上训练 LoRA</h1>
+<blockquote>
+<p>对应论文：Tim Dettmers 等，University of Washington，2023。主题：量化微调、高效训练。</p>
+</blockquote>
+<h2 id="解决什么问题">解决什么问题</h2>
+<p>LoRA 已减少可训练参数，但训练时仍要把冻结基座以较高精度放入显存。对 65B 级模型，普通 16-bit 微调需要远超单张消费级或工作站 GPU 的显存。QLoRA 的目标是在不更新基座权重的前提下，把它量化到 4-bit，仍让梯度穿过量化基座流向 LoRA，并尽量保持全精度微调的任务表现。</p>
+<h2 id="原作者的方法与论证">原作者的方法与论证</h2>
+<p>QLoRA 的三项组合是：第一，NF4（NormalFloat 4）按近似正态分布的权重设计 4-bit 量化码本；第二，double quantization 再量化量化常数，减少每组尺度的存储；第三，paged optimizers 利用统一内存机制处理长序列或批量变化引起的优化器状态峰值。基座冻结为 4-bit，计算时按需要反量化到较高计算精度，LoRA 权重保持可训练。</p>
+<p>论文报告可在单张 48GB GPU 上微调 65B 参数模型，并在其 Vicuna 风格聊天比较中，Guanaco 65B 达到 GPT-4 评审下 ChatGPT 水平的 99.3%。作者同时训练超过千个模型，研究数据集、模型尺度与指令数据关系。应把“99.3%”视为特定基准与自动裁判协议下的相对结果；原文也明确讨论了聊天基准和 GPT-4 评估的不完备性。</p>
+<h2 id="核心机制">核心机制</h2>
+<p>QLoRA 的关键区分是“存储精度”和“训练更新精度”。基座量化只是节省存储，低秩 adapter 承担可学习变化；梯度不会把 4-bit 权重本身变回可训练副本。NF4 与双重量化针对模型权重及其尺度的统计结构，paged optimizer 则解决峰值而非平均显存。因此它是一整套内存预算方案，不是只把 <code>load_in_4bit</code> 打开。</p>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>适用于资源受限的指令微调、领域适配和实验迭代。开始前应测量真实序列长度、batch、梯度检查点和 optimizer 状态，因为这些会改变峰值显存。对高精度数值任务、极长上下文或严格吞吐 SLA，需与 BF16 LoRA、全量微调做同一硬件上的端到端基准。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>QLoRA 让“拥有一个大基座”与“能对它做实验”不再完全绑定于大规模显存。它把主要代价从可训练权重转移到数据质量、评测和工程栈兼容性。最好的使用方式是先用它建立高质量、可复现实验基线；若效果瓶颈确实来自更新容量或量化误差，再升级预算，而非预先假设 4-bit 一定无损。</p>
+<h2 id="限制">限制</h2>
+<p>量化误差、量化内核、硬件支持和序列长度都会影响实际结果。冻结基座不能获得全量持续预训练的灵活性。论文的聊天评测依赖自动裁判与特定数据，不能据此证明通用能力、真实性或安全性。paged optimizer 的内存收益也可能以传输或运行时复杂度为代价。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li>与 <span class="wiki-token">LoRA：以低秩增量高效微调大模型</span>：QLoRA 以 LoRA 作为可训练增量；两者不是互斥方案。</li>
+<li>与 <span class="wiki-token">InstructGPT：SFT 如何让预训练模型开始遵循指令</span>：可用 QLoRA 实施 SFT，但不改变 SFT、偏好数据和评估的语义要求。</li>
+<li>与 <span class="wiki-token">Muon：正交化矩阵更新的训练优化器</span>：QLoRA 优化显存与参数化，Muon 优化预训练更新方向；二者解决的训练瓶颈不同。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原论文：<a href="https://arxiv.org/abs/2305.14314">arXiv:2305.14314</a></li>
+<li>本地 PDF 与文本：<code>raw/papers/qlora/2305.14314.pdf</code>、<code>raw/papers/qlora/2305.14314.txt</code></li>
+<li>来源卡片：<code>sources/papers/cards/p20-qlora.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2305.14314" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

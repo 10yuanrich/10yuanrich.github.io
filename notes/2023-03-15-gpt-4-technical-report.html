@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GPT-4：可预测扩展、视觉输入与系统级安全 · 拾贝</title>
+  <meta name="description" content="拾贝对 GPT-4：可预测扩展、视觉输入与系统级安全 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">OpenAI / arXiv / CURATED NOTE</div>
+      <h1 id="gpt-4可预测扩展视觉输入与系统级安全">GPT-4：可预测扩展、视觉输入与系统级安全</h1>
+<blockquote>
+<p>文档类型：技术报告（OpenAI，2023）<br />
+主题：主流模型技术报告、Scaling Laws、多模态、后训练</p>
+</blockquote>
+<h2 id="解决什么问题">解决什么问题</h2>
+<p>GPT-4 的价值不只是“更大、更会答题”。它回答的是前沿训练真正昂贵的问题：当一次完整训练不可反复试错时，怎样从小规模实验预判最终训练是否会收敛、会有多强，以及何时应把安全评估提前。报告同时把文本模型扩展到“图像加文本输入、文本输出”，使视觉信息成为同一任务接口的一部分。</p>
+<h2 id="原作者的论证与方法">原作者的论证与方法</h2>
+<p>作者把 GPT-4 描述为以 next-token prediction 预训练、再经 RLHF 后训练的 Transformer 式多模态模型。报告不披露参数量、硬件、算力、数据构成和具体训练法；这是公开信息边界，不能反推为某个传闻数字。其可复用方法是先建立跨规模行为稳定的基础设施和优化方法，再用比最终训练少约千到万倍算力的模型拟合损失与部分能力曲线。作者报告：对内部代码数据上的最终 loss 预测与 GPT-4 的实际结果高度一致；HumanEval 等能力指标也被纳入提前预估。</p>
+<h2 id="核心机制">核心机制</h2>
+<ol type="1">
+<li><strong>可预测扩展</strong>：不是盲目按比例加卡，而是保持训练配方与测量口径一致，借小模型曲线决定大训练的资源和风险预算。</li>
+<li><strong>多模态任务接口</strong>：视觉输入进入模型，但输出仍为文本；因此“看懂图片”在产品上表现为解释、问答、提取或推理，而不是通用图像生成。</li>
+<li><strong>后训练与系统卡并列</strong>：RLHF 用于改善事实性与期望行为，系统卡则把偏见、虚假信息、过度依赖、隐私、网络安全等风险作为部署问题，而非只报告分数。</li>
+</ol>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>报告给出模拟律师考试、MMLU、多语言 MMLU 和传统 NLP 基准。作者称 GPT-4 在模拟律师考试中约位于前 10%，且在翻译版 MMLU 的 24/26 种语言超过当时英文 SOTA。正确读法是这些结果支持其“复杂语言与知识任务能力显著提高”的主张，不代表每个真实专业任务都能免审执行。适合用在有明确输入、可由人复核的视觉问答、文本分析、辅助写作和代码协作；高后果场景仍须外部证据与责任人。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>这份报告把“能力研发”和“部署治理”放进同一工程闭环：先用 scaling 预测训练结果，再用后训练改变行为，最后用对抗测试和系统级缓解决定能否上线。对团队而言，最值得复用的不是某项 benchmark，而是每增加一个数量级投入前，都同时准备能力预测、失败模式和上线护栏。</p>
+<h2 id="限制">限制</h2>
+<p>作者明确承认幻觉、有限上下文和不能从使用经验中学习。基准好分数也受提示、版本、评测集污染和比较基线影响；缺少架构与数据细节意味着外部研究者无法完全复现训练结论。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li><span class="wiki-token">Transformer：用自注意力重写序列建模</span>：GPT-4 仍是 Transformer 式 next-token 预训练模型，改变的是规模、模态和后训练系统。</li>
+<li><span class="wiki-token">InstructGPT：SFT 如何让预训练模型开始遵循指令</span>：RLHF 延续 SFT、奖励建模和偏好优化的后训练分工。</li>
+<li><span class="wiki-token">Scaling Laws</span>：该报告把 scaling law 从解释性规律推进为训练前决策工具。</li>
+<li><span class="wiki-token">幻觉治理</span>：后训练能改善行为，不替代检索、校验与人工复核。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始报告：<a href="https://arxiv.org/abs/2303.08774">arXiv:2303.08774</a></li>
+<li>本地快照：<code>raw/papers/m01/source-2.pdf</code>、<code>raw/papers/m01/source-2.txt</code></li>
+<li>来源卡片：<code>sources/papers/cards/m01-gpt-4-technical-report.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2303.08774" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

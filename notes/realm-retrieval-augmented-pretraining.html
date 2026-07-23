@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>REALM：在预训练阶段学会检索外部知识 · 拾贝</title>
+  <meta name="description" content="拾贝对 REALM：在预训练阶段学会检索外部知识 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">arXiv / Google Research / CURATED NOTE</div>
+      <h1 id="realm在预训练阶段学会检索外部知识">REALM：在预训练阶段学会检索外部知识</h1>
+<blockquote>
+<p>主题：检索增强预训练、掩码语言模型、开放域问答、外部记忆</p>
+<p>对应论文：Kelvin Guu 等，<em>REALM</em>（2020）</p>
+</blockquote>
+<h2 id="解决什么问题">解决什么问题</h2>
+<p>如果模型只在下游微调时才第一次接触检索，检索器与阅读器的接口容易割裂：检索到的文档不一定是生成/预测真正需要的证据。REALM 的核心问题是：<strong>能否在无人工问答标注的预训练中，让语言模型同时学习“该搜什么”和“如何借文档恢复被遮住的知识”。</strong></p>
+<h2 id="原作者的方法与论证">原作者的方法与论证</h2>
+<p>REALM 将大型文本库（论文中为 Wikipedia）视作潜在知识记忆。对带 mask 的输入 <code>x</code>，retriever 给每篇文档 <code>z</code> 一个分数；reader 对 <code>x</code> 与 <code>z</code> 联合预测被遮住片段，训练目标对检索文档边缘化。因而只有当找对文档能提高 MLM 预测时，检索器才获得奖励。</p>
+<p>普通随机 mask 常可由附近词恢复，未必需要外部知识。作者加入 <strong>salient span masking</strong>，优先遮住命名实体等更可能需要知识库的片段，使预训练任务真正驱动检索。实际训练还要面对全库不可微检索：论文用近似 top-K、异步刷新文档向量索引等工程办法，让 retriever 更新后索引不会长期失配。</p>
+<h2 id="核心机制">核心机制</h2>
+<p><code>含 mask 的文本 -&gt; retriever 排序文档 -&gt; reader 联合读取文本和文档 -&gt; 预测被遮 span</code>。仅当检到的文档能帮助恢复目标时，检索器才有学习信号；salient span masking 则提高这种信号确实依赖外部知识的概率。</p>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>论文以开放域问答为主要验证，比较有/无检索、不同预训练语料与 masking 策略。原文报告 330M 参数 REALM 在 Natural Questions、WebQuestions 和 CuratedTREC 上取得强结果；将知识库从 Wikipedia 替换为更近快照能使部分答案随之更新，展示了外部记忆的可更新性。</p>
+<p>它适合知识依赖强、固定领域语料可维护、且愿意承担建索引和刷新成本的预训练路线。对于一般产品问答，先用成熟 embedding + RAG 的模块化方案通常更易迭代；是否需要 retrieval-aware pretraining，应由规模、领域和长期检索质量决定。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>REALM 说明“检索”不只是推理前的工具调用，也可成为学习目标的一部分。其关键是任务设计：必须遮住真正需要外部证据的信息，否则 retriever 会学会检索无关但易预测的上下文。它还提前暴露了检索系统的现实约束：模型参数在变、文档向量在变、索引不是连续可微的，训练和服务都需要明确刷新策略。</p>
+<h2 id="限制与关系">限制与关系</h2>
+<ul>
+<li>全库检索的近似与索引延迟会影响端到端训练信号；论文并未消除这个系统误差。</li>
+<li>显著 span 的启发式依赖实体与语料形态，未必覆盖所有需要推理的知识。</li>
+<li>与 <span class="wiki-token">RAG：让生成模型从外部知识库取证再回答</span>：REALM 将检索纳入 MLM 预训练；RAG 将预训练生成器与 dense index 结合于生成任务微调。</li>
+<li>与个人知识库：可借鉴的不是复刻预训练，而是让检索评估使用“必须靠原文证据才能答对”的问题集。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/2002.08909">arXiv:2002.08909</a></li>
+<li>本地 PDF：<code>raw/papers/realm-retrieval-augmented-pretraining/2002.08909.pdf</code></li>
+<li>本地文本：<code>raw/papers/realm-retrieval-augmented-pretraining/2002.08909.txt</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2002.08909" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

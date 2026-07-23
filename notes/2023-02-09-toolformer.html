@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Toolformer：让模型以自监督方式学会何时调用工具 · 拾贝</title>
+  <meta name="description" content="拾贝对 Toolformer：让模型以自监督方式学会何时调用工具 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Meta AI / arXiv / CURATED NOTE</div>
+      <h1 id="toolformer让模型以自监督方式学会何时调用工具">Toolformer：让模型以自监督方式学会何时调用工具</h1>
+<blockquote>
+<p>对应论文：Timo Schick 等，Meta AI，2023。主题：工具调用、自监督 Agent。</p>
+</blockquote>
+<h2 id="解决什么问题">解决什么问题</h2>
+<p>语言模型擅长生成文本，却会在精确计算、即时事实、日历和翻译等本可由外部系统可靠完成的工作上出错。手工为工具调用标注大量轨迹成本很高。Toolformer 的问题是：只给每个 API 少量人工示例，能否让模型从普通文本中自动找出“这里调用工具会改善预测”的训练样本，并学会调用时机、参数和结果使用方式？</p>
+<h2 id="原作者的方法与论证">原作者的方法与论证</h2>
+<p>作者先用少量示例提示一个基座模型，在海量文本的潜在位置插入候选 API 调用；执行调用，将返回结果嵌回文本；然后用语言模型损失筛选。直观地说，若加入某次调用及其结果能显著降低后续 token 的预测损失，这个调用被保留为自监督训练样本。最终模型在普通语言建模目标下学习带有特殊标记的 API 调用。</p>
+<p>论文接入计算器、问答、搜索、机器翻译、日历等工具，并训练模型决定“是否调用、调用哪个、传什么参数、怎样把结果接回续写”。原作者报告 Toolformer 在一组零样本下游任务上提升表现，常可与更大模型竞争，同时未明显牺牲核心语言建模能力。该结论来自特定 API、语料和离线评测，不应理解为模型已经学会了任意 SaaS 工具的完整操作。</p>
+<h2 id="核心机制">核心机制</h2>
+<p>其关键是用“未来文本预测是否改善”做代理标签，而不是人工声明每次调用是否有用。候选生成负责召回，损失筛选负责精度，训练使调用标记成为模型词表的一部分。这个目标也解释了局限：它奖励能帮助续写的调用，不必然奖励最安全、最便宜或对用户最终任务最有价值的调用。</p>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>适合 API 稳定、结果可嵌入上下文、且工具输出能帮助文本预测的场景，例如计算、检索、翻译、日期换算。对于企业工具，更可行的是保留其思想，采用真实任务成功率、单元测试和人工策略作为筛选器。工具定义需版本化，调用结果必须来自受控执行层。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>Toolformer 将“工具使用”从纯 prompt 编排推进为可训练接口学习：模型不只生成答案，也生成对外部能力的查询。今天函数调用通常不必复刻其自监督数据管线，但仍值得借鉴它的三段式分离：候选调用、真实执行、由可测收益筛选。这样能避免把工具调用当作神秘涌现能力。</p>
+<h2 id="限制">限制</h2>
+<p>模型自身损失是弱代理：检索出能让句子顺下去的内容，仍可能是过期、偏见或被注入的内容。多步依赖、授权、写操作、隐私数据和失败恢复都不在论文闭环内。每个 API 的少量示例也可能不能覆盖参数边界；生产系统应先校验参数和结果，再允许进入模型上下文。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li>与 <span class="wiki-token">ReAct：交错推理与行动，把语言模型接入环境</span>：两者都把工具结果引回上下文；ReAct 侧重推理时轨迹，Toolformer 侧重训练工具调用能力。</li>
+<li>与 <span class="wiki-token">检索增强</span>：检索只是工具的一类；Toolformer 统一处理“何时查、查什么、如何使用结果”。</li>
+<li>与 <span class="wiki-token">Harness Engineering</span>：执行沙箱、权限和评估不应交给模型自监督目标决定。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原论文：<a href="https://arxiv.org/abs/2302.04761">arXiv:2302.04761</a></li>
+<li>本地 PDF 与文本：<code>raw/papers/toolformer/2302.04761.pdf</code>、<code>raw/papers/toolformer/2302.04761.txt</code></li>
+<li>来源卡片：<code>sources/papers/cards/p18-toolformer.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2302.04761" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

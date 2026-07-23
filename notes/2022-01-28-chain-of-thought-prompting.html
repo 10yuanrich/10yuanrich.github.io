@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>思维链：让模型先写中间推理再作答 · 拾贝</title>
+  <meta name="description" content="拾贝对 思维链：让模型先写中间推理再作答 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Google Research / arXiv / CURATED NOTE</div>
+      <h1 id="思维链让模型先写中间推理再作答">思维链：让模型先写中间推理再作答</h1>
+<blockquote>
+<p>对应论文：Jason Wei 等，Google Research，2022。主题：推理、提示工程。</p>
+</blockquote>
+<h2 id="解决什么问题">解决什么问题</h2>
+<p>直接要求模型给最终答案时，多步算术、符号推理和常识组合任务容易失败：中间变量没有被显式展开，后面的 token 只能依赖压缩在隐藏状态里的不稳定计算。论文提出的 Chain-of-Thought（CoT）提示在 few-shot 示例中展示“题目、若干中间步骤、答案”，让模型先生成可读的推理轨迹，再输出结论。</p>
+<h2 id="原作者的方法与论证">原作者的方法与论证</h2>
+<p>方法本身非常简单：把普通示例里的短答案替换成长的逐步解释，不改变模型权重。作者在 LaMDA、GPT-3、PaLM 上测试算术、常识和符号推理，并强调这种能力在足够大模型上才明显出现。论文报告 PaLM 540B 使用 8 个 CoT 示例在 GSM8K 上达到当时最好结果，超过带验证器微调的 GPT-3；也报告小模型收益有限甚至无效。</p>
+<p>原文的论点不是“写出文字就获得推理能力”，而是中间步骤提供了更多计算 token、把复杂任务分解成较易预测的局部转换，并让示例指定了解题格式。它还比较了标准提示、答案只有数字的提示和 CoT 提示，发现任务与模型尺度会决定差异。</p>
+<h2 id="核心机制">核心机制</h2>
+<p>CoT 是一种运行时脚手架。最终答案不再从问题直接解码，而是条件于已生成的中间文本：<code>问题 -&gt; 中间状态/运算 -&gt; 结论</code>。这让模型能在上下文里外显工作记忆，也让错误传播可被看到。它不更新参数，因而不同于 SFT；但高质量 CoT 数据也可以被用于蒸馏或后训练。</p>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>适合答案可由多步推导、且可核验的任务，例如数学题、规则推演、表格转换、代码规划。生产系统不应盲目要求输出冗长理由：对只需短答的任务会增加延迟和错误表面积。更实用的模式是把步骤作为内部草稿，最终以简洁答案、计算器结果或外部验证为准。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>CoT 的真正贡献是改变了“提示只是在提问”的看法：示例还能定义一段可执行的文本工作区。它为自洽性、ReAct、程序辅助推理奠定接口。不过，读起来通顺的轨迹可能是事后合理化；应按最终答案和可验证中间状态评估，而不是按解释的文采评估。</p>
+<h2 id="限制">限制</h2>
+<p>论文结果集中在特定大模型和基准，不能保证跨语言、跨模型或开放事实问答同样有效。更长输出会放大首个错误；模型也可能生成不忠实的解释。涉及隐私、安全或高风险结论时，应避免把自然语言理由当作唯一审计证据。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li>与 <span class="wiki-token">自洽性：对多条思维链投票而非只信第一条</span>：CoT 产出多条候选路径，自洽性用采样与聚合减少单一路径偶然性。</li>
+<li>与 <span class="wiki-token">ReAct：交错推理与行动，把语言模型接入环境</span>：ReAct 在 CoT 的“思考”之间加入工具动作和环境观察。</li>
+<li>与 <span class="wiki-token">提示工程</span>：CoT 是最具代表性的结构化 few-shot 提示形式之一。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原论文：<a href="https://arxiv.org/abs/2201.11903">arXiv:2201.11903</a></li>
+<li>本地 PDF 与文本：<code>raw/papers/chain-of-thought-prompting/2201.11903.pdf</code>、<code>raw/papers/chain-of-thought-prompting/2201.11903.txt</code></li>
+<li>来源卡片：<code>sources/papers/cards/p15-chain-of-thought-prompting.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2201.11903" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GPT-5.5：面向真实工作的工具执行与预部署安全 · 拾贝</title>
+  <meta name="description" content="拾贝对 GPT-5.5：面向真实工作的工具执行与预部署安全 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">OpenAI / CURATED NOTE</div>
+      <h1 id="gpt-55面向真实工作的工具执行与预部署安全">GPT-5.5：面向真实工作的工具执行与预部署安全</h1>
+<blockquote>
+<p>文档类型：系统卡（OpenAI，2026）<br />
+主题：主流模型技术报告、Agent、工具使用、部署评估</p>
+</blockquote>
+<h2 id="解决什么问题">解决什么问题</h2>
+<p>传统助手的演示往往是“问一句、答一句”，而真实知识工作需要检索、分析、写代码、编辑文档与表格，并跨工具持续检查。GPT-5.5 系统卡把目标表述为复杂现实工作的完成：模型要更早理解任务、少索取额外指导、更好使用工具并在失败后继续。它因此把评估重心从单回合能力扩大到长任务、外部工具和安全部署。</p>
+<h2 id="原作者的论证与方法">原作者的论证与方法</h2>
+<p>作者称 GPT-5.5 接受完整预部署安全评估与 Preparedness Framework 测试，并对网络安全与生物能力做定向红队，还收集近 200 名早期访问伙伴的真实用例反馈。报告把 GPT-5.5 的安全结果通常视为 GPT-5.5 Pro 的强代理，但也说明当并行 test-time compute 可能改变风险时会单独评估。这是很重要的限定：同一基础模型在不同推理预算、工具和访问权限下不是同一个风险对象。</p>
+<h2 id="核心机制">核心机制</h2>
+<ol type="1">
+<li><strong>以工作流而非单答案为对象</strong>：写代码、研究、信息分析与文档操作要求在中间状态上持续判断。</li>
+<li><strong>计算预算影响能力与风险</strong>：Pro 使用并行 test-time compute，不能只用“同一模型权重”忽略额外搜索带来的能力变化。</li>
+<li><strong>预部署多证据评估</strong>：离线基准、针对性红队、真实用户场景反馈共同组成发布判断，而不是由一个排行榜决定。</li>
+</ol>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>卡片定位的典型任务包括在线研究、代码编写、信息分析和创建文档/表格。落地时应将其理解为“可编排的知识工作组件”：让模型承担起草、检索、分类、检查和可逆编辑，而把最终提交、付费、删除、对外发布等不可逆动作放在明确确认后。对本知识库而言，模型可生成候选摘要与交叉链接，但来源抓取、证据核验和发布仍需独立规则。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>GPT-5.5 把 Agent 的质量指标从“回答得像不像人”移到“能否收敛完成一个带工具的任务”。这要求评估记录完整轨迹：是否选对工具、是否读到证据、是否在失败后纠错、是否越权，以及最终产物是否可复核。早期用户反馈有价值，但应与可重复的 held-out 任务集分开，前者发现真实摩擦，后者防止迎合少数试用者。</p>
+<h2 id="限制">限制</h2>
+<p>系统卡没有公开训练配方与全部评测数据。近 200 名伙伴不是统计上代表所有用户；离线评估也未必复现开放网页、第三方工具和对抗提示中的分布。模型“持续工作”可能变成不必要的自主行动，必须结合时间、成本、权限与人工停止机制。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li><span class="wiki-token">Harness Engineering</span>：长任务能否完成更依赖文件状态、后台任务、评估器与权限边界，而不是一次模型调用。</li>
+<li><span class="wiki-token">GPT-5：路由式统一系统与安全完成策略</span>：GPT-5 解决何时分配推理；GPT-5.5 更强调该能力在工具化工作流中的发布评估。</li>
+<li><span class="wiki-token">OpenAI o1：把推理过程纳入后训练与安全对齐</span>：test-time compute 能提升推理，也需要被单独纳入安全评估。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始发布页：<a href="https://openai.com/index/gpt-5-5-system-card/">GPT-5.5 System Card</a></li>
+<li>可复核官方安全中心：<a href="https://deploymentsafety.openai.com/gpt-5-5">GPT-5.5 Deployment Safety</a></li>
+<li>本地快照：<code>raw/papers/m05/deployment-safety-page.html</code></li>
+<li>来源卡片：<code>sources/papers/cards/m05-gpt-5-5-system-card.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://openai.com/index/gpt-5-5-system-card/" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

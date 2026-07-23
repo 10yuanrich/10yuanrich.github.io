@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Muon 可扩展训练：从小模型速度记录走向 LLM 预训练 · 拾贝</title>
+  <meta name="description" content="拾贝对 Muon 可扩展训练：从小模型速度记录走向 LLM 预训练 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Moonshot AI / arXiv / CURATED NOTE</div>
+      <h1 id="muon-可扩展训练从小模型速度记录走向-llm-预训练">Muon 可扩展训练：从小模型速度记录走向 LLM 预训练</h1>
+<blockquote>
+<p>对应技术报告：Jingyuan Liu 等，Moonshot AI，2025。主题：优化器、LLM 预训练、MoE。</p>
+</blockquote>
+<h2 id="解决什么问题">解决什么问题</h2>
+<p>Muon 原始文章在小型语言模型和速度竞赛中表现突出，却留下两个关键疑问：它在大模型、长训练和分布式集群上能否稳定工作？正交化更新的尺度又如何与不同形状参数、权重衰减和 ZeRO 分片共同工作？这份报告试图把优化器从经验速度记录推进到可训练 3B/16B MoE 的方案。</p>
+<h2 id="原作者的方法与论证">原作者的方法与论证</h2>
+<p>报告识别两项关键改动：加入 weight decay，并按参数形状仔细调整 Muon 更新的 RMS/尺度。作者认为原始 Muon 的更新尺度在不同矩阵形状和大规模训练设置下不能直接沿用，因此设计了尺度修正，使其在实验中无需为每个规模重新搜索超参数。对于不适配 Muon 的 embedding、head、向量等参数，仍使用 AdamW；报告还给出面向 ZeRO-1 的内存最优、通信高效实现。</p>
+<p>在 compute-optimal scaling law 实验中，作者报告 Muon 相对 AdamW 约有 2 倍计算效率，即在相同损失目标下需要约一半训练 FLOPs 的量级。随后以 5.7T token 用 Muon 训练 Moonlight 3B/16B MoE，报告其在所比较模型中处于更优的性能-计算 Pareto 前沿，并公开实现和 checkpoints。这里的 2 倍与 Pareto 结论应严格限定在报告的数据、架构、规模和调参协议中。</p>
+<h2 id="核心机制">核心机制</h2>
+<p>Muon 仍对二维隐藏矩阵的动量更新做 Newton-Schulz 正交化；新增工作的核心不是换掉这一步，而是让更新幅度与参数维度、并行训练和正则化匹配。可把它看成“更新方向的谱整形”加上“更新尺度的工程校准”。若尺度不对，正交化本身再好也可能导致大模型不稳定或比较不公平。</p>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>适合组织评估预训练优化器替换时参考：先在小规模做固定 token 的损失曲线与尺度律，再在目标并行策略中测吞吐、通信、稳定性和下游能力。MoE 场景还应分开看 dense 参数、专家参数、路由器和 embedding 的优化规则。报告提供的是可检验起点，不是“一键把 AdamW 全部替换为 Muon”的指令。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>这份报告的重要性在于把优化器研究的评价标准从单点 benchmark 转向规模律、真实训练 FLOPs 和分布式实现。若结论经独立复现，它意味着预训练成本下降可以来自更好的更新几何，而非只靠更大硬件。对使用者而言，最先该复制的是比较协议和参数分组，而不是只复制学习率。</p>
+<h2 id="限制">限制</h2>
+<p>这是技术报告，尚不等同于跨团队、跨数据的独立验证。2 倍效率依赖基线是否充分调优，且训练损失改善不自动保证对齐、推理或下游任务等比例改善。报告重点是预训练；微调、RL、不同模型族及超大集群故障模式仍需额外证据。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li>与 <span class="wiki-token">Muon：正交化矩阵更新的训练优化器</span>：它针对原始 Muon 的规模化与分布式开放问题给出具体答案。</li>
+<li>与 <span class="wiki-token">Scaling Laws</span>：用计算最优尺度律比较优化器，避免只在固定小模型点上判断好坏。</li>
+<li>与 <span class="wiki-token">LoRA：以低秩增量高效微调大模型</span>：Muon 改善基座预训练过程，LoRA 降低基座之后的任务适配成本。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始技术报告：<a href="https://arxiv.org/abs/2502.16982">arXiv:2502.16982</a></li>
+<li>本地 PDF 与文本：<code>raw/papers/muon-scalable/2502.16982.pdf</code>、<code>raw/papers/muon-scalable/2502.16982.txt</code></li>
+<li>来源卡片：<code>sources/papers/cards/o02-muon-scalable.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2502.16982" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

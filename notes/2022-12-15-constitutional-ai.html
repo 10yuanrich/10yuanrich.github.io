@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Constitutional AI：用原则与 AI 反馈训练无害助手 · 拾贝</title>
+  <meta name="description" content="拾贝对 Constitutional AI：用原则与 AI 反馈训练无害助手 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Anthropic / arXiv / CURATED NOTE</div>
+      <h1 id="constitutional-ai用原则与-ai-反馈训练无害助手">Constitutional AI：用原则与 AI 反馈训练无害助手</h1>
+<blockquote>
+<p>对应论文：Yuntao Bai 等，Anthropic，2022。主题：对齐与后训练、RLAIF。</p>
+</blockquote>
+<h2 id="解决什么问题">解决什么问题</h2>
+<p>传统 RLHF 要大量人工判断“哪一条回答更好”，而涉及有害请求时，人工标注既昂贵又难以稳定覆盖边界。论文问的是：能否让人只给出一套可审阅的原则，再让模型用这些原则批评、修订并评价自己的回答？目标不是让助手回避一切，而是面对危险请求时说明拒绝理由，尽量仍提供有帮助的替代信息。</p>
+<h2 id="原作者的方法与论证">原作者的方法与论证</h2>
+<p>作者将流程分成监督阶段和强化学习阶段。先从有帮助的 RLHF 助手抽取对抗性提示下的初始回答；再让模型根据“宪法”中的原则写出自我批评，并据批评生成修订答案。用“原回答到修订回答”的对训练原策略，得到 SL-CAI 模型。原则来自联合国人权宣言、非西方伦理框架及作者设计的无害性规则；这一步的人类监督是选择和表述规则，不是逐条标记有害回答。</p>
+<p>之后，模型为同一提示的两份回答按宪法做比较，形成 AI 偏好数据；偏好模型学习这种比较，再作为奖励信号做强化学习，即 RLAIF。原文报告：在其红队提示与 HHH 人评设置中，CAI/RLAIF 可提高无害性，并比仅靠拒绝更少出现敷衍回避。作者还试验让模型给出类似思维链的批评，认为这有助于人评透明度。</p>
+<h2 id="核心机制">核心机制</h2>
+<p>关键不在“模型自己定规则”，而在把外部可审阅原则变成两个中间任务：<code>按原则批评</code> 与 <code>按原则比较</code>。前者把模糊的“安全”转成可改写的文本；后者把原则转成可规模化的偏好信号。它与 InstructGPT 的 SFT-RM-PPO 管线结构相似，但 RM 的训练标签主要来自 AI 根据原则作出的判断，而非人类逐对排序。</p>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>适合已有可表达政策、却不可能人工覆盖全部长尾输入的助手，例如安全拒答、合规语气、企业行为准则。它更适合作为后训练的数据生成与审查层，不是运行时内容过滤器。实际部署仍应保留独立规则、红队集和人工升级通道。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>这篇论文把“价值观”从不可操作口号变成版本化的训练接口：原则可以比较、修订、追溯，训练数据也能重生成。它降低的是偏好标注的边际成本，不是消除价值选择。宪法写得含糊、相互冲突或覆盖不到的地方，模型只会一致地放大这些缺口。</p>
+<h2 id="限制">限制</h2>
+<p>作者的无害性结论依赖所选原则、提示分布和特定人评；模型可能学会给出听起来合规的批评却没有可靠遵守。自生成偏好还可能继承初始模型盲点。不能把可解释的批评文本视为因果证明，更不能把 RLAIF 当成无需人工治理的安全保证。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li>与 <span class="wiki-token">InstructGPT：SFT 如何让预训练模型开始遵循指令</span>：都采用监督初始化加偏好优化；CAI 将偏好来源部分换为原则驱动的 AI 反馈。</li>
+<li>与 <span class="wiki-token">DPO：不用 PPO 直接从偏好对优化语言模型</span>：CAI 说明偏好数据如何产生，DPO 提供另一种直接消费偏好对的优化方式。</li>
+<li>与 <span class="wiki-token">奖励黑客</span>：宪法和偏好模型同样是代理目标，必须用独立红队与人评防止表面合规。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原论文：<a href="https://arxiv.org/abs/2212.08073">arXiv:2212.08073</a></li>
+<li>本地 PDF 与文本：<code>raw/papers/constitutional-ai/2212.08073.pdf</code>、<code>raw/papers/constitutional-ai/2212.08073.txt</code></li>
+<li>来源卡片：<code>sources/papers/cards/p13-constitutional-ai.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2212.08073" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

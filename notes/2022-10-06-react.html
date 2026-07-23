@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ReAct：交错推理与行动，把语言模型接入环境 · 拾贝</title>
+  <meta name="description" content="拾贝对 ReAct：交错推理与行动，把语言模型接入环境 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Princeton / Google Research / arXiv / CURATED NOTE</div>
+      <h1 id="react交错推理与行动把语言模型接入环境">ReAct：交错推理与行动，把语言模型接入环境</h1>
+<blockquote>
+<p>对应论文：Shunyu Yao 等，Princeton University、Google Research，2022。主题：Agent、工具调用。</p>
+</blockquote>
+<h2 id="解决什么问题">解决什么问题</h2>
+<p>纯思维链只能基于模型已有上下文继续推演，遇到缺失事实时容易把猜测写成结论；纯行动策略又往往缺少可读计划，遇到例外难以修正。ReAct 把两者放在同一轨迹中：模型交替输出 <code>Thought</code>、<code>Action</code>，环境返回 <code>Observation</code>，再由新的观察推动下一步思考和行动。</p>
+<h2 id="原作者的方法与论证">原作者的方法与论证</h2>
+<p>论文通过 few-shot 轨迹提示教模型遵循该格式。在知识密集型问答里，动作是查询简化 Wikipedia API；在 ALFWorld、WebShop 等交互环境里，动作是导航、搜索、选择或购买。作者认为，推理文本帮助模型跟踪计划、发现异常、决定何时需查证；行动则把外部事实与环境状态反馈给推理。</p>
+<p>原文报告 ReAct 在 HotpotQA 和 FEVER 上借助检索减少思维链幻觉与误差传播；在 ALFWorld、WebShop 上以一到两个 in-context 示例超过其比较的模仿或强化学习基线，绝对成功率分别高 34% 和 10%。这些比较说明交错轨迹在所设环境有效，不表示一套 prompt 能直接成为可靠通用 Agent。</p>
+<h2 id="核心机制">核心机制</h2>
+<p>ReAct 的最小闭环是：<code>Thought：当前证据与子目标 -&gt; Action：受限工具调用 -&gt; Observation：可信外部结果 -&gt; Thought：更新计划</code>。Observation 是与 CoT 最大的差异：它把世界状态写回上下文，允许模型纠正旧假设。轨迹也提供故障定位点，能看出失败发生在查询、解析、计划还是执行。</p>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>适合需要检索、浏览、数据库查询、代码执行或环境控制的多步任务。生产实现应将 Action 变成结构化参数而非自由文本：定义工具 schema、参数校验、权限范围、超时、幂等性和预算。只读检索可以低风险试用；发信、下单、删除等不可逆动作必须加入人类确认或策略网关。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>ReAct 的持久价值是把 Agent 从“一次生成答案”改造成“在可观察状态上做闭环控制”。它不是工具调用协议本身，也不是安全系统；现代函数调用、工作流和多 Agent 编排都可看作把这个闭环工程化。质量瓶颈往往从语言模型转向工具可靠性、状态建模与执行治理。</p>
+<h2 id="限制">限制</h2>
+<p>可读 Thought 不是可信证明，模型仍会误读 Observation 或调用错误工具。轨迹会增加延迟和 token 成本，也会受提示注入污染。论文环境动作空间受限，真实网页和企业系统有认证、并发、回滚与长期状态等额外问题。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li>与 <span class="wiki-token">思维链：让模型先写中间推理再作答</span>：ReAct 保留思考，但为其接入外部观察。</li>
+<li>与 <span class="wiki-token">Toolformer：让模型以自监督方式学会何时调用工具</span>：ReAct 主要在推理时用示例协调工具；Toolformer 试图把调用时机写入模型训练。</li>
+<li>与 <span class="wiki-token">Harness Engineering</span>：工具权限、评估、持久状态和后台任务是 ReAct 轨迹之外必须补齐的运行层。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原论文：<a href="https://arxiv.org/abs/2210.03629">arXiv:2210.03629</a></li>
+<li>本地 PDF 与文本：<code>raw/papers/react/2210.03629.pdf</code>、<code>raw/papers/react/2210.03629.txt</code></li>
+<li>来源卡片：<code>sources/papers/cards/p17-react.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2210.03629" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

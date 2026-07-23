@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Qwen：从通用预训练模型到可调用工具的对话系统 · 拾贝</title>
+  <meta name="description" content="拾贝对 Qwen：从通用预训练模型到可调用工具的对话系统 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Qwen Team / arXiv / CURATED NOTE</div>
+      <h1 id="qwen从通用预训练模型到可调用工具的对话系统">Qwen：从通用预训练模型到可调用工具的对话系统</h1>
+<blockquote>
+<p>主题：Qwen、RLHF、工具调用、多语言</p>
+<p>对应材料：Qwen Team，<em>M27 Qwen Technical Report</em>（arXiv:2309.16609，2023）</p>
+</blockquote>
+<h2 id="这篇报告解决了什么问题">这篇报告解决了什么问题</h2>
+<p>早期开放大模型即使在通用基准上强，也常在真实对话、工具使用和规划任务上缺少可靠的操作接口；此外，中文与英文之外的语言覆盖也是能否成为通用服务的约束。</p>
+<h2 id="原作者的论证方法与核心机制">原作者的论证、方法与核心机制</h2>
+<p>报告提出 base Qwen 与经人类对齐的 Qwen-Chat，并在同一底座上训练代码、数学等专用版本；对话模型使用 RLHF，并将代码解释器等工具任务纳入评估与能力展示。</p>
+<p>base 模型负责从大规模文本中学到续写与知识表示，对齐阶段用示范和偏好把回答调整为更符合指令的形式；工具调用将模型输出从自然语言扩展为可执行的计划和参数，因此模型不只要“会回答”，还要能在动作前保持格式与目标一致。</p>
+<h2 id="实验或适用场景">实验或适用场景</h2>
+<p>作者在摘要中报告 Qwen 基座在多类下游任务领先，Qwen-Chat 在经 RLHF 后具备工具使用与规划能力，并给出 Code-Qwen 与 Math-Qwen 等从基座延展的实例。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>这是一篇理解 Qwen 产品路线起点的报告：它把“开源通用模型”和“对齐后的任务接口”明确分层。对应用团队而言，是否能稳定地产生 schema、调用工具和处理失败反馈，比单轮闲聊的主观印象更能决定代理是否可用。</p>
+<h2 id="限制">限制</h2>
+<p>报告中的工具能力不等于模型天然可靠执行任意外部系统；工具描述、权限、环境反馈和错误恢复同样决定成败。公开权重也不等于训练数据与所有对齐细节均可复现。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li>与 <span class="wiki-token">ReAct：把推理轨迹和行动交替写进提示</span> 相关：ReAct 给出推理-行动循环的提示范式，Qwen 则展示经对齐的模型系列如何承接工具和规划需求。</li>
+<li><span class="wiki-token">Transformer：用自注意力重写序列建模</span>：所有这些报告仍以 Transformer 系列为基础；实际差异主要落在数据、后训练、稀疏化、模态编码和服务工作流。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/2309.16609">arXiv:2309.16609</a></li>
+<li>本地原始页面：<code>raw/papers/m27/source.html</code></li>
+<li>本地 PDF：<code>raw/papers/m27/source-2.pdf</code></li>
+<li>本地 UTF-8 文本：<code>raw/papers/m27/source-2.txt</code></li>
+<li>PDF SHA-256：<code>5d4a9c3f6da9e9fa18a444bc3a663271dcf5ada36cc4c5dfe607a041619be798</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2309.16609" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

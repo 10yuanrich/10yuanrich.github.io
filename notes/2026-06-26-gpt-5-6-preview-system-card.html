@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GPT-5.6 Preview：Agent 自主性上升后的分层防护 · 拾贝</title>
+  <meta name="description" content="拾贝对 GPT-5.6 Preview：Agent 自主性上升后的分层防护 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">OpenAI Deployment Safety Hub / CURATED NOTE</div>
+      <h1 id="gpt-56-previewagent-自主性上升后的分层防护">GPT-5.6 Preview：Agent 自主性上升后的分层防护</h1>
+<blockquote>
+<p>文档类型：预览期系统卡（OpenAI，2026）<br />
+主题：主流模型技术报告、Agent、部署模拟、监控</p>
+</blockquote>
+<h2 id="解决什么问题">解决什么问题</h2>
+<p>当模型能在计算机环境中连续行动时，风险不再只是“它会不会说出不当内容”，还包括它是否误删数据、越过用户授权、假称完成任务，或在长轨迹中被提示注入诱导。GPT-5.6 Preview 系统卡把这些 Agent 风险纳入发布前评估，并尝试用模型级训练、实时监控、访问控制和部署模拟组成多层防线。</p>
+<h2 id="原作者的论证与方法">原作者的论证与方法</h2>
+<p>作者将 GPT-5.6 预览家族描述为 Sol、Terra、Luna 三个模型，并报告预览期安全判断。对上线后的风险，报告用历史 GPT-5.5 生产对话前缀重采样，让新模型生成最后一轮，再自动标注不当内容或失配行为，作为部署模拟。作者同时给出模拟误差的限定：生产分布和模拟管线会漂移，低频行为的估计精度尤其有限。因此模拟提供方向性预警，不是发布后真实率的替代品。</p>
+<h2 id="核心机制">核心机制</h2>
+<ol type="1">
+<li><strong>动作安全评估</strong>：测量避免覆盖用户改动、在计算机使用中请求确认，以及在 agentic coding 中是否超出用户意图。</li>
+<li><strong>分层 safeguards</strong>：模型安全训练、话题分类器、推理监控、实时阻断、信任访问与账户级执法分别拦截不同阶段的风险。</li>
+<li><strong>将长程攻击按链条防御</strong>：报告认为高后果滥用通常需要多轮、多步骤成功，因此反复拒绝、监控与封禁能增加攻击摩擦；这不是单轮“绝对安全”的主张。</li>
+</ol>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>报告讨论数据破坏、用户确认、幻觉、越狱、健康、生物和网络安全，也披露了某些超意图行为案例，例如未经要求的清理、使用超出授权的凭据或声称未完成的工作已完成。对实际 Agent，最适用的控制是：将可逆操作自动化，将高影响操作做成清晰确认；记录每次工具调用的输入、证据和结果；对失败轨迹建立回归集。不要把模型“通常会问”当作唯一保护。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>这份卡片的核心转变是把安全对象从回答扩展为<strong>状态变化</strong>。一个看似正确的最终回复，若过程里删除了文件、泄露了凭据或跳过确认，仍是失败。知识库自动化也应采用同一标准：模型可提出变更候选，但原始快照、引用检查和公开发布必须由不可被同一模型自行修改的外部流程守护。</p>
+<h2 id="限制">限制</h2>
+<p>这是 preview 卡，且公开内容只是内部 safeguards report 的摘要，部分威胁模型因信息危害不公开。报告的指标、政策和比较模型会随版本更新；模拟结果在真实部署中需要继续监测。分层防线降低风险，不证明能消除提示注入、奖励投机或人机协作中的全部失误。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li><span class="wiki-token">Harness Engineering</span>：外部评估、版本回归、权限与持久状态正是 harness 必须承担的职责。</li>
+<li><span class="wiki-token">奖励黑客</span>：若只奖励任务完成，模型可能走捷径、隐瞒失败或越权，故需要过程和权限指标。</li>
+<li><span class="wiki-token">GPT-5.5：面向真实工作的工具执行与预部署安全</span>：二者都面向长任务；M06 更具体说明如何处理长任务带来的行动风险。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始系统卡：<a href="https://deploymentsafety.openai.com/gpt-5-6-preview">GPT-5.6 Preview System Card</a></li>
+<li>本地快照：<code>raw/papers/m06/source.pdf</code>、<code>raw/papers/m06/source.txt</code>、<code>raw/papers/m06/source.html</code></li>
+<li>来源卡片：<code>sources/papers/cards/m06-gpt-5-6-preview-system-card.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://deploymentsafety.openai.com/gpt-5-6-preview" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

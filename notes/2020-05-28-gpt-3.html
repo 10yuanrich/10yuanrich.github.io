@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GPT-3：上下文学习如何改变任务适配方式 · 拾贝</title>
+  <meta name="description" content="拾贝对 GPT-3：上下文学习如何改变任务适配方式 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">OpenAI / arXiv / CURATED NOTE</div>
+      <h1 id="gpt-3上下文学习如何改变任务适配方式">GPT-3：上下文学习如何改变任务适配方式</h1>
+<blockquote>
+<p>主题：few-shot、in-context learning、提示、规模化语言模型</p>
+<p>对应论文：Tom B. Brown 等，<em>Language Models are Few-Shot Learners</em>（2020）</p>
+</blockquote>
+<h2 id="这篇论文解决了什么问题">这篇论文解决了什么问题</h2>
+<p>传统迁移的默认路径是“拿到任务数据，再更新参数”。这会带来标注、训练、部署版本和每项任务单独维护的成本。GPT-3 系统检验另一条路径：不做梯度更新，只将任务描述及少量输入输出示例放入上下文，大规模自回归模型是否能在一次前向推理中完成新任务？论文将其称为 in-context learning，并区分 zero-shot、one-shot 与 few-shot。</p>
+<h2 id="原作者的论证与方法">原作者的论证与方法</h2>
+<p>作者训练了最大 1750 亿参数的自回归 Transformer，并在二十多个 NLP 数据集上比较三种设定：zero-shot 只有自然语言说明，one-shot 加一个示例，few-shot 加多个示例。每种设定都没有下游梯度更新或任务专用微调；模型通过续写或候选答案概率完成预测。</p>
+<p>原文报告，多数任务上随模型规模增加，few-shot 增益更明显；例如在 TriviaQA 上，zero/one/few-shot 准确率依次改善，部分结果接近或达到当时的微调系统。论文也明确列出失败任务，并专门检查 Common Crawl 类训练语料可能包含测试集的 data contamination。作者的结论是污染对大部分所测结果影响有限，但这不是对所有 benchmark 或未来网页语料的免检证明。</p>
+<h2 id="核心机制上下文是一次性的任务程序">核心机制：上下文是一次性的任务程序</h2>
+<p>GPT-3 不修改权重。示例把“输入长什么样、输出采用什么格式、判定边界大致在哪里”编码为 token 序列，模型根据预训练形成的模式在当前窗口内继续生成。因此它的“学习”发生在激活和注意力状态中，而非持久参数中；清空上下文后，这项临时适配也消失。</p>
+<p>这解释了 few-shot 的工程性质：示例选择、顺序、标签词、分隔符和 token 预算都会影响结果。它也是 <span class="wiki-token">提示工程</span> 的理论起点。将上下文称为“任务程序”是整理者的工作性比喻，不应误读为论文证明模型执行了显式符号程序。</p>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>适合任务快速变化、示例少、不能或不值得为每项任务训练一个模型的场景，例如原型分类、格式转换、少量示例抽取和交互式分析。先建立 zero/few-shot 基线，能快速判断任务是否可被自然语言接口覆盖。</p>
+<p>不适合直接作为高一致性生产承诺。遇到重复量大、输出必须稳定、领域数据敏感或有明确标签时，SFT、<span class="wiki-token">InstructGPT：SFT 如何让预训练模型开始遵循指令</span>、检索与程序校验往往比堆叠示例更可控。每次 API 调用都塞入示例还会增加上下文成本和版本漂移风险。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>GPT-3 改变的不是“模型免训练”，而是适配资源的分配：一部分本应写进微调数据和权重的意图，被转移到运行时上下文。这个能力使 prompt 成为产品接口，同时也把评测从“模型固定不变”扩展为“模型、模板、示例和顺序的联合系统”。因此，知识库或应用应版本化保存 prompt、few-shot 例子与评测集，而不能只记录模型名。</p>
+<h2 id="限制与容易误解">限制与容易误解</h2>
+<ul>
+<li>few-shot 并非无数据；它依赖任务说明和高质量示例，只是不更新参数。</li>
+<li>能从上下文模仿格式，不等于具备稳定的因果推理或事实检索能力。</li>
+<li>175B 的结果不能线性外推到更小模型、不同语料或不同窗口长度。</li>
+<li>原文已指出基准污染、偏见和错误；使用时必须做领域验证和风险控制。</li>
+</ul>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li><span class="wiki-token">GPT-2：规模化语言模型的零样本迁移信号</span>：GPT-2 给出规模化零样本信号，GPT-3 将其扩展为系统的 few-shot 评测。</li>
+<li><span class="wiki-token">GPT-1：预训练加微调如何成为通用 NLP 迁移范式</span>：两者分别代表参数更新和上下文示例两种适配路径。</li>
+<li><span class="wiki-token">Scaling Laws</span>：GPT-3 的实验依赖能力随规模变化的假设，但具体配比须结合 Kaplan 与 Chinchilla 的证据。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/2005.14165">arXiv:2005.14165</a></li>
+<li>本地 PDF：<code>raw/papers/p06-gpt-3/2005.14165.pdf</code></li>
+<li>本地 UTF-8 文本：<code>raw/papers/p06-gpt-3/2005.14165.txt</code></li>
+<li>来源卡片：<code>sources/papers/cards/p06-gpt-3.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2005.14165" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

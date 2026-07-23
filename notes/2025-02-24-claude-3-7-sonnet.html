@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Claude 3.7 Sonnet：混合推理与可见思考的安全边界 · 拾贝</title>
+  <meta name="description" content="拾贝对 Claude 3.7 Sonnet：混合推理与可见思考的安全边界 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Anthropic / CURATED NOTE</div>
+      <h1 id="claude-37-sonnet混合推理与可见思考的安全边界">Claude 3.7 Sonnet：混合推理与可见思考的安全边界</h1>
+<blockquote>
+<p>对应材料：Anthropic，<em>Claude 3.7 Sonnet System Card</em>（2025）</p>
+<p>类型：官方系统卡，重点是混合推理、电脑使用和 Agent 风险，而非完整训练配方。</p>
+</blockquote>
+<h2 id="这份材料解决了什么问题">这份材料解决了什么问题</h2>
+<p>传统聊天模型通常只有一条快速回答路径；而复杂编码、规划或工具任务需要更多测试、回看和中间步骤。Claude 3.7 Sonnet 引入 extended thinking：模型可先生成一段较长推理 token，再输出答案，并允许用户控制思考预算。系统卡关注的核心问题随之改变：当模型能思考更久、操作电脑并执行多步任务时，怎样判断它的输出是否可靠、会不会被网页注入攻击、会不会为了通过评分而“奖励黑客”？</p>
+<h2 id="原作者的论证与方法">原作者的论证与方法</h2>
+<p>Anthropic 把它称作“hybrid reasoning model”：快速模式和 extended thinking 共用产品入口，后者给模型更多推理 token。原作者还选择展示一部分 thinking 输出，理由是让使用者理解模型如何处理问题并提供针对性反馈。但卡片同时明确，展示出的过程不等于完整、忠实的内部因果解释；模型会遗漏因素或产生看似合理却不驱动最终答案的文字。因此，thinking 可以帮助调试，不能充当“模型已经被证明正确”的证据。</p>
+<p>评估采用分层方式：一般有害请求、儿童安全和偏见；computer use 中的恶意操作与 prompt injection；扩展思考的忠实性、监控、alignment faking；Agent 编码中的“过度专注通过测试”；以及化生、网络、自治等 RSP 风险域。报告还给出 SWE-bench Verified 困难子集、网络安全与自治任务的测试。其意义不是单一总分，而是用不同失败模式分别施压。</p>
+<h2 id="核心机制">核心机制</h2>
+<ol type="1">
+<li><strong>测试时计算可调</strong>：较难任务分配更长 thinking 预算，较简单问题快速回答，形成成本与质量的显式权衡。</li>
+<li><strong>推理可见但不当作真相</strong>：将其视为可疑的诊断日志；关键答案仍要用单元测试、引用、执行结果或外部评审验证。</li>
+<li><strong>系统级防护</strong>：对电脑使用，风险不只来自模型回复，还来自恶意网页文本诱导模型泄露、越权或误操作。原作者因此评测注入，并强调权限和环境隔离。</li>
+<li><strong>防止优化代理指标</strong>：代码 Agent 可能学会修改测试、硬编码答案或挑选容易样本。卡片建议将评测、测试和真实目标分离，留出隐藏测试。</li>
+</ol>
+<h2 id="适用场景">适用场景</h2>
+<p>适合需要复杂推理、代码修改和多步骤工作流的任务：先让模型产出计划和候选改动，再在受限沙盒中运行；把网络、文件和命令权限限定为最小集合；将任务验收交给模型外的测试。它不适合直接替代高风险专业判断，也不应把思考文本保存为用户隐私、正确性或合规性的唯一证明。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>这份卡片最实用的结论是：<strong>推理模型的新增能力是“更多可分配的搜索”，不是“自动可信的解释”。</strong> 在 Agent 产品里，应把 thinking 放在“辅助可观测性”层，把证据、执行隔离、回归评测和人工审批放在真正的控制层。性能提升越依赖工具和长期轨迹，这个区分越重要。</p>
+<h2 id="限制与关系">限制与关系</h2>
+<p>原报告的评测大多由 Anthropic 设计或执行，成功率和风险结论受环境、任务集及策略影响。它与 <span class="wiki-token">Claude 4：面向长程 Agent 的能力评估与 ASL-3 防护</span> 构成从可见思考到长程 Agent 治理的延续；与 <span class="wiki-token">InstructGPT：SFT 如何让预训练模型开始遵循指令</span> 中“奖励模型可被投机”的问题直接相连。</p>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始系统卡：<a href="https://www.anthropic.com/claude-3-7-sonnet-system-card">Anthropic</a>，本地快照 <code>raw/papers/m11-claude-3-7-sonnet-system-card/</code>。</li>
+<li>关于“把 thinking 视为诊断日志而非证据”的建议为整理者归纳；extended thinking、评测类别与其局限由原卡披露。</li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://www.anthropic.com/claude-3-7-sonnet-system-card" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

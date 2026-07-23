@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MiMo-V2-Pro：面向长上下文 Agent 的万亿参数稀疏模型 · 拾贝</title>
+  <meta name="description" content="拾贝对 MiMo-V2-Pro：面向长上下文 Agent 的万亿参数稀疏模型 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Xiaomi MiMo 官方模型页 / CURATED NOTE</div>
+      <h1 id="mimo-v2-pro面向长上下文-agent-的万亿参数稀疏模型">MiMo-V2-Pro：面向长上下文 Agent 的万亿参数稀疏模型</h1>
+<blockquote>
+<p>主题：Agent 模型、MoE、混合注意力、百万上下文、工具调用</p>
+<p>对应材料：Xiaomi MiMo Team，<em>MiMo-V2-Pro</em> 官方模型发布页（2026）</p>
+</blockquote>
+<h2 id="这份材料解决了什么问题">这份材料解决了什么问题</h2>
+<p>真实 Agent 不是一次性回答问题，而是读取长上下文、调用工具、保存状态、再继续多步执行。官方发布页将 MiMo-V2-Pro 定位为这类工作流的基础模型：既要把总容量扩到万亿参数级，又要避免每一步都支付全参数和全局注意力的代价，并在长链工具调用中维持格式与策略稳定。</p>
+<h2 id="原作者的主张与核心机制">原作者的主张与核心机制</h2>
+<p>页面称模型总参数超过 1T、每 token 激活 42B，采用稀疏架构。其混合注意力比例从前代的 5:1 提高到 7:1：多数层侧重较低成本的局部处理，少数层保留全局信息通路。模型支持最高 1M token 上下文，并配置轻量 MTP 层，以更快地产生后续 token。后训练覆盖更广的 Agent 任务，并用 SFT 与 RL 加强工具调用和多步推理。</p>
+<p>这些设计分别处理不同瓶颈：MoE 控制单步计算，混合注意力控制长上下文状态，MTP 面向生成吞吐，Agent 后训练则尝试把“会回答”转成“能完成任务”。它们组合后才构成产品页面所说的 Agent 基座，而不是某一个数字本身。</p>
+<h2 id="实验或适用场景">实验或适用场景</h2>
+<p>页面报告 PinchBench 平均 81.0、ClawEval 61.5，并将模型用于 OpenClaw、OpenCode、KiloCode、Blackbox 和 Cline 等开发框架；还提供 256K 与 1M 上下文档位的 API 价格。对用户而言，适用对象是多文件代码改动、工具驱动的研究流程、长会话客服或需要保留大量任务状态的系统。应把它作为候选引擎接入自己的回归集，而不是仅按公开页面的排名选择。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>这是一份产品发布材料而非完整论文，但它清楚反映出 Agent 模型的优先级已从单轮对话转向执行闭环：长上下文只是一项资源，真正的价值取决于工具调用成功率、失败恢复和最终任务完成率。评估时应把“单调用能力”和“框架加模型的系统能力”分开记录。</p>
+<h2 id="限制">限制</h2>
+<p>训练数据、架构细节、评测提示、采样次数与安全评估未像论文一样完整披露。PinchBench、ClawEval 及竞品比较均为厂商页面的特定快照，可能随版本变化。1M 上下文是接口容量，不应自动理解为一百万 token 上每一步均能可靠检索和规划。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li><span class="wiki-token">MiMo-V2-Flash：以稀疏架构和蒸馏换取快速 Agent 推理</span>：Pro 将其混合注意力和 MTP 路线扩到更大规模。</li>
+<li><span class="wiki-token">Harness Engineering：让智能体通过系统与评估实现自我改进</span>：模型是 Agent 系统的一环，工具权限、评估和记忆仍应由外部 harness 负责。</li>
+<li><span class="wiki-token">Mixtral：用稀疏专家提高每 token 的模型容量</span>：MoE 是控制万亿总参数推理成本的关键手段。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>官方模型页：<a href="https://mimo.xiaomi.com/mimo-v2-pro">MiMo-V2-Pro</a></li>
+<li>本地页面快照：<code>raw/papers/m48/source.html</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://mimo.xiaomi.com/mimo-v2-pro" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

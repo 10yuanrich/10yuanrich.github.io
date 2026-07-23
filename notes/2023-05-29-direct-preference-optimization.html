@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DPO：不用 PPO 直接从偏好对优化语言模型 · 拾贝</title>
+  <meta name="description" content="拾贝对 DPO：不用 PPO 直接从偏好对优化语言模型 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Stanford / arXiv / CURATED NOTE</div>
+      <h1 id="dpo不用-ppo-直接从偏好对优化语言模型">DPO：不用 PPO 直接从偏好对优化语言模型</h1>
+<blockquote>
+<p>对应论文：Rafael Rafailov 等，Stanford，2023。主题：对齐与后训练、偏好优化。</p>
+</blockquote>
+<h2 id="解决什么问题">解决什么问题</h2>
+<p>经典 RLHF 通常要先训练奖励模型，再反复从当前策略采样并用 PPO 更新。链路长、超参数多，奖励模型被过度优化时还可能失真。DPO 问：既然数据已经是“同一提示下胜者回答优于败者回答”的偏好对，能否不显式训练奖励模型和不跑在线强化学习，直接更新语言模型？</p>
+<h2 id="原作者的方法与论证">原作者的方法与论证</h2>
+<p>论文从带 KL 正则的 RLHF 目标出发：最优策略与参考策略的对数概率比可表示奖励。因此将奖励参数化为当前策略相对参考策略的隐式函数后，Bradley-Terry 偏好模型可以化成一个二元 logistic 损失。对每条 <code>(prompt, chosen, rejected)</code>，DPO 提高胜者相对参考模型的概率，同时压低败者的相对概率；<code>beta</code> 控制与参考模型保持接近的强度。</p>
+<p>这意味着训练时只需对离线偏好对做普通反向传播，不需要独立 RM，也不需要每轮从更新后的模型采样。原作者在情感控制、摘要和单轮对话上比较 DPO、PPO 等方法，报告 DPO 在这些设置中达到相当或更好的偏好质量，且训练实现更简洁、对超参数更轻量。这个结论是对论文实验设置的报告，不应外推成 DPO 在所有偏好任务都胜过 PPO。</p>
+<h2 id="核心机制">核心机制</h2>
+<p>把它理解为“带锚点的排序式语言建模”最准确：它不是只最大化胜者似然，因为同时看参考策略，防止模型为赢得偏好数据而无限偏移。也不是只训练一个分类器；模型本身就是最终策略，隐式奖励只是推导所揭示的等价表示。偏好对的有效信息是相对差异，所以数据质量取决于比较是否能区分真正想要的行为。</p>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>适用于已有稳定离线偏好数据、希望快速做对齐或风格偏好的场景，例如回答质量排序、格式偏好、客服语气。它特别适合先建立可重复的后训练基线。对需要探索新行为、在线环境反馈或长程 credit assignment 的任务，单纯离线 DPO 未必足够。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>DPO 的价值是把“偏好优化”从一套训练系统压缩为一个可审计损失函数，从而让瓶颈回到真正难处：偏好数据定义了什么。工程上，先用 DPO 验证数据、参考模型、beta 和离线评测，再决定是否值得增加 PPO 等复杂环节，通常比先搭奖励模型管线更稳妥。</p>
+<h2 id="限制">限制</h2>
+<p>它不会消除数据偏差、长度偏好、标注噪声或分布外问题；偏好对覆盖不到的输入没有神奇监督。偏好损失也可能牺牲基座能力或过拟合风格，需保留通用能力、事实性和安全性评测。<code>beta</code>、参考模型和样本配比仍是实质性设计选择。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li>与 <span class="wiki-token">InstructGPT：SFT 如何让预训练模型开始遵循指令</span>：DPO 替代的是 RM 加 PPO 的偏好优化段，不替代 SFT 的行为起点作用。</li>
+<li>与 <span class="wiki-token">Constitutional AI：用原则与 AI 反馈训练无害助手</span>：CAI 可产出原则驱动的偏好对，DPO 可直接用这些对训练策略。</li>
+<li>与 <span class="wiki-token">奖励黑客</span>：少一个显式 RM 不等于没有代理目标；仍会优化数据中可见的偏好。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原论文：<a href="https://arxiv.org/abs/2305.18290">arXiv:2305.18290</a></li>
+<li>本地 PDF 与文本：<code>raw/papers/direct-preference-optimization/2305.18290.pdf</code>、<code>raw/papers/direct-preference-optimization/2305.18290.txt</code></li>
+<li>来源卡片：<code>sources/papers/cards/p14-direct-preference-optimization.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2305.18290" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

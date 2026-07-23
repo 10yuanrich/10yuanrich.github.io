@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Qwen3：把快答与深度思考放进同一个模型接口 · 拾贝</title>
+  <meta name="description" content="拾贝对 Qwen3：把快答与深度思考放进同一个模型接口 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Qwen Team / arXiv / CURATED NOTE</div>
+      <h1 id="qwen3把快答与深度思考放进同一个模型接口">Qwen3：把快答与深度思考放进同一个模型接口</h1>
+<blockquote>
+<p>主题：Qwen、推理、MoE、多语言</p>
+<p>对应材料：Qwen Team，<em>M16 Qwen3 Technical Report</em>（arXiv:2505.09388，2025）</p>
+</blockquote>
+<h2 id="这篇报告解决了什么问题">这篇报告解决了什么问题</h2>
+<p>推理模型往往用更长的思考换取正确率，普通对话模型则追求低延迟；让用户在两套模型、两种提示和两份成本之间切换，会让部署和产品体验变得复杂。</p>
+<h2 id="原作者的论证方法与核心机制">原作者的论证、方法与核心机制</h2>
+<p>Qwen3 同时发布 dense 与 MoE 模型，规模从 0.6B 到 235B；其核心设计是将 thinking 与 non-thinking 放在统一框架里，并以聊天模板或用户指令切换，还允许设置 thinking budget。</p>
+<p>思考模式为复杂多步问题分配更多推理 token，非思考模式直接生成面向上下文的回答；预算把这种差异显式暴露为资源控制旋钮。报告还通过旗舰模型的知识蒸馏降低小模型训练成本，并把多语言支持扩展到 119 种语言和方言。</p>
+<h2 id="实验或适用场景">实验或适用场景</h2>
+<p>作者在代码、数学、代理等基准上报告同规模或更大模型间的竞争结果，并明确公开 base 与 instruction 模型。这里的结论应理解为该版本、该评测设置下的比较，而非不加条件的通用排名。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>这篇报告最有价值的产品判断是：推理能力不应只被包装成一个独立模型名，还应成为可按任务开关和计量的运行时策略。实际系统可把问题风险、时间预算和是否可验证作为开启思考的规则，而不是每个请求都付出最长链路的延迟。</p>
+<h2 id="限制">限制</h2>
+<p>思考预算如何映射到真实质量、吞吐和费用，仍取决于服务端实现和提示策略；“统一模型”也不意味着所有任务都无需专用后训练，代码、视觉与语音仍可能需要分支模型。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li>与 <span class="wiki-token">思维链：让语言模型显式展开中间推理</span> 和 <span class="wiki-token">DeepSeek-R1：用可验证奖励把推理训练成能力</span> 相连：Qwen3 关注的是把推理时计算变成统一产品接口，而不只是在训练中获得推理样本。</li>
+<li><span class="wiki-token">Transformer：用自注意力重写序列建模</span>：所有这些报告仍以 Transformer 系列为基础；实际差异主要落在数据、后训练、稀疏化、模态编码和服务工作流。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/2505.09388">arXiv:2505.09388</a></li>
+<li>本地原始页面：<code>raw/papers/m16/source.html</code></li>
+<li>本地 PDF：<code>raw/papers/m16/source-2.pdf</code></li>
+<li>本地 UTF-8 文本：<code>raw/papers/m16/source-2.txt</code></li>
+<li>PDF SHA-256：<code>84a5e2b1fa04bb774bf12ae606d1e6d9dd2147ed2ebe78a4cfeb91ba380ffdd5</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2505.09388" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

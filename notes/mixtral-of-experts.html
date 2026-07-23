@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mixtral：8x7B 稀疏专家模型的容量与激活成本 · 拾贝</title>
+  <meta name="description" content="拾贝对 Mixtral：8x7B 稀疏专家模型的容量与激活成本 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">arXiv / Mistral AI / CURATED NOTE</div>
+      <h1 id="mixtral8x7b-稀疏专家模型的容量与激活成本">Mixtral：8x7B 稀疏专家模型的容量与激活成本</h1>
+<blockquote>
+<p>主题：MoE、稀疏激活、top-2 路由、开源模型、长上下文</p>
+<p>对应技术报告：Albert Q. Jiang 等，<em>Mixtral of Experts</em>（2024）</p>
+</blockquote>
+<h2 id="解决什么问题">解决什么问题</h2>
+<p>稠密模型想提高能力，通常要让每次 token 前向都通过更多参数。Mixtral 将这个矛盾具体化为一个可部署的开放权重模型：<strong>如何让模型保有多个 7B 级 FFN 专家的容量，但每个 token 只付出少数专家的计算，并保持长上下文与生成效率。</strong></p>
+<h2 id="原作者的方法与论证">原作者的方法与论证</h2>
+<p>Mixtral 8x7B 在每层 FFN 放置 8 个专家，router 对每个 token 选择其中 <strong>2 个</strong>，将两个专家输出按门控权重组合。因此“8x7B”描述总专家库，而不是一次前向运行八个完整模型；报告明确给出每 token 约 13B 激活参数。注意力部分沿用 Mistral 的 GQA 与滑动窗口方案，并以 32k 上下文训练。模型另有经指令微调的 Instruct 版本。</p>
+<p>top-2 与 Switch 的 top-1 是不同取舍：两个专家可为 token 提供更丰富的混合和冗余，但会增加专家 FFN 计算、调度与带宽。稀疏性真正节约的是每 token 激活的 expert FFN，不会让嵌入、注意力、共享层、权重装载或路由通信全部消失。</p>
+<h2 id="核心机制">核心机制</h2>
+<p><code>token -&gt; 8 个 expert 的 router 打分 -&gt; 选择 top-2 FFN -&gt; 门控加权合并</code>。注意力路径仍是共享的 Mistral 风格 decoder；稀疏性只发生在专家 FFN，因此总权重、激活参数和服务成本必须分别测量。</p>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>报告比较 Llama 2 与 GPT-3.5 等模型，在语言理解、数学、代码、常识、多语言与长上下文检索任务上给出结果；作者称 Mixtral 8x7B 在所列多数基准上优于 Llama 2 70B，Instruct 版本在当时的聊天竞技场与对话比较中表现很强。该报告同时以 Apache 2.0 发布基础与指令权重，促成了 MoE 从超大研究模型走向可自行部署的实践。</p>
+<p>适合有足够显存容纳总权重、但希望较低每 token 计算成本的高吞吐服务或本地集群。若单机内存装不下全部专家、batch 很小或专家分布跨慢速互联，稀疏架构可能没有表面 FLOPs 所显示的优势。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>Mixtral 让“模型大小”至少分成三种：磁盘/显存中的<strong>总权重</strong>、请求时的<strong>激活参数</strong>、集群上的<strong>通信与尾延迟</strong>。8x7B 的价值不在参数标签，而在它迫使部署评估同时报告这三者。对产品而言，路由命中分布、专家热点、KV cache 与并发 batch 往往比论文中的总参数更决定成本。</p>
+<h2 id="限制与关系">限制与关系</h2>
+<ul>
+<li>top-2 路由仍可能负载不均；专家利用率与容量策略需要在真实流量上监控。</li>
+<li>技术报告披露有限，外部复现应避免把其比较表当作所有语言、量化或硬件的结论。</li>
+<li>与 <span class="wiki-token">Switch Transformer：用单专家路由扩展稀疏 MoE</span>：Switch 用 top-1 简化系统，Mixtral 用 top-2 增强单 token 的专家组合。</li>
+<li>与 <span class="wiki-token">GLaM：以稀疏专家扩展语言模型容量</span>：都利用稀疏条件计算扩容；Mixtral 面向 8 专家的公开模型，GLaM 展示万亿级研究规模。</li>
+<li>与 <span class="wiki-token">Mistral 7B：滑动窗口与 GQA 的高效 decoder</span>：Mixtral 继承其注意力效率设计，在 FFN 上加入专家稀疏性。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始技术报告：<a href="https://arxiv.org/abs/2401.04088">arXiv:2401.04088</a></li>
+<li>本地 PDF：<code>raw/papers/mixtral-of-experts/2401.04088.pdf</code></li>
+<li>本地文本：<code>raw/papers/mixtral-of-experts/2401.04088.txt</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2401.04088" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

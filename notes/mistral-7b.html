@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mistral 7B：滑动窗口与 GQA 的高效 decoder · 拾贝</title>
+  <meta name="description" content="拾贝对 Mistral 7B：滑动窗口与 GQA 的高效 decoder 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">arXiv / Mistral AI / CURATED NOTE</div>
+      <h1 id="mistral-7b滑动窗口与-gqa-的高效-decoder">Mistral 7B：滑动窗口与 GQA 的高效 decoder</h1>
+<blockquote>
+<p>主题：decoder-only、分组查询注意力、滑动窗口注意力、KV cache</p>
+<p>对应技术报告：Albert Q. Jiang 等，<em>Mistral 7B</em>（2023）</p>
+</blockquote>
+<h2 id="解决什么问题">解决什么问题</h2>
+<p>小型 decoder 模型常受两类推理成本限制：每层全注意力读取全部历史，KV cache 随序列长度线性膨胀；而每个 query 头都保留独立 K/V 头，也会增加带宽与显存。Mistral 7B 的目标是在约 7B 参数预算内，把注意力计算、KV cache 与上下文传递做得更有效率，而不是用更大稠密模型换性能。</p>
+<h2 id="原作者的方法与论证">原作者的方法与论证</h2>
+<p>报告结合三项设计。第一，<strong>Grouped-Query Attention（GQA）</strong>：多个 query heads 共享较少的 key/value heads，减少生成时读取的 KV cache。第二，<strong>Sliding Window Attention（SWA）</strong>：每层 token 只注意固定窗口内历史；论文采用滚动 KV cache，窗口之外的 K/V 不再保留，从而限制内存。第三，层层堆叠的局部窗口会扩大有效感受野：信息可在相邻层逐步向后传递，尽管单层并不直接看完整历史。模型使用 RoPE 编码位置。</p>
+<p>报告以 32k token 的例子说明，SWA 比全注意力显著减少 cache；它同时强调这不是“旧 token 完全没有影响”，而是旧信息要经由中间 token 的层间传播才能到达当前位置。GQA 降低 KV 头数，主要针对自回归推理的内存带宽瓶颈。</p>
+<h2 id="核心机制">核心机制</h2>
+<p><code>多个 Q heads 共享较少 K/V heads</code> 降低缓存体积；<code>每层仅读滑动窗口</code> 限制注意力与 KV cache；<code>多层堆叠</code> 再把局部信息逐层向远处传播。三者共同改变的是实际 decode 成本，不是模型的因果生成方式。</p>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>作者在常识、阅读理解、数学、代码、世界知识与多任务评测上比较 Llama 2 等基线，并报告 Mistral 7B 在所列基准上优于 Llama 2 13B、在若干指标接近或超过更大模型。报告也测试长上下文检索任务，说明训练时引入 8k 上下文与滑动窗口可处理较长输入。</p>
+<p>适合 GPU 显存和生成吞吐敏感的通用对话、代码或文本任务。若任务需要对远处原始 token 做单层、精确的随机访问，SWA 的局部连接可能不如全注意力；应测试真实上下文分布而非只看标称窗口。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>Mistral 7B 展示了一个重要工程原则：上下文长度由三件事共同决定，<strong>位置编码能表示多远、每层 attention 能读多远、KV cache 能承受多远</strong>。它们不是同一个数。SWA 与 RoPE 解决不同层面，GQA 则主要压低 KV 成本。模型选型时要测首 token 延迟、decode 吞吐、有效信息距离和长文任务质量。</p>
+<h2 id="限制与关系">限制与关系</h2>
+<ul>
+<li>GQA 是压缩 K/V 共享，不会消除自回归生成按 token 串行的本质。</li>
+<li>窗口传播有路径长度；层数不足或信息被压缩时，远处细节可能衰减。</li>
+<li>与 <span class="wiki-token">RoPE：把相对位置信息旋进注意力计算</span>：Mistral 使用 RoPE；但 RoPE 解决位置表示，SWA 解决每层读取范围。</li>
+<li>与 <span class="wiki-token">Mamba：用选择性状态空间模型线性处理长序列</span>：两者都缓解长序列成本；前者保留局部 attention，后者改用选择性状态递推。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始技术报告：<a href="https://arxiv.org/abs/2310.06825">arXiv:2310.06825</a></li>
+<li>本地 PDF：<code>raw/papers/mistral-7b/2310.06825.pdf</code></li>
+<li>本地文本：<code>raw/papers/mistral-7b/2310.06825.txt</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2310.06825" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

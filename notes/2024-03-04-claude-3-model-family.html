@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Claude 3：多模态模型卡与部署边界 · 拾贝</title>
+  <meta name="description" content="拾贝对 Claude 3：多模态模型卡与部署边界 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Anthropic / CURATED NOTE</div>
+      <h1 id="claude-3多模态模型卡与部署边界">Claude 3：多模态模型卡与部署边界</h1>
+<blockquote>
+<p>对应材料：Anthropic，<em>The Claude 3 Model Family: Opus, Sonnet, Haiku</em>（2024）</p>
+<p>类型：官方模型卡。它主要说明产品能力、安全流程和适用边界，不是完整训练技术报告。</p>
+</blockquote>
+<h2 id="这份材料解决了什么问题">这份材料解决了什么问题</h2>
+<p>模型发布常只给出“更强”的基准分数，却没有告诉使用者它能处理什么输入、何时会失效、怎样受控。Claude 3 模型卡尝试把 Opus、Sonnet、Haiku 放进同一套可部署的框架：三者在能力、速度和成本之间分工；同时把视觉输入、工具调用、数据来源、红队和产品限制写进发布材料。它解决的不是提出新 Transformer 结构，而是把“模型能力”转成“可被采购、集成和治理的系统说明”。</p>
+<h2 id="原作者的论证与方法">原作者的论证与方法</h2>
+<p>Anthropic 将 Claude 3 描述为文本输出的多模态模型家族：可读图表、图片与文档，并通过 function calling 接入外部工作流。原作者的主张是，Opus 更偏复杂推理、数学和代码，Sonnet 取能力与速度的平衡，Haiku 面向低延迟与低成本场景；这一主张用 GPQA、MMLU、MMMU、编码与多语种评测支撑。这里应注意，榜单比较是在指定提示、评分器和版本下完成，不能简化成所有真实任务上的绝对排序。</p>
+<p>训练层面，模型卡只披露原则：在公开网络、第三方非公开数据、标注服务与内部生成数据的混合上预训练，做去重和分类过滤；随后用人类反馈及 Constitutional AI 对齐。所谓 Constitution 是把一组行为原则作为训练信号，使模型更倾向帮助、诚实并避免伤害；卡片还说明新增了与残障权益有关的原则。它没有公开参数量、token 总量、数据配比和完整优化配方，因此这些未披露部分不能由基准结果反推。</p>
+<h2 id="核心机制能力外壳与治理共同工作">核心机制：能力、外壳与治理共同工作</h2>
+<ol type="1">
+<li><strong>模型分层</strong>：把同一产品面向不同延迟、成本和复杂度档位，避免把“最大模型”当成唯一部署选项。</li>
+<li><strong>多模态与工具</strong>：图像只是输入通道；模型通过工具调用才可进入检索、业务 API 或自动化流程。工具结果、权限和执行器不在模型权重中。</li>
+<li><strong>训练对齐与运行时防护</strong>：训练阶段降低有害倾向；部署阶段用使用政策、实时分类器、人工复核、分级发布和账户处置补足。原作者明确把两层都视为安全工作的一部分。</li>
+</ol>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>报告给出基准、人工偏好比较、拒答与多语种/视觉测试，也展示图表理解、摘要、代码和函数调用的场景。它适合作为企业接入 Claude 3 时的第一份风险清单：先按任务复杂度选择档位，再把医疗、法律、金融等高风险输出交给人审；若任务需要最新事实，必须显式接入检索，因为卡片说明模型本身没有跨会话记忆，也不会自行打开链接或搜索网页。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>这份模型卡的长期价值在于提出一个实用的阅读框架：<strong>不要把模型当成独立产品，要同时读输入能力、上下文边界、工具接口、训练对齐和运行时治理。</strong> 对知识库或 Agent 而言，Claude 3 的“能用工具”不等于“可安全授权”；真正的可靠性来自模型、检索证据、最小权限、日志和人工升级路径的组合。</p>
+<h2 id="限制与关系">限制与关系</h2>
+<p>模型卡是发布方证据，特别是安全和灾难风险结论需要独立复核。它与 <span class="wiki-token">InstructGPT：SFT 如何让预训练模型开始遵循指令</span> 共享“后训练改变行为”的逻辑；与 <span class="wiki-token">Llama 3：从密集 Transformer 到 128K、工具使用与 405B 后训练</span> 共同说明工具使用必须作为训练和系统能力一起评估；底层计算仍建立在 <span class="wiki-token">Transformer：用自注意力重写序列建模</span> 之上。</p>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始模型卡：<a href="https://www-cdn.anthropic.com/de8ba9b01c9ab7cbabf5c33b80b7bbc618857627/Model_Card_Claude_3.pdf">PDF</a>，本地快照 <code>raw/papers/m10-claude-3-model-family/</code>。</li>
+<li>本页对“分层部署、外壳与治理”的表述为整理者归纳；能力、训练数据类别、Constitutional AI 与限制为原作者披露。</li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://www-cdn.anthropic.com/de8ba9b01c9ab7cbabf5c33b80b7bbc618857627/Model_Card_Claude_3.pdf" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

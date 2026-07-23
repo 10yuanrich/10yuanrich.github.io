@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chinchilla：同一训练算力下，参数与数据应一起增长 · 拾贝</title>
+  <meta name="description" content="拾贝对 Chinchilla：同一训练算力下，参数与数据应一起增长 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">DeepMind / arXiv / CURATED NOTE</div>
+      <h1 id="chinchilla同一训练算力下参数与数据应一起增长">Chinchilla：同一训练算力下，参数与数据应一起增长</h1>
+<blockquote>
+<p>主题：Chinchilla、计算最优、训练 token、模型规模、下游成本</p>
+<p>对应论文：Jordan Hoffmann 等，<em>Training Compute-Optimal Large Language Models</em>（2022）</p>
+</blockquote>
+<h2 id="这篇论文解决了什么问题">这篇论文解决了什么问题</h2>
+<p>大模型训练常把大部分新增预算投给参数，而训练 token 增长较慢。Chinchilla 重新问固定预训练 FLOPs 下的资源分配：模型应多大、要看多少 token，才能得到最低语言建模损失和更好的下游表现？它的关键挑战是区分“参数最多”与“训练最充分、单位训练算力最有效”这两件事。</p>
+<h2 id="原作者的论证与方法">原作者的论证与方法</h2>
+<p>作者训练超过 400 个模型，参数从约 7000 万到超过 160 亿，训练 token 从 50 亿到 5000 亿以上，并用三种估计方法拟合计算最优前沿。论文结论是，在其设定中，随着计算预算增加，最优参数量和训练 token 数应以近似相同比例增长，而不是像 Kaplan 估计那样主要增加模型大小。</p>
+<p>为验证预测，作者在与 Gopher 相近的训练 FLOPs 下训练 Chinchilla：70B 参数、约 1.4T token；对照的 Gopher 是 280B 参数、约 300B token。原文报告 Chinchilla 在多项下游评测中统一且显著优于 Gopher、GPT-3、Jurassic-1 和 Megatron-Turing NLG，并在 MMLU 平均准确率上达到 67.5%，比 Gopher 高 7 个点以上。它还指出更小模型会显著降低微调和推理的内存与成本。</p>
+<h2 id="核心机制避免参数多每个参数见过的数据少">核心机制：避免“参数多、每个参数见过的数据少”</h2>
+<p>在固定 FLOPs 下，增大参数会提高每个 token 的计算成本，因而可训练 token 变少；若 token 太少，模型处于欠训练状态。Chinchilla 的答案是把预算从“更大但训练不足”移向“较小但看更多高质量文本”。这不表示参数不重要，而是强调 <code>N</code> 和 <code>D</code> 需共同选择。</p>
+<p>论文将训练最优与部署成本连接起来：同样预训练预算下，70B 的模型比 280B 更易服务。这里还须补一层整理者判断：预训练 FLOPs 最优不必然等于总拥有成本最优，真实系统还要加入数据采购、后训练、长上下文、吞吐、延迟和用户任务价值。</p>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>当团队有固定算力或固定训练期限时，这篇论文适合做第一轮配比决策。可先训练多个小规模矩阵，拟合自己的 loss 前沿，再选择候选 <code>N/D</code> 组合；之后用代表性下游任务验证，而不只看 perplexity。若预计服务量很大，应把参数规模直接纳入推理成本模型，因为较小模型的优势会在持续调用中放大。</p>
+<p>若高质量新数据不足，不能机械地增加 token 或重复同一语料。重复次数、数据多样性、去重和领域偏移会改变有效 token 数；而当关键目标是推理、工具或安全行为时，还需给后训练留出预算。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>Chinchilla 最有用的结论不是“每个参数训练 20 token”这种口号，而是<strong>把训练充分度视为与参数量同级的设计变量</strong>。它使阅读模型技术报告时必须同时问：模型多大、用了多少独特 token、是否按预算充分训练、在线成本如何。<span class="wiki-token">LLaMA：更多训练 token 如何提升基础模型效率</span> 的表现正说明较小模型加更多 token 可以是强基座路线。</p>
+<h2 id="限制与容易误解">限制与容易误解</h2>
+<ul>
+<li>近似同倍率增长来自该论文模型、数据与计算定义，不是跨架构的永久常数。</li>
+<li>同一预训练 FLOPs 不代表数据清洗、存储、标注和推理成本相同。</li>
+<li>更小的基座模型未必在所有能力、上下文长度或后训练后都更优。</li>
+<li>MMLU 等基准提升是支持性证据，不能替代特定产品场景的端到端评测。</li>
+</ul>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li><span class="wiki-token">Kaplan Scaling Laws：把规模、数据与算力变成可预测变量</span>：Chinchilla 继承固定算力前沿问题，但得到不同的 <code>N/D</code> 配比。</li>
+<li><span class="wiki-token">LLaMA：更多训练 token 如何提升基础模型效率</span>：LLaMA 在实际基座模型上采用了更重 token 的训练思路。</li>
+<li><span class="wiki-token">PaLM：大规模训练、能力跃迁与系统协同</span>：PaLM 关注能否高效训练极大模型，Chinchilla 约束同一预算下是否值得做得那么大。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/2203.15556">arXiv:2203.15556</a></li>
+<li>本地 PDF：<code>raw/papers/p10-chinchilla/2203.15556.pdf</code></li>
+<li>本地 UTF-8 文本：<code>raw/papers/p10-chinchilla/2203.15556.txt</code></li>
+<li>来源卡片：<code>sources/papers/cards/p10-chinchilla.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2203.15556" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

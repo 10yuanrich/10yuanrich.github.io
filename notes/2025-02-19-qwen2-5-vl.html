@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Qwen2.5-VL：把图像、文档和视频变成可定位、可执行的输入 · 拾贝</title>
+  <meta name="description" content="拾贝对 Qwen2.5-VL：把图像、文档和视频变成可定位、可执行的输入 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Qwen Team / arXiv / CURATED NOTE</div>
+      <h1 id="qwen25-vl把图像文档和视频变成可定位可执行的输入">Qwen2.5-VL：把图像、文档和视频变成可定位、可执行的输入</h1>
+<blockquote>
+<p>主题：Qwen、视觉语言模型、视频、GUI Agent</p>
+<p>对应材料：Qwen Team，<em>M30 Qwen2.5-VL Technical Report</em>（arXiv:2502.13923，2025）</p>
+</blockquote>
+<h2 id="这篇报告解决了什么问题">这篇报告解决了什么问题</h2>
+<p>视觉语言模型若只能描述图像，就无法可靠处理表格、票据、界面和长视频等业务材料；真实任务还要求给出坐标、时间点或结构化字段，供后续工具使用。</p>
+<h2 id="原作者的论证方法与核心机制">原作者的论证、方法与核心机制</h2>
+<p>Qwen2.5-VL 使用动态分辨率处理、绝对时间编码和原生动态分辨率 ViT，并引入 Window Attention 降低计算开销。系列以多个尺寸覆盖边缘设备到高性能部署，并保留语言基座能力。</p>
+<p>动态分辨率避免把所有图像粗暴缩放到同一网格，绝对时间编码为视频 token 保留秒级时间位置；空间坐标与时间位置随后可被语言输出引用，使“看到内容”转为“定位对象、提取字段、在界面执行下一步”。</p>
+<h2 id="实验或适用场景">实验或适用场景</h2>
+<p>作者报告其在识别、定位、文档解析和长视频理解上的提升，称 72B 版本在文档与图表理解中可与 GPT-4o、Claude 3.5 Sonnet 比较。此处保留为作者在给定基准上的主张。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>最直接的落地不是泛化的看图聊天，而是把模型放入有结构约束的视觉工作流：先定义字段或点击目标，再要求坐标、置信度与证据片段，最后由外部程序校验动作是否执行成功。</p>
+<h2 id="限制">限制</h2>
+<p>视觉坐标和视频时间定位会受分辨率、压缩、页面变化和提示格式影响；模型在 GUI 上的成功率也不等于拥有操作权限，生产系统仍需白名单、回放与人工确认。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li>与 <span class="wiki-token">Qwen3-VL：将长上下文多模态理解扩展到图像、视频与代理决策</span> 相连：Qwen2.5-VL 以动态分辨率和时间编码打基础，后续版本进一步强化长交错上下文与视觉推理。</li>
+<li><span class="wiki-token">Transformer：用自注意力重写序列建模</span>：所有这些报告仍以 Transformer 系列为基础；实际差异主要落在数据、后训练、稀疏化、模态编码和服务工作流。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/2502.13923">arXiv:2502.13923</a></li>
+<li>本地原始页面：<code>raw/papers/m30/source.html</code></li>
+<li>本地 PDF：<code>raw/papers/m30/source-2.pdf</code></li>
+<li>本地 UTF-8 文本：<code>raw/papers/m30/source-2.txt</code></li>
+<li>PDF SHA-256：<code>399a28f6ed79f4ece29cca93993fceb56fc304b1d779e49392aec05aff45aba5</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2502.13923" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

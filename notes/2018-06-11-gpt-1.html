@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GPT-1：预训练加微调如何成为通用 NLP 迁移范式 · 拾贝</title>
+  <meta name="description" content="拾贝对 GPT-1：预训练加微调如何成为通用 NLP 迁移范式 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">OpenAI / CURATED NOTE</div>
+      <h1 id="gpt-1预训练加微调如何成为通用-nlp-迁移范式">GPT-1：预训练加微调如何成为通用 NLP 迁移范式</h1>
+<blockquote>
+<p>主题：基础模型、生成式预训练、任务微调、decoder-only Transformer</p>
+<p>对应论文：Alec Radford 等，<em>Improving Language Understanding by Generative Pre-Training</em>（2018）</p>
+</blockquote>
+<h2 id="这篇论文解决了什么问题">这篇论文解决了什么问题</h2>
+<p>当时的 NLP 常为每个任务各训练一套模型：标注数据少时，任务特定结构和特征工程很难泛化。GPT-1 要回答的是：能否先在大量无标注文本上学一个通用语言模型，再用很少的任务改动迁移到分类、蕴含、问答等不同任务？它把“先学语言，再适配任务”明确为可重复的两阶段流程。</p>
+<h2 id="原作者的论证与方法">原作者的论证与方法</h2>
+<p>论文先在 BooksCorpus 上以自回归语言模型目标训练 Transformer，再把同一网络用于下游监督任务。预训练模型为输入 token 生成上下文表征；微调时在末端加入很小的任务输出层，并让全部参数继续更新。对于文本对任务，作者将两段文本连同开始、分隔和结束 token 串成一个序列，而非为每项任务另造复杂双塔结构。</p>
+<p>原文使用 12 层、768 隐状态、12 头的 decoder-only Transformer。微调阶段还研究了保留语言模型辅助目标：在分类损失外继续预测 token。论文报告它对较大的 NLI 与 QQP 数据集有帮助，但对较小任务未必有益。这是条件性实验观察，不是“微调一定要保留 LM loss”的普遍结论。</p>
+<h2 id="核心机制先获得语言先验再用标签改写接口">核心机制：先获得语言先验，再用标签改写接口</h2>
+<p>自回归预训练把大量无标注文本压进参数，使模型先学到词形、句法、语义搭配和长程上下文的统计规律。微调并不是从零学习语言，而是用较少标签调整“什么输入应输出什么任务答案”。因此，任务数据主要承担对齐决策边界和输出格式的作用。</p>
+<p>这一点也解释了 GPT-1 的结构选择：causal mask 使每个位置只能读取左侧内容，适合续写目标；把分类或问答输入序列化后，模型仍只做熟悉的序列建模。与 <span class="wiki-token">Transformer：用自注意力重写序列建模</span> 的关系是：Transformer 给出计算块，GPT-1 首次把其中的 decoder-only 路线稳定地接到“预训练后统一迁移”的产品化工作流。</p>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>论文在 GLUE 覆盖的自然语言蕴含、语义相似、问答和常识推理任务上比较此前系统，报告多项结果提升。其直接证据是：同一预训练模型经轻量任务头和微调后能跨任务取得竞争力，而非证明单一模型已经具备可靠的开放域助手能力。</p>
+<p>适合的工程场景是：有一个相近领域的大量无标注文本、每个下游任务标注相对有限、并可接受训练时更新整模型。今天这会对应领域继续预训练后接 SFT 或参数高效微调；若标签任务与预训练语料差异很大，或需要严格事实正确性，还要引入检索、验证或后训练机制。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>GPT-1 的持久价值不是它的参数量，而是把模型能力拆为两种资产：<strong>预训练获得可复用表示，微调把表示接到具体行为。</strong> 这条分工后来延伸为 GPT-3 的上下文适配、<span class="wiki-token">InstructGPT：SFT 如何让预训练模型开始遵循指令</span> 的行为塑形，以及 LoRA 等低成本适配。实际选型时，应先问“任务缺的是知识/领域语言，还是缺的是输出行为”，再决定继续预训练、SFT 或提示设计，不能把它们混成同一件事。</p>
+<h2 id="限制与容易误解">限制与容易误解</h2>
+<ul>
+<li>论文的预训练数据是 BooksCorpus，规模和数据治理条件已不同于今天；不能照搬其语料选择。</li>
+<li>完整微调会复制一份模型并可能遗忘旧能力，未必是资源受限场景的首选。</li>
+<li>原文评测是受控 NLP 基准；它没有验证安全、鲁棒工具调用或长程对话。</li>
+<li>“生成式预训练”不等于只会生成文本：这里的生成目标被用来学习可供理解任务复用的表示。</li>
+</ul>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li><span class="wiki-token">BERT：双向预训练为什么擅长语言理解</span>：两者都采用预训练加微调，但 BERT 用掩码目标获得双向编码，偏向理解任务。</li>
+<li><span class="wiki-token">GPT-3：上下文学习如何改变任务适配方式</span>：GPT-3 将部分适配从参数更新移到上下文样例。</li>
+<li><span class="wiki-token">InstructGPT：SFT 如何让预训练模型开始遵循指令</span>：SFT 可视为把 GPT-1 的任务微调扩展为面向用户指令的行为数据。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf">OpenAI PDF</a></li>
+<li>本地 PDF：<code>raw/papers/p02-gpt-1/language_understanding_paper.pdf</code></li>
+<li>本地 UTF-8 文本：<code>raw/papers/p02-gpt-1/language_understanding_paper.txt</code></li>
+<li>来源卡片：<code>sources/papers/cards/p02-gpt-1.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>T5：统一 Text-to-Text 接口如何系统比较预训练方案 · 拾贝</title>
+  <meta name="description" content="拾贝对 T5：统一 Text-to-Text 接口如何系统比较预训练方案 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Google Research / arXiv / CURATED NOTE</div>
+      <h1 id="t5统一-text-to-text-接口如何系统比较预训练方案">T5：统一 Text-to-Text 接口如何系统比较预训练方案</h1>
+<blockquote>
+<p>主题：T5、encoder-decoder、C4、去噪预训练、迁移学习</p>
+<p>对应论文：Colin Raffel 等，<em>Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer</em>（2019/2020）</p>
+</blockquote>
+<h2 id="这篇论文解决了什么问题">这篇论文解决了什么问题</h2>
+<p>预训练 NLP 研究中，模型结构、预训练目标、无标注数据和下游任务接口经常同时变化，很难知道性能提升究竟来自哪一项。T5 试图把比较变成一套可重复的实验语言：无论分类、翻译、摘要还是问答，都写成“输入文本到输出文本”；然后在尽量固定的训练框架里比较架构、数据、目标和规模。</p>
+<h2 id="原作者的论证与方法">原作者的论证与方法</h2>
+<p>作者采用 encoder-decoder Transformer，并将所有任务序列化。例如分类输入可带任务前缀，输出直接是类别词；翻译与摘要天然是文本生成。预训练阶段使用 C4（Colossal Clean Crawled Corpus），这是从 Common Crawl 清洗得到的大规模英文语料。论文并非只发布一个模型，而是建立“统一实验基线”，对比 decoder-only、encoder-only、encoder-decoder，及多种去噪/语言建模目标。</p>
+<p>其基线去噪方式是破坏输入的一段连续 span，用一个 sentinel token 代替，再让 decoder 依次生成被遮住的 spans。论文报告，在其比较条件下，encoder-decoder 配合去噪目标表现最好；不同去噪细节间的差异往往不如架构、数据和规模明显。它还展示了从小模型到 11B 的扩展，以及在 GLUE、SuperGLUE、翻译、摘要和问答上的结果。</p>
+<h2 id="核心机制统一任务接口与缺失片段复原">核心机制：统一“任务接口”与“缺失片段复原”</h2>
+<p>Text-to-text 的价值是把输出空间统一成 token 序列。分类不再需要专用 softmax 头，抽取和生成也不必切换训练代码；任务名或前缀成为条件输入。这使训练、解码和评测更容易复用，但不代表不同任务的难度、指标或标签噪声真的相同。</p>
+<p>span corruption 的直觉是：encoder 看带缺口的完整上下文，decoder 只生成缺失段，因此既利用双向信息，又保留生成式输出。与 <span class="wiki-token">BERT：双向预训练为什么擅长语言理解</span> 的 MLM 相比，二者都通过遮蔽制造预测目标；T5 以连续块为单位并用 decoder 生成答案，更自然地衔接文本到文本任务。</p>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>原文的核心实验是“控制变量式的配方研究”，不是只用一张榜单证明某模型最好。它适合需要多任务、多输出形式的系统：机器翻译、摘要、改写、受控文本抽取，或希望共用一套训练服务和解码器的场景。对组织而言，统一接口可降低任务接入成本，也便于记录数据和 prompt 的版本。</p>
+<p>实际应用仍要单独设计标签词、长度约束和评测指标。把分类变成生成“yes/no”会引入 tokenization 和解码错误；把所有任务都 text-to-text 也可能牺牲专用判别模型的延迟或校准。统一接口解决工程一致性，并不替代任务级验收。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>T5 最重要的贡献是实验方法论：<strong>先把接口统一，才能更可信地比较配方。</strong> 这与当前 LLM 系统把工具调用、结构化输出、SFT 数据都表示为序列的习惯相连。对知识库或产品团队，真正可借鉴的是维护可复现实验矩阵：架构、数据清洗、目标、规模、微调格式和指标应能分别变化，否则“某模型更好”的结论没有可行动性。</p>
+<h2 id="限制与容易误解">限制与容易误解</h2>
+<ul>
+<li>C4 是清洗后的英文网页语料，不等价于高质量、无偏见或适合所有语言的知识库。</li>
+<li>论文的最佳组合是其数据、算力与基准条件下的结果，不是架构不可替代的证明。</li>
+<li>text-to-text 统一了接口，不会自动统一评价：生成 BLEU、摘要质量和分类准确率仍不可直接相加。</li>
+<li>span corruption 适合预训练，不等于所有下游必须使用遮蔽或 encoder-decoder。</li>
+</ul>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li><span class="wiki-token">Transformer：用自注意力重写序列建模</span>：T5 使用原始 Transformer 的 encoder-decoder 结构。</li>
+<li><span class="wiki-token">BERT：双向预训练为什么擅长语言理解</span>：同属去噪预训练，但 T5 的目标和输出接口更生成式。</li>
+<li><span class="wiki-token">GPT-3：上下文学习如何改变任务适配方式</span>：T5 强调训练/微调时的统一任务格式，GPT-3 更强调推理时以内文样例适配。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/1910.10683">arXiv:1910.10683</a></li>
+<li>本地 PDF：<code>raw/papers/p05-t5/1910.10683.pdf</code></li>
+<li>本地 UTF-8 文本：<code>raw/papers/p05-t5/1910.10683.txt</code></li>
+<li>来源卡片：<code>sources/papers/cards/p05-t5.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/1910.10683" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

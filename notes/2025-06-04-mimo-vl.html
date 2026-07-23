@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MiMo-VL：把视觉理解、推理与 GUI 操作放进同一训练轨道 · 拾贝</title>
+  <meta name="description" content="拾贝对 MiMo-VL：把视觉理解、推理与 GUI 操作放进同一训练轨道 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Xiaomi LLM-Core / arXiv / CURATED NOTE</div>
+      <h1 id="mimo-vl把视觉理解推理与-gui-操作放进同一训练轨道">MiMo-VL：把视觉理解、推理与 GUI 操作放进同一训练轨道</h1>
+<blockquote>
+<p>主题：视觉语言模型、多模态推理、GUI grounding、混合强化学习</p>
+<p>对应材料：Xiaomi LLM-Core Team，<em>MiMo-VL Technical Report</em>（arXiv:2506.03569，2025）</p>
+</blockquote>
+<h2 id="这篇报告解决了什么问题">这篇报告解决了什么问题</h2>
+<p>视觉语言模型的能力往往被拆开训练：看图问答追求识别，数学图题追求推理，GUI 任务又要求把坐标、控件和下一步动作对齐。单一偏好或单一奖励很容易令某一类提升、另一类退化。MiMo-VL 试图在 7B 规模下，让一般视觉理解、长链多模态推理和界面操作共享一个底座与后训练过程。</p>
+<h2 id="原作者的方法与核心机制">原作者的方法与核心机制</h2>
+<p>作者采用四阶段预训练，共计 2.4T token，并强调把高质量、带长 Chain-of-Thought 的推理样本提前放入预训练，而不是只在 RL 时补入。这样视觉符号、图表关系与文字推导会在底座阶段共同出现。后训练有 SFT 与 <strong>Mixed On-policy Reinforcement Learning（MORL）</strong>：同一个策略在多类任务上采样，由不同的可验证或任务相关奖励共同更新。</p>
+<p>MORL 的难点是奖励尺度和任务难度不一致。报告把它看成多域优化问题，而非把所有数据简单拼接：视觉问答、数学、文档理解和 GUI grounding 各有反馈形式，训练调度需要保持它们的有效占比。GUI grounding 让模型从截图或界面状态定位可操作对象，因而衡量的是“看懂后能否落到动作”，不只是描述图片。</p>
+<h2 id="实验或适用场景">实验或适用场景</h2>
+<p>作者发布 MiMo-VL-7B-SFT 与 RL 版本，报告 RL 版在 40 项比较中的 35 项优于 Qwen2.5-VL-7B；OlympiadBench 得分 59.4，OSWorld-G 得分 56.1。更适合的实际场景包括：需要看图读表再计算的分析助手、基于截图定位控件的自动化流程，以及含视觉证据的长步骤推理。部署前仍应单独测量目标 UI、语言和权限边界。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>多模态 Agent 的核心不是“多加一个视觉编码器”，而是建立从视觉表征到可验证行动的训练闭环。把推理材料前置到预训练，能减少后训练只记格式的风险；混合 RL 则要求任务采样、奖励归一化和回归集共同存在。若目标业务没有可靠的界面状态检查，就不应把基准中的 GUI 分数直接等同于可上线自动化能力。</p>
+<h2 id="限制">限制</h2>
+<p>评测种类多不等于覆盖真实软件的动态 UI、登录态、异常分支和安全限制。作者报告的胜负次数依赖于具体评测、提示和推理预算。长 CoT 训练也可能增加延迟和成本，并不适合所有低风险、短交互的视觉任务。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li><span class="wiki-token">Transformer：用自注意力重写序列建模</span>：视觉 token 与文本 token 仍依赖注意力机制在上下文中交互。</li>
+<li><span class="wiki-token">ReAct：让语言模型在推理与行动间交替</span>：GUI grounding 为“行动”提供界面级的落点，但不自动解决任务规划。</li>
+<li><span class="wiki-token">MiMo-7B：从预训练到强化学习保留推理潜力</span>：两篇都主张将推理数据前移，区别在于 MiMo-VL 要同时处理视觉域。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/2506.03569">arXiv:2506.03569</a></li>
+<li>本地 PDF：<code>raw/papers/m46/source-2.pdf</code></li>
+<li>本地文本：<code>raw/papers/m46/source-2.txt</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2506.03569" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

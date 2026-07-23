@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GPT-4o：原生全模态交互与部署安全边界 · 拾贝</title>
+  <meta name="description" content="拾贝对 GPT-4o：原生全模态交互与部署安全边界 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">OpenAI / CURATED NOTE</div>
+      <h1 id="gpt-4o原生全模态交互与部署安全边界">GPT-4o：原生全模态交互与部署安全边界</h1>
+<blockquote>
+<p>文档类型：系统卡（OpenAI，2024）<br />
+主题：主流模型技术报告、语音、多模态、安全评估</p>
+</blockquote>
+<h2 id="解决什么问题">解决什么问题</h2>
+<p>此前多模态产品常把语音转文字、文字交给语言模型、再合成语音，信息与延迟在流水线中累积。GPT-4o 系统卡讨论的是把文本、音频、图像和视频放到同一自回归“omni”模型接口后，怎样获得更自然、低延迟的交互，同时识别声音、身份、情绪和跨模态误用带来的新风险。</p>
+<h2 id="原作者的论证与方法">原作者的论证与方法</h2>
+<p>作者称 GPT-4o 可接收任意组合的文本、音频、图像、视频，并输出文本、音频与图像；语音输入最快响应约 232ms，平均约 320ms。系统卡的重点不是公开架构，而是部署前的分层测试：模型能力、外部红队、Preparedness Framework，以及常规安全、语音与多语种表现。训练数据截至 2023 年 10 月、来自公开与许可等来源的表述，只能说明信息截止和来源类别，不能推出数据全集。</p>
+<h2 id="核心机制">核心机制</h2>
+<ol type="1">
+<li><strong>端到端模态统一</strong>：模态不再只是外置转换器的前后处理，因此语音语调、图像内容和文本指令可以共同影响响应。</li>
+<li><strong>把语音当作攻击面</strong>：系统卡专门测试未授权声音模仿、说话人识别、情感推断、极端音频和多语种。产品上的预设声音、输出过滤与使用限制属于模型之外的必要控制。</li>
+<li><strong>准备度分级</strong>：作者将 GPT-4o 在网络、化生、说服、模型自主性等领域按框架评估；报告中模型自主性为 Low，依据是测试下未能稳健地自行完成资源获取、自我复制或长期自主行动。</li>
+</ol>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>卡片展示文本、多语种、语音安全和红队案例。它支持的使用场景是实时翻译、无障碍对话、带图像的辅助问答和低延迟语音助手。它不支持“模型已理解所有情感或身份”的结论：语音属性推断尤其容易带来准确性、歧视和隐私问题，应设计为禁区或需要明确授权的功能。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>GPT-4o 的工程启发是：多模态的难点不是把更多输入塞进 API，而是重新定义端到端失败模式。文字助手的风险常在内容；实时语音助手还要管理延迟、声纹、拟人化、用户过度信任和输出可控性。评测应沿真实链路跑，而非只分别测 ASR、LLM、TTS。</p>
+<h2 id="限制">限制</h2>
+<p>系统卡不等同于独立审计，评测集也无法覆盖开放环境。报告中的自主性结论仅适用于当时的测试环境与脚手架；低延迟和强语音交互也不等于事实更可靠。任何医疗、法律、金融或身份相关输出都应保留人类复核与最小化数据访问。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li><span class="wiki-token">GPT-4：可预测扩展、视觉输入与系统级安全</span>：GPT-4 以图文输入为重点，GPT-4o 把实时音视频进一步变为统一交互面。</li>
+<li><span class="wiki-token">Transformer：用自注意力重写序列建模</span>：统一模态仍需把连续信号编码为可供序列模型处理的表示。</li>
+<li><span class="wiki-token">Harness Engineering</span>：语音产品的权限、确认、审计和回退是 harness 的责任，不能交给单一模型分数。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始系统卡：<a href="https://cdn.openai.com/gpt-4o-system-card.pdf">GPT-4o System Card</a></li>
+<li>本地快照：<code>raw/papers/m02/source.pdf</code>、<code>raw/papers/m02/source.txt</code></li>
+<li>来源卡片：<code>sources/papers/cards/m02-gpt-4o-system-card.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://cdn.openai.com/gpt-4o-system-card.pdf" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

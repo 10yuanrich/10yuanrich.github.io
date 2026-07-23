@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Qwen2.5-Coder：把代码能力训练到仓库级编辑与工具环境里 · 拾贝</title>
+  <meta name="description" content="拾贝对 Qwen2.5-Coder：把代码能力训练到仓库级编辑与工具环境里 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Qwen Team / arXiv / CURATED NOTE</div>
+      <h1 id="qwen25-coder把代码能力训练到仓库级编辑与工具环境里">Qwen2.5-Coder：把代码能力训练到仓库级编辑与工具环境里</h1>
+<blockquote>
+<p>主题：Qwen、代码模型、代码代理、长上下文</p>
+<p>对应材料：Qwen Team，<em>M29 Qwen2.5-Coder Technical Report</em>（arXiv:2409.12186，2024）</p>
+</blockquote>
+<h2 id="这篇报告解决了什么问题">这篇报告解决了什么问题</h2>
+<p>函数级补全已不足以支持真实软件工程：模型需要跨文件理解、按仓库约束编辑、调用终端或测试，并从执行结果中修正。通用语言模型的代码数据和环境交互通常不够集中。</p>
+<h2 id="原作者的论证方法与核心机制">原作者的论证、方法与核心机制</h2>
+<p>报告推出 0.5B 到 32B 的代码模型，说明在代码预训练基础上加入更多代码、文本与合成数据，并使用多阶段训练与指令数据把能力推向代码生成、修复和代理式任务。</p>
+<p>代码专项训练把 token 分布从自然语言转向语法、库调用、项目结构和变更模式；长上下文使模型能保留更多仓库状态。代理任务的关键不是一次写出补丁，而是把读取、编辑、执行测试与根据报错重试连接为有反馈的循环。</p>
+<h2 id="实验或适用场景">实验或适用场景</h2>
+<p>作者在 HumanEval、MBPP、LiveCodeBench、代码修复和代理相关基准中给出结果，并将 Qwen2.5-Coder 与通用 Qwen2.5 的关系表述为共享基座后的专用扩展。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>部署代码模型时，首先应区分补全、生成单文件、仓库修改和自主代理四类任务；后一类的瓶颈常在工具沙箱、测试覆盖、上下文检索和权限边界，而不只是模型参数。</p>
+<h2 id="限制">限制</h2>
+<p>公开基准多以可验证编程题或有限仓库为主，不能代表私有代码库里的依赖、需求歧义和安全约束；长上下文也不会自动选择正确文件，仍需检索和工作流设计。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li>与 <span class="wiki-token">Toolformer：让语言模型学习何时调用外部工具</span> 相连：Toolformer 关注工具调用学习，Qwen2.5-Coder 将同类思想放到代码编辑和可执行反馈的环境里。</li>
+<li><span class="wiki-token">Transformer：用自注意力重写序列建模</span>：所有这些报告仍以 Transformer 系列为基础；实际差异主要落在数据、后训练、稀疏化、模态编码和服务工作流。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/2409.12186">arXiv:2409.12186</a></li>
+<li>本地原始页面：<code>raw/papers/m29/source.html</code></li>
+<li>本地 PDF：<code>raw/papers/m29/source-2.pdf</code></li>
+<li>本地 UTF-8 文本：<code>raw/papers/m29/source-2.txt</code></li>
+<li>PDF SHA-256：<code>8416ad8d885737ed15f757180499f5202fa93e791180a6d3fcd6f0381d79595e</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2409.12186" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

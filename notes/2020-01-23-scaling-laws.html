@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kaplan Scaling Laws：把规模、数据与算力变成可预测变量 · 拾贝</title>
+  <meta name="description" content="拾贝对 Kaplan Scaling Laws：把规模、数据与算力变成可预测变量 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">OpenAI / arXiv / CURATED NOTE</div>
+      <h1 id="kaplan-scaling-laws把规模数据与算力变成可预测变量">Kaplan Scaling Laws：把规模、数据与算力变成可预测变量</h1>
+<blockquote>
+<p>主题：Scaling Laws、幂律、训练计算、模型与数据配比</p>
+<p>对应论文：Jared Kaplan 等，<em>Scaling Laws for Neural Language Models</em>（2020）</p>
+</blockquote>
+<h2 id="这篇论文解决了什么问题">这篇论文解决了什么问题</h2>
+<p>语言模型变大是否只是经验试错？在训练前，团队能否根据参数量、训练数据和 FLOPs 粗略预估验证损失，进而决定预算怎么分配？Kaplan 等人试图用大量实验把这个问题从“选一个看起来合理的规模”转成经验函数拟合：损失如何随模型参数 <code>N</code>、数据量 <code>D</code> 与训练计算 <code>C</code> 变化。</p>
+<h2 id="原作者的论证与方法">原作者的论证与方法</h2>
+<p>论文在自回归 Transformer 上改变参数量、数据集大小、训练步数和 batch 等因素，观察验证损失。作者报告，在其考察范围内，损失对 <code>N</code>、<code>D</code> 和最优分配的计算量近似呈平滑幂律关系；模型深宽等其他架构超参数的影响相对较弱。基于这些拟合，他们推导固定算力下的计算最优前沿。</p>
+<p>原文的重要推论是：在当时的实验和定义下，固定 <code>C</code> 时最优模型参数增长快于数据量，给出近似 <code>N ∝ C^0.73</code>、<code>D ∝ C^0.27</code> 的关系，并建议较大模型不必训练到完全收敛。论文还写出常用的训练计算近似 <code>C ≈ 6NBS</code>（<code>B</code> 为 batch、<code>S</code> 为训练步数）。这些是经验外推公式，不是物理定律，也不是忽略 embedding、数据质量和硬件约束后的精确成本账单。</p>
+<h2 id="核心机制用-loss-曲线代替单点-benchmark-决策">核心机制：用 loss 曲线代替单点 benchmark 决策</h2>
+<p>Scaling law 的工作方式是先选一个稳定、可度量的代理目标，例如 held-out next-token loss；在多个小中型点上拟合曲线，再估计更大预算的前沿。其价值在于把“继续训练是否还会有收益”“该加参数还是加 token”变成可检验假设，而不是盲目把资源投入单一最大模型。</p>
+<p>它不保证下游能力与 loss 同样平滑。基准准确率、工具调用、事实性和安全性可能随 prompt、后训练和阈值发生不同变化。因此，loss 是训练配比的核心仪表，不是产品价值的唯一仪表；这正是 <span class="wiki-token">PaLM：大规模训练、能力跃迁与系统协同</span> 报告某些任务非线性表现时应保持的区分。</p>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>适合用于预训练预算规划：先在目标架构和数据域内做规模扫描，记录 token、FLOPs、验证损失、吞吐、显存和训练稳定性，再拟合本组织的数据。也适合做停止条件：若验证损失已接近预期前沿，继续堆训练步的边际收益可能低于重新分配数据或模型规模。</p>
+<p>不适合将论文公式直接代入任何新模型。数据去重、序列长度、tokenizer、模型架构、优化器、训练稳定性、可用数据上限和推理预算都会改变可行解。尤其是高质量数据稀缺时，理论最优 <code>D</code> 也可能不可获得。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>Kaplan 论文把“训练规模”从模型名后的参数数字扩展为三变量规划问题，这一改变比其具体指数更持久。正确的工程继承是建立自己的 scaling sweep，而不是背诵 <code>0.73/0.27</code>。后来的 <span class="wiki-token">Chinchilla：同一训练算力下，参数与数据应一起增长</span> 提出不同配比，恰好证明 scaling law 应视为可反驳、可随实验范围更新的模型。</p>
+<h2 id="限制与容易误解">限制与容易误解</h2>
+<ul>
+<li>幂律拟合依赖实验区间；超出区间的外推可能失效。</li>
+<li>论文对参数和计算的定义与后续研究不完全相同，比较指数前必须核对口径。</li>
+<li>低验证损失不等于高安全性、低幻觉或高用户满意度。</li>
+<li>“不训练到收敛更高效”是固定算力下的前沿判断，不是鼓励任意早停。</li>
+</ul>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li><span class="wiki-token">Chinchilla：同一训练算力下，参数与数据应一起增长</span>：直接重新估计固定算力下参数与 token 的配比，是最重要的后续对照。</li>
+<li><span class="wiki-token">LLaMA：更多训练 token 如何提升基础模型效率</span>：LLaMA 以长 token 训练实践了后续更重数据的路线。</li>
+<li><span class="wiki-token">GPT-3：上下文学习如何改变任务适配方式</span>：GPT-3 的规模实验可被理解为能力侧结果，scaling law 则主要建模训练 loss。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/2001.08361">arXiv:2001.08361</a></li>
+<li>本地 PDF：<code>raw/papers/p09-scaling-laws/2001.08361.pdf</code></li>
+<li>本地 UTF-8 文本：<code>raw/papers/p09-scaling-laws/2001.08361.txt</code></li>
+<li>来源卡片：<code>sources/papers/cards/p09-scaling-laws.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2001.08361" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

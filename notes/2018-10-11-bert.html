@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BERT：双向预训练为什么擅长语言理解 · 拾贝</title>
+  <meta name="description" content="拾贝对 BERT：双向预训练为什么擅长语言理解 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Google AI / arXiv / CURATED NOTE</div>
+      <h1 id="bert双向预训练为什么擅长语言理解">BERT：双向预训练为什么擅长语言理解</h1>
+<blockquote>
+<p>主题：BERT、MLM、双向上下文、预训练加微调</p>
+<p>对应论文：Jacob Devlin 等，<em>BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</em>（2018）</p>
+</blockquote>
+<h2 id="这篇论文解决了什么问题">这篇论文解决了什么问题</h2>
+<p>GPT-1 式自回归模型在预测当前位置时只能看左侧上下文；但分类、抽取和匹配任务往往希望一个词同时利用前后文。若直接让 Transformer 双向看完整句子再预测每个 token，模型会在训练时看到答案本身，目标失效。BERT 的问题因此是：如何在不泄露 token 的条件下，训练深层的双向语言表示，并让它以极少任务结构适配多种理解任务？</p>
+<h2 id="原作者的论证与方法">原作者的论证与方法</h2>
+<p>作者提出两个预训练任务。第一是 masked language model（MLM）：随机选取约 15% token 作为预测目标，其中多数替换成 <code>[MASK]</code>，少数换成随机 token 或保持原样，以降低“看到 MASK 就填词”的训练推理差异。模型从其余左右文恢复原 token。第二是 next sentence prediction（NSP）：判断句子 B 是否是句子 A 的真实后句，用于让模型接触句对关系。</p>
+<p>模型主体是双向 Transformer encoder。输入由 token、segment 和 position embedding 相加组成；预训练后只在 <code>[CLS]</code> 表示或 token 表示上接小输出层，并微调整体参数。论文报告 BERT Large 在 GLUE、SQuAD v1.1 和 SQuAD v2.0 上取得当时领先结果，并在 11 项 NLP 任务上展示迁移能力。这里的可证据结论是该配方在这些基准有效，而非所有双向目标都必然优于自回归模型。</p>
+<h2 id="核心机制把被遮住的位置变成预测缺口">核心机制：把“被遮住的位置”变成预测缺口</h2>
+<p>MLM 使一个位置的表征能够读取两侧未遮住 token，因此特别适合句意判断、实体边界和抽取式问答。它与自回归续写的差别不只是遮罩方向：BERT 每次只对被选中的位置计算复原目标，预训练的输入中还出现人工 <code>[MASK]</code>，而下游真实文本通常没有该符号。这种训练分布差异正是其机制的一部分。</p>
+<p>NSP 则让 <code>[CLS]</code> 汇总两个片段的关系。但后续研究常以更简单或不同的句间目标替代它，说明 BERT 的成功不能被简化为“NSP 是关键”。更稳妥的理解是：双向 encoder、海量预训练和端到端微调共同构成了证据所覆盖的方案。</p>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>原文的强项是文本理解：GLUE 分类/蕴含、SQuAD 抽取式阅读理解、命名实体识别等，推理时通常能一次并行处理整段已知文本。它适合检索排序、文本分类、语义匹配、实体抽取和 reranker 等“先拿到完整输入、再做判定”的任务。</p>
+<p>若目标是连续生成答案，BERT 不会像 decoder-only 模型那样逐 token 产生文本；可将其用作编码器或打分器，而不是直接当聊天生成器。工程上也要注意 MLM 预训练与下游之间的目标差异，不能只因模型名是 BERT 就默认适合所有语义任务。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>BERT 将“基础模型”分成生成路线和编码路线：前者擅长条件续写，后者擅长把完整输入压缩为可判别的上下文表示。它使微调接口高度统一，推动了预训练模型成为 NLP 默认起点。与 <span class="wiki-token">GPT-1：预训练加微调如何成为通用 NLP 迁移范式</span> 相比，二者的共同骨架是先无监督、后监督；不同点是注意力可见性和预训练目标决定了表示如何组织。</p>
+<h2 id="限制与容易误解">限制与容易误解</h2>
+<ul>
+<li>BERT 的双向性来自 MLM，不表示它在生成时可以无代价读取未来 token。</li>
+<li><code>[MASK]</code> 造成的预训练/下游差异真实存在；论文的替换策略只是缓解而非消除。</li>
+<li>NSP 的必要性不是已被原论文单独证明的事实，后续工作对它提出过质疑。</li>
+<li>基准得分高不等于事实知识可追溯；知识密集应用仍需要检索与引用机制。</li>
+</ul>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li><span class="wiki-token">Transformer：用自注意力重写序列建模</span>：BERT 使用其中 encoder 与无因果遮罩的 self-attention 部分。</li>
+<li><span class="wiki-token">T5：统一 Text-to-Text 接口如何系统比较预训练方案</span>：T5 将 BERT 一类去噪目标放进统一实验框架，并比较不同遮蔽方式。</li>
+<li><span class="wiki-token">GPT-2：规模化语言模型的零样本迁移信号</span>：GPT-2 选择自回归生成路线，重点转向零样本任务表达。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/1810.04805">arXiv:1810.04805</a></li>
+<li>本地 PDF：<code>raw/papers/p03-bert/1810.04805.pdf</code></li>
+<li>本地 UTF-8 文本：<code>raw/papers/p03-bert/1810.04805.txt</code></li>
+<li>来源卡片：<code>sources/papers/cards/p03-bert.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/1810.04805" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

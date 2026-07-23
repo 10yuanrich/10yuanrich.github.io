@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DeepSeek-V2：以 MLA 和细粒度 MoE 降低训练与推理成本 · 拾贝</title>
+  <meta name="description" content="拾贝对 DeepSeek-V2：以 MLA 和细粒度 MoE 降低训练与推理成本 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">DeepSeek-AI / arXiv / CURATED NOTE</div>
+      <h1 id="deepseek-v2以-mla-和细粒度-moe-降低训练与推理成本">DeepSeek-V2：以 MLA 和细粒度 MoE 降低训练与推理成本</h1>
+<blockquote>
+<p>主题：MoE、KV cache、MLA、专家路由、长上下文</p>
+<p>对应材料：DeepSeek-AI，<em>DeepSeek-V2: A Strong, Economical, and Efficient Mixture-of-Experts Language Model</em>（arXiv:2405.04434，2024）</p>
+</blockquote>
+<h2 id="这篇报告解决了什么问题">这篇报告解决了什么问题</h2>
+<p>密集模型扩大容量时，每个 token 都要经过全部 FFN 参数；生成时每层还要缓存所有历史 token 的 KV。前者拉高训练 FLOPs，后者在长上下文和高并发时拉高显存。V2 想同时处理这两类成本，而不是用更低成本换取明显能力损失。</p>
+<h2 id="原作者的论证方法与核心机制">原作者的论证、方法与核心机制</h2>
+<p>报告提出两个互补结构。第一是 <strong>MLA</strong>：先把 Key 与 Value 联合低秩压缩为潜向量，解码时只缓存该潜向量，再在计算注意力时上投影。为让 RoPE 不破坏这种吸收关系，论文将位置相关部分与内容部分解耦。它的目标是比 GQA/MQA 更大幅缩小缓存，同时保持比直接共享 KV 更强的表示能力。</p>
+<p>第二是 <strong>DeepSeekMoE</strong>。FFN 被拆为细粒度专家，除被 router 选中的专家外还设共享专家；这样一部分通用知识不必每次经过稀疏路由，专用专家有更强的分工空间。训练时专家并行会使 token 跨设备 all-to-all，论文因此加上 device-limited routing、辅助负载均衡和 token dropping，以控制通信和过载。注意：这些是成套的系统设计，而不是“只要加 MoE 就更便宜”。</p>
+<p>模型总参数 236B、每 token 激活 21B，预训练 8.1T token，支持 128K 上下文；之后依次用 SFT 与 GRPO 做对话后训练。</p>
+<h2 id="实验或适用场景">实验或适用场景</h2>
+<p>相对其 67B 密集前代，原作者报告 V2 节省 42.5% 训练成本、KV cache 降低 93.3%、最大生成吞吐提高至 5.76 倍，并在中英基准和开放式评测中比较 SFT/RL 版本。最直接的适用场景是长会话、长文档或高并发生成服务：缓存与每 token 激活量会比“总参数”更接近实际成本。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>V2 给出一个实用的成本拆分：<strong>MoE 主要节省每 token FFN 计算，MLA 主要节省自回归生成状态</strong>。两者解决不同瓶颈。因此评估模型部署时，应分开测预填充吞吐、decode 吞吐、KV cache、路由负载和跨卡通信，不能只比较参数量或离线 benchmark。</p>
+<h2 id="限制">限制</h2>
+<p>MLA 的压缩是近似表示，不保证所有任务或所有长度下无损；MoE 的路由、容量和通信对硬件拓扑敏感。报告的百分比相对于特定 67B 基线和实现，不能直接移植到其他服务栈。技术报告没有公开完整预训练数据和所有工程细节，外部复现应以端到端测量验证。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li><span class="wiki-token">Transformer：用自注意力重写序列建模</span>：MLA 保留注意力的读取机制，但压缩了需要跨生成步保存的状态。</li>
+<li><span class="wiki-token">DeepSeek-V3：把 MoE 的模型能力、训练稳定性和部署成本一起设计</span>：V3 继承 MLA 与 DeepSeekMoE，并调整负载均衡和训练目标。</li>
+<li><span class="wiki-token">Scaling Laws</span>：MoE 的总参数与激活参数分离，使“模型规模”不能只用一个数描述。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/2405.04434">arXiv:2405.04434</a></li>
+<li>本地 PDF：<code>raw/papers/m23-deepseek-v2/2405.04434.pdf</code></li>
+<li>本地文本：<code>raw/papers/m23-deepseek-v2/2405.04434.txt</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2405.04434" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

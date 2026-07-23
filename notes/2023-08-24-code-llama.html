@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Code Llama：代码续训、填空训练与长上下文工程 · 拾贝</title>
+  <meta name="description" content="拾贝对 Code Llama：代码续训、填空训练与长上下文工程 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Meta / arXiv / CURATED NOTE</div>
+      <h1 id="code-llama代码续训填空训练与长上下文工程">Code Llama：代码续训、填空训练与长上下文工程</h1>
+<blockquote>
+<p>对应论文：Baptiste Rozière 等，<em>Code Llama: Open Foundation Models for Code</em>（2023）</p>
+<p>类型：技术报告，基于 Llama 2 构建的代码模型系列。</p>
+</blockquote>
+<h2 id="这篇论文解决了什么问题">这篇论文解决了什么问题</h2>
+<p>通用语言模型能生成代码，但 IDE 中真正需要的是三种不同能力：从需求生成函数、在光标处补中间缺失片段、以及带着多个文件和依赖关系阅读更长上下文。Code Llama 不试图从零训练纯代码模型，而是从通用 Llama 2 出发，逐层加入代码续训、fill-in-the-middle、长上下文微调、Python 专项训练和指令微调。</p>
+<h2 id="原作者的论证与方法">原作者的论证与方法</h2>
+<p>作者比较“从通用基座继续训练”与“从头只训代码”的路线，主张在同等预算下前者更好，因为它保留了自然语言理解、问题澄清和说明能力。Code Llama 有 7B、13B、34B、70B；基础款在代码占主、自然语言相关代码数据和少量通用文本的混合上继续训练。7B/13B/34B 约使用 500B token，70B 使用 1T token；Python 版在此基础上再用 100B Python-heavy token。</p>
+<p>论文区分三条产品线：基础 Code Llama 用于代码生成；Python 用于单语言深度优化；Instruct 用于按自然语言协作。Instruct 的数据不仅来自既有 Llama 2 对话数据，也用 self-instruct 生成题目、单元测试和多份候选解，再以“能否通过执行测试”筛选。这是一个重要变化：代码域可以把部分人类偏好替换为可执行反馈，但单元测试覆盖不足时仍会产生伪正确样本。</p>
+<h2 id="核心机制">核心机制</h2>
+<ol type="1">
+<li><strong>FIM / infilling</strong>：将文档拆成 prefix、middle、suffix，训练模型根据前后文生成 middle；这比纯左到右续写更符合编辑器补全、补函数和生成 docstring 的形态。论文中 7B、13B、70B 基础款带此目标，34B 初版没有。</li>
+<li><strong>长上下文微调（LCFT）</strong>：先在 4K 训练，再用 16K 序列做专门微调，并把 RoPE 的基频从 10,000 调到 1,000,000。作者报告可稳定外推到 100K；这说明位置编码调整需配合训练，而非只改一个配置数。</li>
+<li><strong>可执行 self-instruct</strong>：题目 -&gt; 测试 -&gt; 十个候选 Python 解 -&gt; 执行 -&gt; 保留首个通过者。执行结果提供廉价、确定的筛选信号。</li>
+<li><strong>回放数据</strong>：Instruct 阶段保留少量代码和自然语言数据，减少后训练后遗忘通用编程与语言能力。</li>
+</ol>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>作者在 HumanEval、MBPP、APPS、MultiPL-E 等上评测，报告最佳模型在当时开放模型中具有竞争力。其适用场景是 IDE 中间补全、仓库内问答、代码解释、生成小型修复和 Python 辅助。生产代码 Agent 仍要在隔离环境编译、运行测试、检查依赖和安全扫描；100K 上下文降低“看不全代码”的概率，却不保证模型理解真实业务约束。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>Code Llama 的可迁移原则是：<strong>让训练目标贴近用户实际编辑动作，让评估器尽可能可执行。</strong> 对代码任务，FIM 比泛泛续写更贴近光标；测试反馈比“看起来像正确代码”的文本偏好更强。但执行通过只是必要条件，不能替代需求、边界条件和代码审查。</p>
+<h2 id="限制与关系">限制与关系</h2>
+<p>HumanEval 等小题无法等同大型仓库维护；长上下文也承受 Transformer 注意力成本与信息干扰。它建立在 <span class="wiki-token">Llama 2：开放权重 Chat 模型的 SFT、双奖励模型与 RLHF</span> 的通用基座和指令数据之上，并把 <span class="wiki-token">Transformer：用自注意力重写序列建模</span> 的 RoPE/上下文能力直接转化为代码工作流。</p>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/2308.12950">arXiv</a>，本地快照 <code>raw/papers/m51-code-llama/</code>。</li>
+<li>模型系列、token 数、FIM、LCFT 和 self-instruct 流程来自原论文；“必要非充分”的工程判断为整理者归纳。</li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2308.12950" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Qwen2：用尺寸梯度和 MoE 把能力、成本与语言覆盖拆开选择 · 拾贝</title>
+  <meta name="description" content="拾贝对 Qwen2：用尺寸梯度和 MoE 把能力、成本与语言覆盖拆开选择 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Qwen Team / arXiv / CURATED NOTE</div>
+      <h1 id="qwen2用尺寸梯度和-moe-把能力成本与语言覆盖拆开选择">Qwen2：用尺寸梯度和 MoE 把能力、成本与语言覆盖拆开选择</h1>
+<blockquote>
+<p>主题：Qwen、MoE、多语言、开源模型</p>
+<p>对应材料：Qwen Team，<em>M28 Qwen2 Technical Report</em>（arXiv:2407.10671，2024）</p>
+</blockquote>
+<h2 id="这篇报告解决了什么问题">这篇报告解决了什么问题</h2>
+<p>模型发布若只有一个旗舰尺寸，开发者必须在性能与本地成本之间二选一；而不同语言、代码、数学和通用问答的能力要求也不相同。</p>
+<h2 id="原作者的论证方法与核心机制">原作者的论证、方法与核心机制</h2>
+<p>Qwen2 发布 0.5B 到 72B 的 dense 模型以及 MoE 模型，并同时提供 base 与 instruction 版本。报告强调多语言能力、长上下文、代码与数学等通用评估，并公开权重以覆盖从端侧到服务器的不同部署。</p>
+<p>尺寸梯度让容量和推理成本可按场景选择，MoE 则在每个 token 仅激活部分专家的条件下扩大总参数容量。base/instruct 双版本把继续预训练、领域微调与直接对话服务区分开，避免将一个版本误用于所有流程。</p>
+<h2 id="实验或适用场景">实验或适用场景</h2>
+<p>作者报告 Qwen2-72B 在 MMLU、GPQA、HumanEval、GSM8K、BBH 等基准的结果，并称该系列能处理约 30 种语言。数字应连同版本、提示和评测协议阅读。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>对知识库中的模型谱系而言，Qwen2 的贡献不只是分数升级，而是把“模型选择”变为一个清晰矩阵：任务类型决定能力分支，延迟和显存决定尺寸，是否要二次训练决定 base 或 instruct。</p>
+<h2 id="限制">限制</h2>
+<p>小尺寸模型并非旗舰的线性缩小版，复杂推理、长上下文和跨语言迁移可能下降更快；MoE 的端到端优势也会受路由、通信和服务批处理影响。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li>与 <span class="wiki-token">Switch Transformer：用稀疏专家扩展模型容量</span> 相关：Qwen2 把稀疏专家作为系列中的部署选项，而 Switch Transformer 说明了路由与负载均衡的基础问题。</li>
+<li><span class="wiki-token">Transformer：用自注意力重写序列建模</span>：所有这些报告仍以 Transformer 系列为基础；实际差异主要落在数据、后训练、稀疏化、模态编码和服务工作流。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/2407.10671">arXiv:2407.10671</a></li>
+<li>本地原始页面：<code>raw/papers/m28/source.html</code></li>
+<li>本地 PDF：<code>raw/papers/m28/source-2.pdf</code></li>
+<li>本地 UTF-8 文本：<code>raw/papers/m28/source-2.txt</code></li>
+<li>PDF SHA-256：<code>32d7276673eec39636207cfedd54f8275220b219e6b2ea74d6e33169a19df64d</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2407.10671" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

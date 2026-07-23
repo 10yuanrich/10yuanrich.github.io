@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MiMo-V2.5-Pro：把长轨迹 Agent 能力落到可部署的开源模型 · 拾贝</title>
+  <meta name="description" content="拾贝对 MiMo-V2.5-Pro：把长轨迹 Agent 能力落到可部署的开源模型 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Xiaomi MiMo / Hugging Face 模型卡 / CURATED NOTE</div>
+      <h1 id="mimo-v25-pro把长轨迹-agent-能力落到可部署的开源模型">MiMo-V2.5-Pro：把长轨迹 Agent 能力落到可部署的开源模型</h1>
+<blockquote>
+<p>主题：开源 MoE、长上下文、混合注意力、MTP、Agent 部署</p>
+<p>对应材料：Xiaomi MiMo Team，<em>MiMo-V2.5-Pro</em> Hugging Face 模型卡（2026）</p>
+</blockquote>
+<h2 id="这份模型卡解决了什么问题">这份模型卡解决了什么问题</h2>
+<p>模型发布往往只说“能力更强”，却没有告诉使用者需要为推理、上下文和部署付出什么代价。MiMo-V2.5-Pro 模型卡给出了一组更可操作的界面：开源权重、1.02T 总参数但每 token 激活 42B、1M 上下文，以及部署和评测入口。它的目标是将复杂软件工程和长轨迹工具任务，放到可由社区复用的模型资产上。</p>
+<h2 id="原作者的主张与核心机制">原作者的主张与核心机制</h2>
+<p>模型卡称其采用 MoE，并继承 MiMo-V2-Flash 的混合注意力和三层 <strong>MTP</strong>。混合注意力以 6:1 的滑动窗口注意力与全局注意力交错，窗口为 128 token；作者称这能将 KV cache 存储压低近 7 倍，同时以可学习 attention sink bias 保留长上下文表现。三层 MTP 使用稠密 FFN，作者称可将输出速度提高约三倍，也能加速 RL 训练中的 rollout。</p>
+<p>训练信息包括 27T token、FP8 混合精度、原生 32K 序列和最高 1M 上下文；后训练则包括 SFT、大规模 Agent RL 和 MOPD。与产品发布页相比，模型卡额外给出权重精度、下载项和部署框架，因而更接近工程接入的起点。</p>
+<h2 id="实验或适用场景">实验或适用场景</h2>
+<p>模型卡将目标场景定义为 Agent、复杂软件工程和长时程任务，称模型可在数千次工具调用的轨迹中保持指令遵循与连贯性，并提供 SGLang、vLLM 等部署入口。真实使用时可从小规模的代码修复、浏览器工具调用或企业知识库 Agent 开始，记录任务成功率、token 吞吐、KV 占用和异常恢复率，再决定是否为 1M 上下文与 FP8 推理配置基础设施。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>开源万亿总参数不等于“本地轻松运行”。42B 激活参数降低的是单 token 的计算，权重存储、专家路由、KV cache、长预填充和多卡通信仍决定部署门槛。模型卡提供的是能力与部署假设，不是应用效果承诺；把它放进有权限边界、可观测日志和任务级回归测试的 harness 中，才谈得上可靠 Agent。</p>
+<h2 id="限制">限制</h2>
+<p>模型卡的部分评测字段标记为未验证或可能由社区维护，不能替代独立复现。不同推理引擎的 FP8 支持、并行策略和上下文扩展会显著改变成本及稳定性。即使模型可处理长轨迹，工具失败、外部状态变化和错误累积仍需由系统层处理。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li><span class="wiki-token">MiMo-V2-Pro：面向长上下文 Agent 的万亿参数稀疏模型</span>：二者共享面向 Agent 的大规模稀疏路线；本篇更强调权重与部署信息。</li>
+<li><span class="wiki-token">MiMo-V2-Flash：以稀疏架构和蒸馏换取快速 Agent 推理</span>：混合注意力、MTP、MOPD 的技术起点在 Flash 报告中更完整。</li>
+<li><span class="wiki-token">Harness Engineering：让智能体通过系统与评估实现自我改进</span>：长轨迹能力需要外部评估、权限和持久状态配合，不能由模型权重单独保证。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>官方模型卡：<a href="https://huggingface.co/XiaomiMiMo/MiMo-V2.5-Pro">MiMo-V2.5-Pro</a></li>
+<li>本地页面快照：<code>raw/papers/m49/source.html</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://huggingface.co/XiaomiMiMo/MiMo-V2.5-Pro" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

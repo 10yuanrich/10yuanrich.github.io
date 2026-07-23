@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DeepSeek LLM：把 Scaling Laws 变成训练决策 · 拾贝</title>
+  <meta name="description" content="拾贝对 DeepSeek LLM：把 Scaling Laws 变成训练决策 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">DeepSeek-AI / arXiv / CURATED NOTE</div>
+      <h1 id="deepseek-llm把-scaling-law-变成-7b-与-67b-的训练决策">DeepSeek LLM：把 scaling law 变成 7B 与 67B 的训练决策</h1>
+<blockquote>
+<p>主题：预训练、Scaling Laws、数据质量、SFT、DPO</p>
+<p>对应材料：DeepSeek-AI，<em>DeepSeek LLM: Scaling Open-Source Language Models with Longtermism</em>（arXiv:2401.02954，2024）</p>
+</blockquote>
+<h2 id="这篇报告解决了什么问题">这篇报告解决了什么问题</h2>
+<p>开源模型常沿用固定的 7B、13B、70B 配置，却未必知道在有限算力下模型大小、训练 token、batch size 和学习率怎样配才合算。报告的目标是把缩放规律落到两个实际配置：7B 与 67B，并用此指导数据建设、预训练和后训练，而非只报告一个最终模型分数。</p>
+<h2 id="原作者的论证方法与核心机制">原作者的论证、方法与核心机制</h2>
+<p>作者先研究超参数随模型规模的变化，再估计在给定计算预算下模型和数据的最优分配；一个重要观察是，使用不同数据集得到的 scaling curve 会显著不同。因此论文明确反对把单一数据集上的幂律无条件推广为通用定律。</p>
+<p>在实现上，模型基本沿用 LLaMA 式 decoder-only Transformer：RMSNorm、SwiGLU、RoPE；67B 用 GQA 降低生成缓存，并使用多阶段学习率调度以利继续训练。数据管线分去重、过滤、重混合三个阶段：跨 91 个 Common Crawl dump 的全局去重比单个 dump 去重移除了更多重复文档，随后用质量过滤提高信息密度，再调节语种和领域比例。报告称其预训练集为 2T 中英 token。</p>
+<p>后训练部分以超过 100 万条样本做 SFT，再以 DPO 改善对话偏好。这里的结构很重要：缩放规律决定“训练资源投向何处”，而 SFT/DPO 决定“用户如何感知模型”；两层指标不能混成一个结论。</p>
+<h2 id="实验或适用场景">实验或适用场景</h2>
+<p>原作者报告 67B base 在多项代码、数学、推理基准超过 LLaMA 2 70B，67B Chat 在其开放式中英文评测中优于 GPT-3.5。更可迁移的实验信息是数据消融：论文将数据构成视为会改变 scaling behavior 的变量。适合该方法的场景是团队要在固定预算下训练一条长期模型线，而不是只为一次发布选择最大参数量。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>这份报告把 scaling law 从“预测 loss 的图”转为工程控制面板：先在自己的数据、目标上下文和训练栈上做小规模曲线，再决定模型和数据比例。它也提示知识库或领域模型项目：数据去重和重混合不是预处理杂务，数据分布改变时，历史上的最优训练配方可能失效。</p>
+<h2 id="限制">限制</h2>
+<p>该报告的规律来自其数据、tokenizer、模型结构与预算，不能替代当前训练硬件和数据上的测量。基准与开放式比较主要是作者的评估设置；没有完整公开原始数据和标注细节。2T token、7B/67B 的结论也不直接回答 MoE、长上下文或推理 RL 的资源分配问题。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li><span class="wiki-token">Scaling Laws</span>：本报告提供了“不同数据集会改变规律”的实际反例与应用路径。</li>
+<li><span class="wiki-token">Transformer：用自注意力重写序列建模</span>：该系列建立在 decoder-only Transformer 与 RoPE/GQA 等变体上。</li>
+<li><span class="wiki-token">InstructGPT：SFT 如何让预训练模型开始遵循指令</span>：SFT/DPO 是预训练后把基础能力转换为可对话行为的层。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/2401.02954">arXiv:2401.02954</a></li>
+<li>本地 PDF：<code>raw/papers/m22-deepseek-llm/2401.02954.pdf</code></li>
+<li>本地文本：<code>raw/papers/m22-deepseek-llm/2401.02954.txt</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2401.02954" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

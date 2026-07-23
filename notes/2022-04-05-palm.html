@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PaLM：大规模训练、能力跃迁与系统协同 · 拾贝</title>
+  <meta name="description" content="拾贝对 PaLM：大规模训练、能力跃迁与系统协同 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Google Research / arXiv / CURATED NOTE</div>
+      <h1 id="palm大规模训练能力跃迁与系统协同">PaLM：大规模训练、能力跃迁与系统协同</h1>
+<blockquote>
+<p>主题：PaLM、Pathways、规模化训练、few-shot、能力评估</p>
+<p>对应论文：Aakanksha Chowdhery 等，<em>PaLM: Scaling Language Modeling with Pathways</em>（2022）</p>
+</blockquote>
+<h2 id="这篇论文解决了什么问题">这篇论文解决了什么问题</h2>
+<p>模型变大不只受算法限制，也受训练系统、通信效率和稳定性限制。PaLM 要验证两件事：其一，在数千个加速器上训练一个 540B 的稠密语言模型是否可行；其二，继续放大后，few-shot 语言、代码和数学任务是否仍有收益，或会出现明显的非线性变化。它把“规模”同时当作模型问题和系统问题处理。</p>
+<h2 id="原作者的论证与方法">原作者的论证与方法</h2>
+<p>论文训练 8B、62B 和 540B 三个 PaLM 规模。540B 使用 Pathways 系统跨 6144 个 TPU v4 芯片训练；模型仍是稠密激活的 decoder-only Transformer。文中描述并行层设计、训练稳定性处理、词表和数据构成，并在数百项语言理解、生成、代码、推理与 BIG-bench 任务上做 zero/few-shot 评估。</p>
+<p>作者报告 PaLM 540B 在 29 个常用英文 few-shot 任务中的 28 个达到当时领先或竞争结果，并指出 BIG-bench 约四分之一任务从 62B 到 540B 出现比 8B 到 62B 更陡的提升。论文将此称为某些任务上的“discontinuous improvements”。这说明测得的性能曲线可能非线性，不证明所有能力都突然、可靠或不可逆地涌现。</p>
+<h2 id="核心机制能力扩展依赖训练系统兑现算力">核心机制：能力扩展依赖训练系统兑现算力</h2>
+<p>PaLM 的模型机制仍是自回归 Transformer；新的部分是训练系统使大规模计算能够有效落在一个模型上。论文使用 Pathways 支撑跨 TPU Pod 的高效训练，并报告平行层结构在大规模下约 15% 的训练速度收益。换言之，参数规模不是抽象数字：没有足够的并行、通信和稳定训练机制，理论算力预算无法转换为有效 token 更新。</p>
+<p>评测机制则沿用 <span class="wiki-token">GPT-3：上下文学习如何改变任务适配方式</span>：用自然语言提示和少量样例测试，而非每任务都微调。因此 PaLM 的能力结果应读成“基座模型加特定 prompt/evaluation protocol 的联合表现”。</p>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>论文适合用于理解大规模基础设施投资的回报：更大模型可在一些语言、代码和推理基准上减少任务专用训练；规模间的差异还提示不能只用小模型试验外推大模型价值。它也报告多语言数据、偏见、毒性与训练数据记忆化分析，说明能力评估应与风险评估并行。</p>
+<p>对于一般团队，PaLM 不是“应训练 540B”的配方。可迁移的方法是分层验证：先在小/中规模观察 loss、吞吐和领域指标，再明确系统瓶颈；同时把能力、延迟、成本和风险列为独立验收项。仅用公开 benchmark 的均分来决定模型路线，会忽略部署阶段的上下文、后训练与安全要求。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>PaLM 证明了一条工程事实：大模型能力研究不能把训练集群当作背景。模型架构、数据、优化器、并行策略和评测协议是一个共同系统。它与 <span class="wiki-token">Chinchilla：同一训练算力下，参数与数据应一起增长</span> 形成互补：PaLM 展示“可以把规模训练起来”，Chinchilla 追问“同样预算是否花在了合适的参数和 token 配比上”。</p>
+<h2 id="限制与容易误解">限制与容易误解</h2>
+<ul>
+<li>BIG-bench 的非线性提升依赖具体任务与评估，不是所有任务均有可预测阈值。</li>
+<li>few-shot 高分仍会受 prompt、样例与污染影响，不能替代真实用户测试。</li>
+<li>训练系统效率不等于推理成本低；540B 稠密模型仍有显著服务开销。</li>
+<li>论文报告风险分析并不代表风险已被解决，只说明它们被测量过。</li>
+</ul>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li><span class="wiki-token">GPT-3：上下文学习如何改变任务适配方式</span>：PaLM 延续 in-context 评测并在更大规模观察能力变化。</li>
+<li><span class="wiki-token">Kaplan Scaling Laws：把规模、数据与算力变成可预测变量</span>：PaLM 的扩展动机可由 scaling 视角理解，但其配比需进一步核验。</li>
+<li><span class="wiki-token">LLaMA：更多训练 token 如何提升基础模型效率</span>：LLaMA 以较小模型、更多 token 的路线回应相同的效率问题。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/2204.02311">arXiv:2204.02311</a></li>
+<li>本地 PDF：<code>raw/papers/p07-palm/2204.02311.pdf</code></li>
+<li>本地 UTF-8 文本：<code>raw/papers/p07-palm/2204.02311.txt</code></li>
+<li>来源卡片：<code>sources/papers/cards/p07-palm.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2204.02311" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

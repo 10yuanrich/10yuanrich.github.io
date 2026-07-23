@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RoPE：把相对位置信息旋进注意力计算 · 拾贝</title>
+  <meta name="description" content="拾贝对 RoPE：把相对位置信息旋进注意力计算 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">arXiv / CURATED NOTE</div>
+      <h1 id="rope把相对位置信息旋进注意力计算">RoPE：把相对位置信息旋进注意力计算</h1>
+<blockquote>
+<p>主题：位置编码、相对位置、RoPE、自注意力、长序列</p>
+<p>对应论文：Jianlin Su 等，<em>RoFormer</em>（2021）</p>
+</blockquote>
+<h2 id="解决什么问题">解决什么问题</h2>
+<p>自注意力本身不知道 token 顺序。最早的 Transformer 将绝对位置向量加到 embedding 上，模型还要自行从两个绝对位置推断相对距离。对语言而言，许多关系更直接取决于“相隔几步”和方向。RoFormer 要解决的是：<strong>把绝对位置信号写入 Q/K，使 attention 分数天然表达相对位移，同时保持实现简单并兼容不同序列长度。</strong></p>
+<h2 id="原作者的方法与论证">原作者的方法与论证</h2>
+<p>RoPE（Rotary Position Embedding）将每个头的向量维度两两组成平面。位置 <code>m</code> 对 Q 做一个随频率变化的二维旋转，位置 <code>n</code> 对 K 做对应旋转；再计算点积。旋转矩阵的组合性质使 <code>R_m^T R_n</code> 只依赖 <code>n-m</code>，因此 attention score 中同时保留内容匹配与明确的相对位置关系。</p>
+<p>这和“把位置 embedding 相加”不同：位置信息不是附加在输入上，而是改变 Q/K 的几何关系。不同维度使用不同角频率，低频维度刻画较长尺度、高频维度刻画较短尺度。作者还给出其可用于线性 attention 的推导，并讨论相对距离增大时依赖衰减的性质。</p>
+<h2 id="核心机制">核心机制</h2>
+<p>对第 <code>m</code> 个 token 的 Q 与第 <code>n</code> 个 token 的 K 分别施加旋转 <code>R_m</code>、<code>R_n</code>。点积中的 <code>R_m^T R_n</code> 化为只与 <code>n-m</code> 相关的项，因此相对距离直接进入 attention score，而 V 不需要同样旋转。</p>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>论文在多个长文本分类基准上比较不同位置编码，报告 RoPE 版本的 RoFormer 稳定优于所比较替代方案。实验直接支持“在该类 Transformer 编码任务中，旋转位置编码可用且有效”。</p>
+<p>实际应用中，RoPE 是 decoder-only LLM 的常见位置方案：实现只发生在 Q/K 投影后，KV cache 中的 K 已带位置变换，和因果 attention 配合自然。它适合希望模型利用相对距离、又不想在每层维护复杂位置偏置的架构。训练长度之外的外推、频率重标定和超长窗口则必须单独验证。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>RoPE 的实用洞见是把“位置”从 token 属性改成“两个 token 能否匹配的相位关系”。因此它对 attention 的作用更直接。理解长上下文问题时，需要分开看两件事：RoPE 让模型<strong>表示</strong>相对位置，并不会消除全注意力 O(n^2) 的计算，也不会自动保证超出训练长度后仍可靠。</p>
+<h2 id="限制与关系">限制与关系</h2>
+<ul>
+<li>原论文不等于今天所有 RoPE 变体；插值、NTK 缩放、YaRN 等是后续扩展，不能归为原作者实验结论。</li>
+<li>RoPE 的旋转频率、训练上下文长度与推理长度耦合，外推会出现位置分布偏移。</li>
+<li>与 <span class="wiki-token">Transformer：用自注意力重写序列建模</span>：RoPE 是对原始 sinusoidal absolute positional encoding 的替代路线，核心 attention 与 FFN 不变。</li>
+<li>与 <span class="wiki-token">Mistral 7B：滑动窗口与 GQA 的高效 decoder</span>：Mistral 使用 RoPE，同时用滑动窗口限制每层可见历史；位置表达与计算节省是两层不同的问题。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/2104.09864">arXiv:2104.09864</a></li>
+<li>本地 PDF：<code>raw/papers/roformer-rope/2104.09864.pdf</code></li>
+<li>本地文本：<code>raw/papers/roformer-rope/2104.09864.txt</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2104.09864" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Switch Transformer：用单专家路由扩展稀疏 MoE · 拾贝</title>
+  <meta name="description" content="拾贝对 Switch Transformer：用单专家路由扩展稀疏 MoE 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">arXiv / Google Research / CURATED NOTE</div>
+      <h1 id="switch-transformer用单专家路由扩展稀疏-moe">Switch Transformer：用单专家路由扩展稀疏 MoE</h1>
+<blockquote>
+<p>主题：MoE、稀疏激活、路由、专家负载均衡、训练扩展</p>
+<p>对应论文：William Fedus、Barret Zoph、Noam Shazeer，<em>Switch Transformers</em>（2021）</p>
+</blockquote>
+<h2 id="解决什么问题">解决什么问题</h2>
+<p>稠密 Transformer 的每个 token 都经过同一组 FFN 参数。想扩大容量，就必须让所有 token 的计算一起变重；而早期 MoE 虽能让不同 token 访问不同专家，却常被 top-2 路由、跨设备通信、专家失衡和低精度训练不稳定拖住。论文要解决的是：<strong>在每 token 计算近似不变时，大幅增加可选参数容量，并把系统复杂度降到可训练的程度。</strong></p>
+<h2 id="原作者的方法与论证">原作者的方法与论证</h2>
+<p>作者把 Transformer 中部分 FFN 层替换成专家层。router 对 token 表示做线性投影和 softmax，传统 MoE 会把 token 发给概率最高的多个专家；Switch 只取 <strong>top-1</strong> 专家。选中的专家输出再乘路由概率，因而路由器仍有可学习信号。这个看似损失冗余的决定，直接减少了路由计算、每个专家需要预留的容量和 all-to-all 通信负担。</p>
+<p>每个专家只能接收固定数量 token，容量约为“本批 token 数除以专家数，再乘 capacity factor”。当热门专家溢出，token 会被跳过该层，因此作者加入辅助负载均衡损失，让 batch 内的路由概率与实际派发尽量均匀。为抑制训练不稳定，论文还将 router 局部计算升为 float32、在专家层使用更强 dropout，并讨论初始化与专家并行。</p>
+<h2 id="核心机制">核心机制</h2>
+<p><code>token -&gt; router -&gt; 最高分的一个 FFN expert -&gt; 按 gate 缩放 -&gt; 回到共享 Transformer</code>。单专家路由把总专家容量和单 token FFN 计算解耦；容量上限与均衡损失则约束该解耦不会因热点专家而失效。</p>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>论文在 T5 系列预训练、下游语言理解及多语言任务上比较稠密、top-2 MoE 和 Switch。作者报告同等资源下，基于 T5-Base/Large 的配置可达最高约 7 倍预训练提速；最大设计达到 1.6 万亿总参数，并报告相对 T5-XXL 的加速。证据说明稀疏专家在其设置中能改善速度-质量权衡，但它不是“任何场景都更快”的证明。</p>
+<p>适合的工程场景是训练期或批处理吞吐受限、token 规模大、且有足够互联能力做专家并行的模型。在线小 batch、跨机网络差或尾延迟要求极严时，路由与通信可能反而成为主成本。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>Switch 的关键贡献不是“专家更多”，而是把 MoE 变成一个明确的资源预算问题：参数容量可以随专家数增加，<strong>每 token 激活的 FFN 仍只是一份</strong>；但代价转移为路由质量、容量溢出和分布式通信。设计时应同时看 active parameters、每 token FLOPs、专家利用率、drop rate 和端到端延迟，不能用总参数量替代这些指标。</p>
+<h2 id="限制与关系">限制与关系</h2>
+<ul>
+<li>top-1 路由会放大单个选择错误；负载均衡损失只能缓解专家塌缩，不能保证专家学到可解释分工。</li>
+<li>容量不足会丢 token，容量太高又浪费算力；这是质量与效率的真实调参边界。</li>
+<li>与 <span class="wiki-token">Transformer：用自注意力重写序列建模</span> 的关系：Switch 主要替换其中的 FFN，而不是注意力主干。</li>
+<li>与 Mixtral 的关系：二者都使用稀疏专家；Mixtral 采用每 token 选两个专家，体现了路由冗余与吞吐之间的不同取舍。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/2101.03961">arXiv:2101.03961</a></li>
+<li>本地 PDF：<code>raw/papers/switch-transformers/2101.03961.pdf</code></li>
+<li>本地文本：<code>raw/papers/switch-transformers/2101.03961.txt</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2101.03961" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

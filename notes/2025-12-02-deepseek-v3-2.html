@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DeepSeek-V3.2：稀疏长上下文注意力与 Agent 后训练 · 拾贝</title>
+  <meta name="description" content="拾贝对 DeepSeek-V3.2：稀疏长上下文注意力与 Agent 后训练 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">DeepSeek-AI / arXiv / CURATED NOTE</div>
+      <h1 id="deepseek-v32把长上下文注意力稀疏化并把-rl-扩到-agent-轨迹">DeepSeek-V3.2：把长上下文注意力稀疏化，并把 RL 扩到 Agent 轨迹</h1>
+<blockquote>
+<p>主题：稀疏注意力、长上下文、强化学习、Agent 合成数据</p>
+<p>对应材料：DeepSeek-AI，<em>DeepSeek-V3.2: Pushing the Frontier of Open Large Language Models</em>（arXiv:2512.02556，2025）</p>
+</blockquote>
+<h2 id="这篇报告解决了什么问题">这篇报告解决了什么问题</h2>
+<p>标准全注意力在长序列上需要处理大量 token 对，既限制长上下文推理，也让长轨迹 RL 的成本急剧上升。报告认为开源模型的缺口还包括后训练投入不足和工具使用泛化差，因此同时提出注意力稀疏化、扩大 RL 计算，以及合成 Agent 环境三条线。</p>
+<h2 id="原作者的论证方法与核心机制">原作者的论证、方法与核心机制</h2>
+<p>其核心结构是 <strong>DeepSeek Sparse Attention（DSA）</strong>。一个轻量的 lightning indexer 为查询 token 与历史 token 打分，再只取 top-k KV 条目做主注意力。作者在 MLA 的 MQA 模式下实现它，以共享 KV 潜变量提高 kernel 效率。训练不是直接把稠密注意力替换掉：先冻结主模型，在稠密注意力下用 KL 损失让 indexer 模仿主注意力的聚合分布；再启用稀疏选择、联合持续预训练，并继续约束 indexer。报告把主注意力复杂度从 O(L^2) 降为 O(Lk)，但也说明 indexer 本身仍有 O(L^2) 项，只是计算较轻。</p>
+<p>后训练上，作者描述了更大的 RL 预算和面向工具调用的数据管线：先以冷启动轨迹把推理与工具使用写在同一条序列中，再合成 1,800 多个环境、8.5 万个复杂 prompt，让 RL 学习在交互环境中的指令遵循与泛化。这里“合成环境”比单纯扩充问答更关键，因为它让工具状态、行动和结果形成可反馈的闭环。</p>
+<h2 id="实验或适用场景">实验或适用场景</h2>
+<p>原作者报告 DSA 版本在短、长上下文评估及 Chatbot Arena 间接人偏上与前代接近，并给出长序列生成 token 成本曲线；同时报告高计算版本在推理竞赛与 Agent 评测中的对比。适用场景是长文档检索阅读、多工具工作流和需要大量 rollout 的训练，前提是稀疏选择不会漏掉任务所需证据，且环境反馈可被可靠评估。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>DSA 体现了长上下文的一个现实取舍：并非所有历史 token 同等重要，先用便宜索引筛选，再把昂贵注意力留给少量候选。它与检索增强相似但发生在模型内部；失败模式也相似，即召回阶段若漏掉关键片段，后端再强也无从恢复。Agent 后训练的对应物是：环境合成的质量和验证器覆盖范围决定 RL 学到的是通用策略还是环境模板。</p>
+<h2 id="限制">限制</h2>
+<p>indexer 的轻量 O(L^2) 仍可能在极端长度下成为瓶颈，top-k 选择也可能漏掉远处关键信息。报告中的跨模型比较、竞赛成绩和“可比”表述来自作者评估，不能外推到全部任务。合成环境可规模化，却有分布窄、奖励被投机、真实工具权限与安全边界缺失等风险。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li><span class="wiki-token">Transformer：用自注意力重写序列建模</span>：DSA 针对全注意力 O(n^2) 的长序列代价进行稀疏近似。</li>
+<li><span class="wiki-token">DeepSeek-V2：以 MLA 和细粒度 MoE 降低训练与推理成本</span>：DSA 建立在 MLA 的 KV 压缩路线之上。</li>
+<li><span class="wiki-token">DeepSeek-R1：用可验证奖励驱动长链推理，而非先模仿推理过程</span>：两者都扩大 RL，但 V3.2 明确把目标延伸到工具环境中的长轨迹。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/2512.02556">arXiv:2512.02556</a></li>
+<li>本地 PDF：<code>raw/papers/m25-deepseek-v3-2/2512.02556.pdf</code></li>
+<li>本地文本：<code>raw/papers/m25-deepseek-v3-2/2512.02556.txt</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2512.02556" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

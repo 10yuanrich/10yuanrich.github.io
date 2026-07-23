@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LLaMA：更多训练 token 如何提升基础模型效率 · 拾贝</title>
+  <meta name="description" content="拾贝对 LLaMA：更多训练 token 如何提升基础模型效率 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Meta AI / arXiv / CURATED NOTE</div>
+      <h1 id="llama更多训练-token-如何提升基础模型效率">LLaMA：更多训练 token 如何提升基础模型效率</h1>
+<blockquote>
+<p>主题：LLaMA、训练 token、公开数据、计算最优、开放基础模型</p>
+<p>对应论文：Hugo Touvron 等，<em>LLaMA: Open and Efficient Foundation Language Models</em>（2023）</p>
+</blockquote>
+<h2 id="这篇论文解决了什么问题">这篇论文解决了什么问题</h2>
+<p>超大参数模型很强，但训练和部署成本高，也常依赖不可公开的数据。LLaMA 问的是：若遵循更重视训练 token 的 scaling 直觉，能否训练 7B 到 65B 的较小模型，用更多公开可获得文本取得接近或超过更大模型的基座性能？这同时涉及计算效率、数据可复核性和后续研究可访问性。</p>
+<h2 id="原作者的论证与方法">原作者的论证与方法</h2>
+<p>作者训练四个 decoder-only 模型，约为 7B、13B、33B、65B 参数，使用约 1.4T token 的公开可获得数据混合，包括 Common Crawl、C4、GitHub、Wikipedia、书籍、ArXiv 和 Stack Exchange 等。数据按来源设定采样比例，并对 Common Crawl 去重、清理和过滤。模型使用标准 Transformer 训练设置，论文明确将其数据量选择与 Chinchilla scaling laws 联系起来。</p>
+<p>原文报告 LLaMA-13B 在多数基准上超过 GPT-3，LLaMA-65B 与 Chinchilla-70B、PaLM-540B 竞争；还给出常识、代码、数学、MMLU 与指令微调评测。这里应读为特定基座版本、任务格式和评测条件下的比较。论文也报告偏见、毒性、训练数据记忆化和能耗信息，并没有把“公开数据”写成风险已消失的结论。</p>
+<h2 id="核心机制用更多独特-token-避免大模型训练不足">核心机制：用更多独特 token 避免大模型训练不足</h2>
+<p>LLaMA 的核心不是发明新 attention，而是训练预算再分配。若模型相对数据过大、训练 token 偏少，参数未被充分训练；将同一预算的一部分投入到更多高质量 token，可让较小模型继续改善。原文观察 7B 在 1T token 后仍持续提升，借此支持更长训练的选择。</p>
+<p>这与 <span class="wiki-token">Chinchilla：同一训练算力下，参数与数据应一起增长</span> 的判断一致：模型大小与 token 数应共同扩大。它也提醒工程团队，比较模型时不能只比参数量，至少要同时记录训练 token、数据重复率、数据配比、FLOPs 与推理成本。</p>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>LLaMA 的适用价值在于提供了一个小至中等参数规模也能做强基座的证据，使研究和私有部署更可能承担预训练后的微调、推理和评测。对有特定领域语料的团队，可借鉴其分析框架：先确定可用高质量 token 总量和重复风险，再决定参数规模，而不是先锁死最大模型。</p>
+<p>不过“开放权重”或“公开可获得数据”不自动等于可无条件商用、可完整重训或可直接上线。许可证、数据来源、隐私、语言覆盖、偏见和下游滥用均需逐项审查；模型卡和法律信息不能从论文的基准表现中推导出来。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>LLaMA 将 scaling laws 变成了清晰的采购与训练决策：<strong>不应把所有预算花在更大参数上，数据 token 和训练充分度也是模型能力资产。</strong> 对个人知识库而言，它还提供了阅读模型报告的最低表格：参数、token、数据来源、去重、训练预算、基座/指令版本和评测协议缺一不可。</p>
+<h2 id="限制与容易误解">限制与容易误解</h2>
+<ul>
+<li>“公开可获得”不等于所有训练样本的版权、隐私和许可风险都已解决。</li>
+<li>65B 与更大模型的比较受训练 token、prompt、评测版本影响，不能只看单个分数。</li>
+<li>基座模型的 few-shot 或 instruction-tuned 结果必须分开看，后训练会改变行为。</li>
+<li>用更多 token 的效率结论仍受数据质量和多样性约束，重复低质文本不能等价替代新信息。</li>
+</ul>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li><span class="wiki-token">PaLM：大规模训练、能力跃迁与系统协同</span>：PaLM 展示大规模稠密模型，LLaMA 展示更重 token 的效率路线。</li>
+<li><span class="wiki-token">Chinchilla：同一训练算力下，参数与数据应一起增长</span>：LLaMA 是该训练配比思想的直接实践参照。</li>
+<li><span class="wiki-token">GPT-3：上下文学习如何改变任务适配方式</span>：三者均为 decoder-only 基座，但训练规模和数据配比不同。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/2302.13971">arXiv:2302.13971</a></li>
+<li>本地 PDF：<code>raw/papers/p08-llama/2302.13971.pdf</code></li>
+<li>本地 UTF-8 文本：<code>raw/papers/p08-llama/2302.13971.txt</code></li>
+<li>来源卡片：<code>sources/papers/cards/p08-llama.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2302.13971" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

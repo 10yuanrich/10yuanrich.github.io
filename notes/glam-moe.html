@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GLaM：以稀疏专家扩展语言模型容量 · 拾贝</title>
+  <meta name="description" content="拾贝对 GLaM：以稀疏专家扩展语言模型容量 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">arXiv / Google Research / CURATED NOTE</div>
+      <h1 id="glam以稀疏专家扩展语言模型容量">GLaM：以稀疏专家扩展语言模型容量</h1>
+<blockquote>
+<p>主题：语言模型、MoE、条件计算、few-shot、训练能耗</p>
+<p>对应论文：Nan Du 等，<em>GLaM</em>（2021）</p>
+</blockquote>
+<h2 id="解决什么问题">解决什么问题</h2>
+<p>语言模型的规模收益曾主要依赖稠密扩张：参数、训练计算和推理计算一起增长。GLaM 问的是，能否把“模型可拥有多少知识容量”与“一个 token 实际经过多少计算”拆开。它的目标不是提出新的注意力公式，而是用稀疏专家把大容量语言模型做得比同类稠密模型更省训练和推理算力。</p>
+<h2 id="原作者的方法与论证">原作者的方法与论证</h2>
+<p>GLaM 是 decoder-only 语言模型，在交替层的 FFN 位置放置 MoE。router 为每个 token 选择少数专家，论文使用 top-2 门控：token 的 FFN 计算只由被选专家承担，其余专家参数不激活。这样总参数可非常大，而一次前向计算只覆盖小部分参数。作者还调整了模型宽深、专家数、门控与并行配置，比较不同尺度的稠密和稀疏模型。</p>
+<p>论文最大的 GLaM 报告 1.2 万亿总参数，约为 GPT-3 总参数的七倍；摘要中作者称其在 29 项 NLP 任务的 zero-shot/one-shot 整体表现更好，同时训练能耗约为 GPT-3 的三分之一、推理 FLOPs 约为一半。这些是论文在自身估算与评测条件下的结论，不应被读成跨平台的固定比例。</p>
+<h2 id="核心机制">核心机制</h2>
+<p><code>token -&gt; top-2 router -&gt; 两个 expert FFN -&gt; 按 gate 加权合并</code>。总参数来自完整专家池，实际计算只来自被选中的两位专家；这就是容量增长快于单 token 计算增长的原因。</p>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>实验覆盖语言补全、常识推理、阅读理解和开放域问答等 few-shot 任务，并把性能放在训练预算和推理计算预算中观察。其价值在于显示：当任务和数据足够多样时，增加“可选择的专家容量”可比单纯做大一个稠密 FFN 更有效。</p>
+<p>它适合建设大型通用模型、离线批量生成或有专家并行集群的场景。对于小模型、低吞吐单请求，专家参数的常驻显存、路由、跨设备调度和负载不均不一定划算。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>GLaM 将 MoE 从结构技巧提升为 scaling 策略：总参数描述<strong>模型可表达的容量</strong>，active parameters 与 FLOPs 描述<strong>单次计算成本</strong>。评估稀疏模型时，至少要同时报告两套数。它也提示知识并不必然平均存入所有参数；条件计算允许不同输入走不同容量通路，但这是统计分工，不能据此断言某个专家等于一个明确知识领域。</p>
+<h2 id="限制与关系">限制与关系</h2>
+<ul>
+<li>top-2 路由降低单专家选择风险，却比 Switch 的 top-1 多一份专家计算与通信。</li>
+<li>论文未消除 MoE 的负载均衡、全局通信和容量溢出问题；这些会决定真实部署的尾延迟。</li>
+<li>与 <span class="wiki-token">Switch Transformer：用单专家路由扩展稀疏 MoE</span>：两者共享条件计算目标；Switch 以 top-1 换取更简单更快的路由，GLaM 则以 top-2 保留更多专家混合。</li>
+<li>与 <span class="wiki-token">Mixtral：8x7B 稀疏专家模型</span>：Mixtral 延续“少数激活专家”的路线，但针对开放权重的中型模型与 32k 上下文给出另一种实现点。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/2112.06905">arXiv:2112.06905</a></li>
+<li>本地 PDF：<code>raw/papers/glam-moe/2112.06905.pdf</code></li>
+<li>本地文本：<code>raw/papers/glam-moe/2112.06905.txt</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2112.06905" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

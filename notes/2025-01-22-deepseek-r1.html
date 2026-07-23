@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DeepSeek-R1：用可验证奖励驱动长链推理 · 拾贝</title>
+  <meta name="description" content="拾贝对 DeepSeek-R1：用可验证奖励驱动长链推理 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">DeepSeek-AI / arXiv / CURATED NOTE</div>
+      <h1 id="deepseek-r1用可验证奖励驱动长链推理而非先模仿推理过程">DeepSeek-R1：用可验证奖励驱动长链推理，而非先模仿推理过程</h1>
+<blockquote>
+<p>主题：推理模型、强化学习、GRPO、可验证奖励、蒸馏</p>
+<p>对应材料：DeepSeek-AI，<em>DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning</em>（arXiv:2501.12948，2025）</p>
+</blockquote>
+<h2 id="这篇报告解决了什么问题">这篇报告解决了什么问题</h2>
+<p>长链推理通常依赖人工示范：人写出中间步骤，再让模型模仿。但高质量推理轨迹昂贵，也会把模型限制在人的既有写法中。报告探讨另一条路线：对数学、代码、逻辑等能自动判对错的任务，只奖励最终正确性和格式，让模型在 RL 中自行发现更长的验证、回溯和换路策略。</p>
+<h2 id="原作者的论证方法与核心机制">原作者的论证、方法与核心机制</h2>
+<p>报告先训练 <strong>R1-Zero</strong>：以 DeepSeek-V3-Base 为起点，跳过常规的推理 SFT，采用 GRPO（Group Relative Policy Optimization）。同一问题采样一组答案，以组内奖励的均值和标准差构造相对优势，从而不需要单独训练 PPO 常用的 critic。奖励主要是可规则核验的正确性，以及把推理与答案包在指定标签内的格式奖励；原作者刻意不用神经奖励模型，理由是大规模 RL 中它可能被奖励黑客利用。</p>
+<p>在这种目标下，作者观察到 R1-Zero 的回答逐渐变长，并出现复查、反思和备选方案探索。论文将此称为由训练过程涌现的推理模式，而不是把可读的链式思维当作人类标注的直接复制品。随后它也承认 R1-Zero 的可读性、语言混杂和开放域能力不足，因此完整的 <strong>R1</strong> 采用多阶段流程：冷启动数据、推理导向 RL、拒绝采样得到的新 SFT 数据、再一轮面向各类任务的 RL，最后把大模型的推理输出蒸馏给较小模型。</p>
+<h2 id="实验或适用场景">实验或适用场景</h2>
+<p>原作者报告 R1-Zero 在 AIME 2024 的 pass@1 训练曲线从 15.6% 升至 77.9%，采用 16 次自一致性采样时为 86.7%；也报告数学、代码竞赛和 STEM 基准提升。这里最适合的是<strong>有可靠验证器</strong>的任务：单值数学题、单元测试可覆盖的代码题、形式化约束搜索等。关键不是“要求模型多想”，而是每次多想的候选能否收到可信的成败反馈。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>R1 将推理后训练拆成两个不同目标：可验证 RL 负责扩展搜索和纠错行为；SFT 与通用偏好数据负责让输出可读、可交互。两者不可互相替代。若把这套方法迁到业务 Agent，第一优先级不是仿写 CoT，而是把任务改造成可判分的终态、可隔离的工具环境和抗投机的验证器。</p>
+<h2 id="限制">限制</h2>
+<p>“涌现”是对论文观察的描述，不说明模型拥有通用可靠的自我反思。最终答案可验证，不代表中间推理文本真实反映内部计算。报告的强结论集中在可验证领域；写作、开放问答和含糊任务需要不同奖励与人工评审。长 rollout 还会显著抬高采样、验证和延迟成本，并可能优化到测试用例漏洞而非真实目标。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li><span class="wiki-token">InstructGPT：SFT 如何让预训练模型开始遵循指令</span>：R1-Zero 反例说明，某些推理能力可先以 RL 激励；最终 R1 仍回到 SFT 以解决交互质量。</li>
+<li><span class="wiki-token">奖励黑客</span>：规则奖励降低了神经奖励模型的风险，但验证器本身仍可能被投机。</li>
+<li><span class="wiki-token">DeepSeek-V3：把 MoE 的模型能力、训练稳定性和部署成本一起设计</span>：R1 以 V3-Base 为底座，并把其推理能力蒸馏回后续模型。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/2501.12948">arXiv:2501.12948</a></li>
+<li>本地 PDF：<code>raw/papers/m18-deepseek-r1/2501.12948.pdf</code></li>
+<li>本地文本：<code>raw/papers/m18-deepseek-r1/2501.12948.txt</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2501.12948" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

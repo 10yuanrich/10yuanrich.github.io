@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OpenAI o1：把推理过程纳入后训练与安全对齐 · 拾贝</title>
+  <meta name="description" content="拾贝对 OpenAI o1：把推理过程纳入后训练与安全对齐 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">OpenAI / arXiv / CURATED NOTE</div>
+      <h1 id="openai-o1把推理过程纳入后训练与安全对齐">OpenAI o1：把推理过程纳入后训练与安全对齐</h1>
+<blockquote>
+<p>文档类型：系统卡（OpenAI，2024）<br />
+主题：主流模型技术报告、推理模型、强化学习、对齐</p>
+</blockquote>
+<h2 id="解决什么问题">解决什么问题</h2>
+<p>快速直接回答的模型在复杂数学、代码和多约束任务上容易早早锁定错误路径；同一缺陷也会使安全规则被表面改写绕过。o1 系统卡讨论的核心是：通过大规模强化学习训练模型在回答前进行更长的内部推理，让它能尝试策略、发现错误，并在危险请求中把安全规范纳入推理。</p>
+<h2 id="原作者的论证与方法">原作者的论证与方法</h2>
+<p>作者将 o1 和 o1-mini 描述为用强化学习训练复杂推理的模型系列，其中 o1-mini 更偏向快速编码。报告称模型会在给出用户响应前产生较长的 chain of thought，并通过训练学习修正思路。所谓 <strong>deliberative alignment</strong>，是让模型在输出前显式依据安全规范进行推理，从而同时改善有帮助性和对越狱的抵抗。这里应注意：卡片描述的是训练目标和可观察评估，不公开完整思维链、奖励函数或训练数据。</p>
+<h2 id="核心机制">核心机制</h2>
+<ol type="1">
+<li><strong>test-time reasoning</strong>：把更多推理步骤分配给困难题，而不是把每个请求都用同样的短路径完成。</li>
+<li><strong>推理辅助对齐</strong>：安全不只来自“看到危险词就拒绝”的分类器，模型还要判断请求的意图、约束和允许的替代帮助。</li>
+<li><strong>分层测评</strong>：卡片分别考察不当建议、刻板印象、越狱、幻觉、偏差、外部红队与 Preparedness 风险，并说明不同评估对应不同 near-final 或发布检查点。</li>
+</ol>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>原作者报告 o1 在最难内部 jailbreak 与内容规则遵循评测上提升明显，也把链式思考的欺骗性监控列为研究对象。可用场景是需要逐步验证的数学、代码审阅、计划分解和受规则约束的问答。实际部署不要把“会思考”误读成“会自证正确”：它仍可能在早期假设错误时生成连贯但错误的推理，且用户通常看不到完整推理链，无法据此直接审计。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>o1 把后训练的重心从“更像好答案”推进到“更会找答案的过程”。这对 Agent 很重要：工具调用前先做计划、工具返回后再反思，比一次性生成更可控。但真正的可靠闭环还需外部验证器、工具权限、成本上限和可复现轨迹；仅延长模型思考时间不能替代这些系统部件。</p>
+<h2 id="限制">限制</h2>
+<p>报告明确指出生产版本会持续调整，卡片中的数字只对应特定检查点。强化学习式推理会增加能力，也可能增大高后果领域的误用价值；安全推理本身还存在监控不足、奖励投机和跨分布失效。公开系统卡不提供完整复现条件。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li><span class="wiki-token">InstructGPT：SFT 如何让预训练模型开始遵循指令</span>：SFT 给出初始行为；o1 进一步以强化学习优化长程推理与规则遵循。</li>
+<li><span class="wiki-token">Harness Engineering</span>：推理模型的价值在执行环境中体现，评估器和权限应在模型循环外。</li>
+<li><span class="wiki-token">奖励黑客</span>：推理奖励若只奖励表面步骤，也会被模型学会投机。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始系统卡：<a href="https://arxiv.org/abs/2412.16720">arXiv:2412.16720</a></li>
+<li>本地快照：<code>raw/papers/m03/source-2.pdf</code>、<code>raw/papers/m03/source-2.txt</code></li>
+<li>来源卡片：<code>sources/papers/cards/m03-openai-o1-system-card.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2412.16720" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

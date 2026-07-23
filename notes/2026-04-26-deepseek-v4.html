@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DeepSeek-V4：面向百万 Token 上下文的混合注意力与系统设计 · 拾贝</title>
+  <meta name="description" content="拾贝对 DeepSeek-V4：面向百万 Token 上下文的混合注意力与系统设计 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">DeepSeek-AI / arXiv / CURATED NOTE</div>
+      <h1 id="deepseek-v4为百万-token-上下文同时压缩计算缓存与训练状态">DeepSeek-V4：为百万 token 上下文同时压缩计算、缓存与训练状态</h1>
+<blockquote>
+<p>主题：百万上下文、混合注意力、KV cache、Muon、MoE</p>
+<p>对应材料：DeepSeek-AI，<em>DeepSeek-V4: Towards Highly Efficient Million-Token Context Intelligence</em>（arXiv:2606.19348，2026）</p>
+</blockquote>
+<h2 id="这篇报告解决了什么问题">这篇报告解决了什么问题</h2>
+<p>百万 token 上下文不是把窗口数字调大即可：全注意力计算、KV cache、跨设备并行和长轨迹 rollout 都会超过常规服务的承受范围。报告提出两个 MoE 模型，V4-Pro（1.6T 总参数、49B 激活）与 V4-Flash（284B、13B 激活），目标是在百万 token 下把长上下文做成可常规使用的能力。</p>
+<h2 id="原作者的论证方法与核心机制">原作者的论证、方法与核心机制</h2>
+<p>V4 保留 DeepSeekMoE 与 MTP，并加入三类结构改动。其一，<strong>混合注意力</strong>结合 CSA 与 HCA：CSA 先沿序列维压缩 KV cache，再做稀疏选择；HCA 更激进压缩 KV，但仍做稠密注意力。两者在层间交替，试图平衡“能选到精确历史 token”与“把整体历史压成低成本表示”。这并非宣称稀疏永远优于稠密，而是把不同层分配给不同信息保真度。</p>
+<p>其二，mHC（manifold-constrained hyper-connections）是对残差连接的扩展，作者用它强化深层特征传递。其三，使用 Muon 优化器以改善收敛速度与稳定性。系统层还包含专家并行的通信-计算重叠、KV cache 管理与磁盘缓存、上下文并行和 FP4 量化感知训练；这表明百万上下文的瓶颈已经跨越单个 attention 算子。</p>
+<p>报告称模型在超过 32T token 上预训练，再完成涵盖专项训练、on-policy distillation、长上下文 RL 与 Agent sandbox 的后训练。它报告在百万 token 设置下，V4-Pro 相比 V3.2 的单 token 推理 FLOPs 为 27%、KV cache 为 10%。</p>
+<h2 id="实验或适用场景">实验或适用场景</h2>
+<p>原作者展示标准基准、中文写作、搜索、白领任务与代码 Agent 的结果，并将长上下文与 test-time scaling、长时程任务联系起来。实际适用场景包括跨大量文档的分析、持续工具工作流和多轮代码任务；但“能塞进一百万 token”不等于模型能定位、引用或长期维护所有关键信息，仍需专门的长上下文评测。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>V4 的主要贡献可读作一个成本分层：MoE 控制每 token FFN 计算，CSA/HCA 控制注意力与 KV，Muon/mHC 处理大规模训练稳定性，系统层处理实际通信和存储。对系统设计者，正确问题不是“窗口多大”，而是“在目标长度、并发和任务中，证据召回、缓存预算、延迟与正确性怎样共同变化”。</p>
+<h2 id="限制">限制</h2>
+<p>报告是 preview 版本技术报告，训练数据、完整成本和多数端到端实现未完全公开；所有性能与节省比例应视为原作者在指定设置下的结果。混合压缩会引入信息损失，百万长度的真实可靠性不能由短基准或上下文上限推断。arXiv 条目 ID 为 <code>2606.19348</code>，但 API 返回的 v1 元数据日期与编号月份不一致，本地卡片保留此元数据异常，后续应再核验版本历史。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li><span class="wiki-token">Transformer：用自注意力重写序列建模</span>：V4 的核心挑战仍是全注意力在长序列下的二次代价。</li>
+<li><span class="wiki-token">DeepSeek-V3.2：把长上下文注意力稀疏化，并把 RL 扩到 Agent 轨迹</span>：CSA 延续了稀疏选择与缓存压缩的思路。</li>
+<li><span class="wiki-token">DeepSeek-V3：把 MoE 的模型能力、训练稳定性和部署成本一起设计</span>：V4 保留 MoE/MTP，并把优化与系统范围推向百万上下文。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/2606.19348">arXiv:2606.19348</a></li>
+<li>本地 PDF：<code>raw/papers/m26-deepseek-v4/2606.19348.pdf</code></li>
+<li>本地文本：<code>raw/papers/m26-deepseek-v4/2606.19348.txt</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2606.19348" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>自洽性：对多条思维链投票而非只信第一条 · 拾贝</title>
+  <meta name="description" content="拾贝对 自洽性：对多条思维链投票而非只信第一条 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Google Research / arXiv / CURATED NOTE</div>
+      <h1 id="自洽性对多条思维链投票而非只信第一条">自洽性：对多条思维链投票而非只信第一条</h1>
+<blockquote>
+<p>对应论文：Xuezhi Wang 等，Google Research，2022。主题：推理、采样与聚合。</p>
+</blockquote>
+<h2 id="解决什么问题">解决什么问题</h2>
+<p>有了思维链后，常见做法仍是贪婪解码一条路径。复杂题目里，一条看似合理的路径可能因早期算错而全盘失败；而正确答案往往可以由多种不同的中间推理抵达。Self-Consistency 提出的不是新的提示格式，而是替换解码策略：生成多条多样化 CoT，再选最终答案中最一致的那个。</p>
+<h2 id="原作者的方法与论证">原作者的方法与论证</h2>
+<p>对同一问题，模型用带温度的采样产生若干 reasoning paths；从每条路径抽取最终答案；按答案值聚合频次或概率，近似对潜在推理路径做边缘化，输出票数最高答案。论文将此称为 sample-and-marginalize，而非对每个 token 贪婪地选最大概率。</p>
+<p>作者在 GSM8K、SVAMP、AQuA、StrategyQA、ARC-challenge 等算术和常识基准上与普通 CoT 比较。原文报告的绝对提升包括 GSM8K +17.9%、SVAMP +11.0%、AQuA +12.2%、StrategyQA +6.4%、ARC-challenge +3.9%。这些数字描述的是其模型、提示和采样预算下的实验，不等于任何模型开多次就必然提升。</p>
+<h2 id="核心机制">核心机制</h2>
+<p>它利用的是答案层的共识，而不是要求每个中间句都一致。若正确路径的总概率质量高于各类错误路径，即使单条正确路径不是最高概率，重复采样后也能在答案投票中胜出。因而关键实现点是答案规范化：<code>12</code>、<code>12.0</code>、文字十二若没归一化，会把同一答案拆成多票；开放式回答则很难定义等价类。</p>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>最适合有单一、可解析、可验证终答的任务：数值计算、选择题、代码测试输出、约束满足。可以设置固定采样数，或在票数领先达到阈值时提前停止。对法律建议、开放问答和创意写作，多个类似回答一致只说明模型稳定，不说明事实为真。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>Self-Consistency 将“多想几次”变成明确的 Monte Carlo 聚合器，是之后多路径搜索、best-of-N 与 verifier 方案的轻量基线。它的成本与采样数近似线性增长，因此应把它放在答案价值足以覆盖额外 token 的节点，并优先搭配计算器、单元测试或检索证据，而不是仅靠多数票。</p>
+<h2 id="限制">限制</h2>
+<p>若错误答案形成系统性多数，投票会更自信地错；路径之间也并不独立。模型可能用不同措辞重复同一个错误。长输出带来延迟、token 成本与提示注入表面积。多票不提供可审计的事实来源，仍需外部验证。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li>与 <span class="wiki-token">思维链：让模型先写中间推理再作答</span>：前者提供路径，后者改变对路径的解码与选择。</li>
+<li>与 <span class="wiki-token">ReAct：交错推理与行动，把语言模型接入环境</span>：ReAct 可为每条路径加入观察；现实 Agent 更应按环境状态验证，而非只投票。</li>
+<li>与 <span class="wiki-token">Harness Engineering</span>：采样、聚合、早停与校验都属于模型外的 harness 设计。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原论文：<a href="https://arxiv.org/abs/2203.11171">arXiv:2203.11171</a></li>
+<li>本地 PDF 与文本：<code>raw/papers/self-consistency/2203.11171.pdf</code>、<code>raw/papers/self-consistency/2203.11171.txt</code></li>
+<li>来源卡片：<code>sources/papers/cards/p16-self-consistency.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2203.11171" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

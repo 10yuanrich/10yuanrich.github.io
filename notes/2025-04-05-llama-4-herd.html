@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Llama 4：原生多模态 MoE、iRoPE 与在线 RL 后训练 · 拾贝</title>
+  <meta name="description" content="拾贝对 Llama 4：原生多模态 MoE、iRoPE 与在线 RL 后训练 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Meta AI / CURATED NOTE</div>
+      <h1 id="llama-4原生多模态-moeirope-与在线-rl-后训练">Llama 4：原生多模态 MoE、iRoPE 与在线 RL 后训练</h1>
+<blockquote>
+<p>对应材料：Meta AI，<em>The Llama 4 herd: The beginning of a new era of natively multimodal AI innovation</em>（2025）</p>
+<p>类型：官方技术博客，不是同行评审论文；架构与性能数字均应按发布方自述阅读。</p>
+</blockquote>
+<h2 id="这份材料解决了什么问题">这份材料解决了什么问题</h2>
+<p>当模型既要看图、读长文、处理多语种，又要控制推理和服务成本，单一稠密模型会同时受显存、延迟和训练预算限制。Llama 4 报告尝试以原生多模态 MoE 处理这个组合问题：Scout 和 Maverick 都只有 17B active parameters，却分别拥有 109B 和 400B 总参数；每个 token 只激活共享专家和一个路由专家，以降低每 token 的计算成本。</p>
+<h2 id="原作者的论证与方法">原作者的论证与方法</h2>
+<p>Meta 的主张是：Llama 4 是其首个原生多模态、MoE 的开放权重系列。它采用 early fusion，让图像/视频 token 和文本 token 进入统一主干，并通过改造视觉编码器对接语言模型。Maverick 使用 128 个路由专家加共享专家，Scout 使用 16 个专家；作者还披露以 Behemoth 教师模型共同蒸馏较小模型。这里“高性能/最佳”的比较来自 Meta 的内部或汇总基准，不能脱离版本、提示与硬件条件解读。</p>
+<p>预训练方面，博客描述超过 30T token、200 种语言、FP8 训练和 MetaP 超参数迁移技术。所谓 MetaP 是让层学习率和初始化尺度能跨批大小、宽度、深度和 token 数迁移，以降低大规模训练时反复试参的成本。相比 Llama 3，报告还把多语种 token 增加到约十倍。</p>
+<h2 id="核心机制">核心机制</h2>
+<ol type="1">
+<li><strong>MoE 的“总量与活跃量”分离</strong>：总参数提供容量，路由使每次推理只使用局部专家。收益是计算效率，代价是路由、通信、负载均衡和显存存放全部权重仍很复杂。</li>
+<li><strong>early fusion 多模态</strong>：在统一 backbone 中共同预训练文本、图像和视频，而非将视觉模型的最终标签塞给语言模型；它有利于跨模态对齐，但数据质量和视觉编码器成为关键瓶颈。</li>
+<li><strong>iRoPE 长上下文</strong>：Scout 交错使用带/不带位置嵌入的注意力层，并在推理时做 attention temperature scaling。作者称其经 256K 训练后可支持 10M 输入；实际产品仍应以目标文档的检索、事实核验和成本测试决定上下文长度。</li>
+<li><strong>轻 SFT -&gt; 在线 RL -&gt; 轻 DPO</strong>：作者发现过重 SFT/DPO 会限制在线 RL 的探索，因此移除大量“容易”样本，持续以当前模型筛出中难样本，在 RL 后再用轻量 DPO 修正对话边角。</li>
+</ol>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>Scout 面向单 H100 级部署与超长输入，Maverick 面向更强通用多模态助手。可应用于多文档摘要、代码库分析、图像问答和跨语言产品，但 10M 上下文不是“自动拥有无限记忆”：输入越长，检索噪声、注意力预算、延迟和验证成本越高。博客还介绍 Llama Guard、Prompt Guard 与 CyberSecEval，说明开放权重部署仍需外部输入/输出防线。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>Llama 4 将三条近年的主线汇合：用 MoE 控制单位 token 成本，用 early fusion 把视觉变成基础能力，用在线 RL 和动态难度筛选维持推理探索。其真正工程含义是：<strong>模型训练、服务拓扑、数据筛选和安全外壳必须协同设计；没有任一层能单独保证“高效且可靠”。</strong></p>
+<h2 id="限制与关系">限制与关系</h2>
+<p>技术博客缺少完整可复现实验与独立评测；Behemoth 当时仍在训练，不能把其预览数字当成已发布模型事实。它承接 <span class="wiki-token">Llama 3：从密集 Transformer 到 128K、工具使用与 405B 后训练</span> 的长上下文和教师数据路线，并把 MoE 与在线 RL 推到多模态规模；与 <span class="wiki-token">Code Llama：代码续训、填空训练与长上下文工程</span> 一样，都说明长上下文要有专门训练和验证。</p>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始技术博客：<a href="https://ai.meta.com/blog/llama-4-multimodal-intelligence/">Meta AI</a>，本地快照 <code>raw/papers/m52-llama-4-herd/</code>。</li>
+<li>参数、架构、训练流程与安全工具为原作者披露；关于工程取舍和“无限记忆”的解释为整理者归纳。</li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://ai.meta.com/blog/llama-4-multimodal-intelligence/" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

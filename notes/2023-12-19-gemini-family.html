@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gemini 1.0：原生多模态模型与三层产品谱系 · 拾贝</title>
+  <meta name="description" content="拾贝对 Gemini 1.0：原生多模态模型与三层产品谱系 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Google / arXiv / CURATED NOTE</div>
+      <h1 id="gemini-10原生多模态模型与三层产品谱系">Gemini 1.0：原生多模态模型与三层产品谱系</h1>
+<blockquote>
+<p>文档类型：技术报告（Google，2023）<br />
+主题：主流模型技术报告、多模态、模型分层</p>
+</blockquote>
+<h2 id="解决什么问题">解决什么问题</h2>
+<p>早期视觉语言系统常在语言模型外拼接图像、语音或视频模块，跨模态推理容易退化为“先转文字再回答”。Gemini 1.0 报告要解决的是让一个模型从训练开始共同处理图像、音频、视频和文本，并把同一能力族拆成 Ultra、Pro、Nano 三种尺寸，以覆盖复杂云端任务、规模化服务和端侧约束。</p>
+<h2 id="原作者的论证与方法">原作者的论证与方法</h2>
+<p>作者称 Gemini 联合训练于图像、音频、视频和文本，预训练后再做质量、能力、对齐与安全后训练，并分别产出面向对话的 Gemini Apps 与面向开发者的 API 变体。Ultra 针对最复杂任务，Pro 在性能与可部署性间折中，Nano 面向内存受限的设备。该报告的关键不是给出一个“万能模型”，而是将模型尺寸、目标产品和评测范围显式绑定。</p>
+<h2 id="核心机制">核心机制</h2>
+<ol type="1">
+<li><strong>原生跨模态表示</strong>：不同模态在同一训练目标下交互，目标是支持跨图像、声音、视频和文字的联合理解与推理。</li>
+<li><strong>家族化缩放</strong>：Ultra/Pro/Nano 不只是参数大小标签，而是按复杂度、吞吐与端侧约束划分部署位置。</li>
+<li><strong>面向服务的后训练</strong>：同一底座根据聊天服务和开发者 API 的需求形成不同版本，说明“模型能力”和“产品行为”需要分别评估。</li>
+</ol>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>作者报告 Gemini Ultra 在所列 32 项基准中的 30 项推进 SOTA，并称在 MMLU 超过 90%、在 MMMU 为 62.4%。报告还以读懂手写物理题、指出学生错误步骤、跨音视频内容推理为质性例子。它最适合需要多种原始媒体共同判断的教育辅助、图文/视频问答、跨模态检索和设备端摘要。分数和演示不能证明其对任意视频、口音、拍摄质量或领域知识都稳定可靠。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>Gemini 1.0 的实用贡献是把“多模态”从单一大模型卖点变成系统设计问题：输入模态怎样保留关键信号，哪一层模型承担成本，聊天与 API 是否需要不同后训练，端侧如何保证隐私和时延。对知识系统而言，原生多模态值得用于读取图表、讲座视频和扫描文档，但每个事实仍应回链到可检查的原始片段。</p>
+<h2 id="限制">限制</h2>
+<p>报告大多是发布方评估，包含内部基准，版本也在后续更新。MMLU 等考试并不覆盖长期任务、事实时效、工具执行和价值冲突。多模态模型还会扩大隐私、声像身份、偏见和合成内容风险，产品不能只继承文字安全策略。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li><span class="wiki-token">GPT-4o：原生全模态交互与部署安全边界</span>：二者都强调统一模态；GPT-4o 更聚焦实时语音交互与部署安全。</li>
+<li><span class="wiki-token">Transformer：用自注意力重写序列建模</span>：多模态仍以 token/表示序列为基础，但输入编码与对齐更复杂。</li>
+<li><span class="wiki-token">检索增强与知识系统</span>：长视频、图片进入知识库时，必须保存时间戳、页面或片段级证据。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始报告：<a href="https://arxiv.org/abs/2312.11805">arXiv:2312.11805</a></li>
+<li>本地快照：<code>raw/papers/m07/source-2.pdf</code>、<code>raw/papers/m07/source-2.txt</code></li>
+<li>来源卡片：<code>sources/papers/cards/m07-gemini-family.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2312.11805" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

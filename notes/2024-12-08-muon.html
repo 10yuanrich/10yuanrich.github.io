@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Muon：正交化矩阵更新的训练优化器 · 拾贝</title>
+  <meta name="description" content="拾贝对 Muon：正交化矩阵更新的训练优化器 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Keller Jordan blog / CURATED NOTE</div>
+      <h1 id="muon正交化矩阵更新的训练优化器">Muon：正交化矩阵更新的训练优化器</h1>
+<blockquote>
+<p>对应原始技术文章：Keller Jordan 等，2024。主题：优化器、预训练效率。</p>
+</blockquote>
+<h2 id="解决什么问题">解决什么问题</h2>
+<p>AdamW 是 Transformer 训练的强默认优化器，但大规模训练的成本使更少 token 或更短墙钟时间达到同等损失很有价值。Muon 关注隐藏层的二维矩阵参数：常规动量更新可能高度病态，绝大部分更新能量集中在少数方向。它尝试将动量更新近似正交化，让更多方向获得相近的更新尺度。</p>
+<h2 id="原作者的方法与论证">原作者的方法与论证</h2>
+<p>Muon 的名称来自 MomentUm Orthogonalized by Newton-Schulz。先对矩阵参数累积 SGD/Nesterov momentum，再将更新矩阵通过若干步 Newton-Schulz 迭代后处理，近似替换为其最近的半正交矩阵。若更新的 SVD 为 <code>USV^T</code>，理想正交化形式为 <code>UV^T</code>；这会压平奇异值而保留方向。作者选择五次左右的五次多项式 Newton-Schulz 迭代，理由是它可在 bfloat16 中稳定运行，比直接 SVD 或高精度迭代更适合 GPU。</p>
+<p>作者的原始文章报告在 NanoGPT speedrunning、CIFAR-10 和短程 1.5B Transformer 训练中取得速度改进，并估算矩阵正交化的额外 FLOPs 会随每步 token batch 增大而摊薄。文章还说明不应把所有参数都交给 Muon：标量、向量、embedding 与最终输出层通常仍用 AdamW；Transformer 的 Q、K、V 分开处理比把 QKV 拼成一个矩阵更好，是其经验结论。</p>
+<h2 id="核心机制">核心机制</h2>
+<p>与 AdamW 按元素缩放不同，Muon 把一个二维权重更新看作整体矩阵，改变其奇异值谱。它不等同于二阶优化器：没有长期积累完整曲率矩阵，而是对当前动量更新做快速谱形状变换。作者将其与去掉累积的 Shampoo、正交 SGD 等工作联系起来；这些联系是解释框架，不构成其对所有训练动态的理论证明。</p>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>适合希望比较预训练 sample efficiency 的研究或训练栈，尤其是线性层占主导、矩阵乘法高效的 Transformer。应在固定数据、token 预算、并行策略与充分调参 AdamW 基线下比较 wall-clock 和验证损失，并记录每类参数的优化器分配。不能只复制超参数后以未调优基线宣布胜利。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>Muon 最值得学的不是某组系数，而是把优化对象从“每个元素的学习率”提升到“矩阵更新的谱结构”。它也强调竞争性训练任务可抑制弱基线。但原始文章本身承认当时的大规模分布式、20B+ 训练及后训练表现仍是开放问题，因而应将其视为强实验假设，而不是成熟默认件。</p>
+<h2 id="限制">限制</h2>
+<p>该材料是作者技术文章而非同行评审论文；速度记录可能受实现、硬件与调参影响。正交化有额外计算和实现复杂度，并非所有参数适用。其原因解释含经验观察与推测，不能把“稀有方向被放大”当作已证实的普适机理。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li>与 <span class="wiki-token">Muon 可扩展训练：从小模型速度记录走向 LLM 预训练</span>：后者针对这里尚未解决的大模型可扩展性给出训练报告。</li>
+<li>与 <span class="wiki-token">Transformer：用自注意力重写序列建模</span>：Muon 主要针对 Transformer 隐藏层中的二维线性权重。</li>
+<li>与 <span class="wiki-token">QLoRA：在冻结的 4-bit 基座上训练 LoRA</span>：Muon 面向预训练更新效率，QLoRA 面向适配时的显存预算。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始技术文章：<a href="https://kellerjordan.github.io/posts/muon/">Muon: An optimizer for hidden layers</a></li>
+<li>本地 HTML 快照：<code>raw/papers/muon/original-writeup.html</code></li>
+<li>来源卡片：<code>sources/papers/cards/o01-muon.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://kellerjordan.github.io/posts/muon/" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

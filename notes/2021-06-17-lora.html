@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LoRA：以低秩增量高效微调大模型 · 拾贝</title>
+  <meta name="description" content="拾贝对 LoRA：以低秩增量高效微调大模型 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Microsoft / arXiv / CURATED NOTE</div>
+      <h1 id="lora以低秩增量高效微调大模型">LoRA：以低秩增量高效微调大模型</h1>
+<blockquote>
+<p>对应论文：Edward J. Hu 等，Microsoft，2021。主题：高效微调、参数高效训练。</p>
+</blockquote>
+<h2 id="解决什么问题">解决什么问题</h2>
+<p>完整微调会为每个任务保存一份与基座同样大的权重和优化器状态。模型越大，这既抬高显存与训练成本，也使多租户部署和版本管理变得困难。LoRA 的问题是：下游适配时，是否真的需要在每个权重矩阵的完整高维空间更新？</p>
+<h2 id="原作者的方法与论证">原作者的方法与论证</h2>
+<p>对于冻结的线性权重 <code>W</code>，LoRA 不直接训练 <code>ΔW</code>，而令 <code>ΔW = B A</code>，其中 <code>A</code>、<code>B</code> 的内维度是远小于原维度的秩 <code>r</code>；前向为 <code>Wx + (alpha/r)BAx</code>。初始化时令其中一项为零，使起点与原模型完全一致，训练时只更新小矩阵。推理阶段可将 <code>BA</code> 合并回 <code>W</code>，因此不同于在每层额外挂接顺序 adapter，理论上不引入额外推理路径延迟。</p>
+<p>论文在 RoBERTa、DeBERTa、GPT-2 和 GPT-3 的多项任务上比较全量微调与 adapter 等方案，并报告 LoRA 用远少于全量的可训练参数取得相当或更好结果。作者以 GPT-3 175B 为例说明其可训练参数可大幅减少、显存需求降低；这些是其具体配置下的实验与估算，不是所有模型都固定的倍率保证。论文还观察到适配的有效更新呈现低秩特征，这是方法合理性的经验支持。</p>
+<h2 id="核心机制">核心机制</h2>
+<p>LoRA 保留基座权重所含的通用能力，只学习任务特有的低维“方向”。<code>r</code> 决定表达容量，<code>alpha</code> 调整增量尺度，目标模块决定改造位置。实践中常放在注意力投影的 Q、V 或扩展至更多线性层；这些是可调设计，而不是原理论文给出的唯一正确位置。</p>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>适合一个冻结基座对应多个领域、客户或任务适配器：只分发小型 adapter，按需加载或合并。它是监督微调、指令微调和偏好微调的参数化方式，不替代数据、目标或评估。资源有限时，应先选择代表性验证集，扫描少量秩与目标层，再按任务收益增加容量。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>LoRA 将“更新整个模型”改成“表达一个可组合的差分”，因此成为 PEFT 的默认基线。它最重要的工程收益往往是版本与部署：同一基座不必复制十几份。选择 LoRA 的前提不是它永远最强，而是任务变化可由低秩增量充分表达且基座许可允许这样分发。</p>
+<h2 id="限制">限制</h2>
+<p>低秩并非普适定理，困难域迁移可能需要更高秩或全量训练。多个 adapter 简单叠加可能互相干扰；合并后也要重新测量。减少可训练参数不必然按比例减少所有显存，因为激活、长序列和 batch 仍可能主导成本。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li>与 <span class="wiki-token">QLoRA：在冻结的 4-bit 基座上训练 LoRA</span>：QLoRA 保留 LoRA 的训练增量，同时把冻结基座压到 4-bit 以进一步节省显存。</li>
+<li>与 <span class="wiki-token">InstructGPT：SFT 如何让预训练模型开始遵循指令</span>：SFT 是学习目标与数据流程，LoRA 是实现该更新的低成本参数化。</li>
+<li>与 <span class="wiki-token">Transformer：用自注意力重写序列建模</span>：LoRA 主要作用于 Transformer 的线性投影矩阵。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原论文：<a href="https://arxiv.org/abs/2106.09685">arXiv:2106.09685</a></li>
+<li>本地 PDF 与文本：<code>raw/papers/lora/2106.09685.pdf</code>、<code>raw/papers/lora/2106.09685.txt</code></li>
+<li>来源卡片：<code>sources/papers/cards/p19-lora.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2106.09685" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

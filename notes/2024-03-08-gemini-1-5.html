@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gemini 1.5：百万级上下文如何成为可用工作记忆 · 拾贝</title>
+  <meta name="description" content="拾贝对 Gemini 1.5：百万级上下文如何成为可用工作记忆 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Google / arXiv / CURATED NOTE</div>
+      <h1 id="gemini-15百万级上下文如何成为可用工作记忆">Gemini 1.5：百万级上下文如何成为可用工作记忆</h1>
+<blockquote>
+<p>文档类型：技术报告（Google，2024）<br />
+主题：主流模型技术报告、长上下文、MoE、多模态</p>
+</blockquote>
+<h2 id="解决什么问题">解决什么问题</h2>
+<p>RAG 擅长从大知识库挑出少量片段，但一些任务需要同时对照整套合同、代码库、数小时视频或多个长文档；传统上下文窗口会迫使系统切分、摘要并丢失关联。Gemini 1.5 的目标是让模型可在百万级、实验中至千万级 token 的多模态上下文内，找回细粒度信息并进行推理，同时以 Flash 提供较低成本版本。</p>
+<h2 id="原作者的论证与方法">原作者的论证与方法</h2>
+<p>报告发布 Gemini 1.5 Pro 和轻量的 1.5 Flash，称其结合稀疏与稠密 scaling、训练、蒸馏和服务基础设施。作者用“needle-in-a-haystack”检索试验和长文档 QA、长视频 QA、长上下文 ASR 来评估，并报告 Pro 在文本、音频、视频的多百万 token 检索中接近完美；文字实验延伸至至少 10M token。报告还强调 1.5 Pro 相对 1.0 Ultra 的广泛能力与训练效率比较。</p>
+<h2 id="核心机制">核心机制</h2>
+<ol type="1">
+<li><strong>长上下文不是单纯缓存</strong>：模型需要在大量干扰信息中定位并结合正确证据，且输入可混合文本、音频、视频。</li>
+<li><strong>能力-成本双产品</strong>：Pro 面向复杂任务；Flash 以尽量少的质量损失换取更低延迟和成本。</li>
+<li><strong>从检索到 in-context 学习</strong>：报告以 Kalamang 语法材料和翻译为例，说明超长上下文有时可临时提供领域规则，但这不是权重层的持久学习。</li>
+</ol>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>论文称在合成长针测试中，多模态检索超过 99%，并报告与专业人士协作时在十类职业任务上节省 26%–75% 时间。适用场景包括代码库问答、长会议/讲座回顾、尽调文档、视频检索和大批资料的初步综合。应用时仍要把回答附到页码、时间戳或原片段：找到了“针”不表示所有推断都正确，也不代表模型理解了材料的法律或业务语境。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>长上下文最适合作为<strong>工作记忆层</strong>，不是知识库的替代品。对拾贝而言，它能帮助一次性横读许多文章并发现关联；稳定知识仍应提炼为带来源的 wiki 页面，原文仍留在 raw。最佳架构通常是 RAG 先缩小候选，再按需将相互依赖的长材料放入上下文；这样可控制成本、污染和无关信息。</p>
+<h2 id="限制">限制</h2>
+<p>针检索是受控评测，无法覆盖冲突信息、诱导文本、跨段因果、格式破坏或恶意提示。10M 是实验上限，不是所有用户可用窗口；上下文越长，延迟、费用和隐私暴露也越大。长输入会让错误证据显得更有说服力，因此仍需引用与验证。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li><span class="wiki-token">检索增强与知识系统</span>：RAG 负责选择证据，长上下文负责在足够大的证据集合中联合推理，两者互补。</li>
+<li><span class="wiki-token">Harness Engineering</span>：上下文组装、压缩、缓存、溯源与回归测试应由 harness 管理。</li>
+<li><span class="wiki-token">Gemini 1.0：原生多模态模型与三层产品谱系</span>：1.5 在 1.0 原生多模态基础上重点推进长上下文与效率。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始报告：<a href="https://arxiv.org/abs/2403.05530">arXiv:2403.05530</a></li>
+<li>本地快照：<code>raw/papers/m08/source-2.pdf</code>、<code>raw/papers/m08/source-2.txt</code></li>
+<li>来源卡片：<code>sources/papers/cards/m08-gemini-1-5.md</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2403.05530" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Llama 3：从密集 Transformer 到 128K、工具使用与 405B 后训练 · 拾贝</title>
+  <meta name="description" content="拾贝对 Llama 3：从密集 Transformer 到 128K、工具使用与 405B 后训练 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Meta / arXiv / CURATED NOTE</div>
+      <h1 id="llama-3从密集-transformer-到-128k工具使用与-405b-后训练">Llama 3：从密集 Transformer 到 128K、工具使用与 405B 后训练</h1>
+<blockquote>
+<p>对应论文：Llama Team，<em>The Llama 3 Herd of Models</em>（2024）</p>
+<p>类型：技术报告，覆盖 Llama 3.1 的 8B、70B、405B 基座与指令模型。</p>
+</blockquote>
+<h2 id="这篇论文解决了什么问题">这篇论文解决了什么问题</h2>
+<p>Llama 2 之后，开放权重大模型面对的不只是“扩大参数”，还要同时提高知识、推理、多语种、长上下文和工具使用能力。Llama 3 报告的核心问题是：如何在仍采用相对标准的 dense decoder-only Transformer 前提下，把规模化预训练和更复杂的后训练做成一条可迭代生产线，并将能力下沉到可部署的 8B/70B 模型。</p>
+<h2 id="原作者的论证与方法">原作者的论证与方法</h2>
+<p>论文没有把架构创新当主角。Llama 3 仍是密集 Transformer，405B 模型有 126 层、16384 hidden size 和 128 个注意力头；其进步主要归因于更大、更干净的数据、训练基础设施、规模和后训练。Llama 3.1 在 405B 级教师模型上预训练，报告称使用约 15T 多语种 token，并把上下文从 8K 扩到 128K。作者强调数据质量和去重、代码/推理/多语种配比，以及训练中对硬件故障、吞吐波动和缩放规律的工程处理。</p>
+<p>后训练不是只做一轮 SFT。论文描述了高质量人工示范、拒绝采样、偏好数据和直接偏好优化等组成；对于数学推理，先生成逐步解答，再用最终答案、步骤级奖励模型和自验证过滤错误轨迹。这个过程的关键不是让模型“背出推理”，而是把可验证结果转成可用于学习的高质量训练样本。</p>
+<h2 id="核心机制">核心机制</h2>
+<ol type="1">
+<li><strong>教师到模型群</strong>：405B 既是旗舰，也用于生成和筛选数据，帮助较小模型获得更强的后训练信号。蒸馏是能力传递，不会自动消除学生模型的边界。</li>
+<li><strong>128K 的混合训练</strong>：预训练后扩展上下文，SFT 中混入长文问答、层次摘要和仓库代码推理的合成数据。作者报告仅约 0.1% 长上下文数据的混合可兼顾短、长任务，说明数据配比比单纯堆长文本更关键。</li>
+<li><strong>工具使用作为轨迹学习</strong>：模型学习搜索、Python 和 Wolfram 工具调用，训练样本由系统提示、用户问题、调用、工具输出和最终回答组成；多步任务中，人工在消息级别标注调用与解读工具结果的质量。</li>
+<li><strong>多语种专家分支</strong>：先从预训练过程中分出多语种专家，再借它收集更好的非英语标注，以避免英语中心数据直接复制到其他语言。</li>
+</ol>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>报告覆盖学术基准、长文检索和摘要、代码、多语种、工具调用及人工偏好评估。对实际应用，128K 让长合同、文档集、代码仓库成为可输入对象，但不保证模型正确“读懂”每个细节；真正的产品应把检索切片、来源引用、工具执行结果和任务验收保留在外部系统。工具调用的价值也不是让模型自带实时知识，而是让它能在受控环境中请求事实和计算。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>Llama 3 的技术路线可概括为：<strong>标准架构 + 数据/系统规模化 + 分阶段后训练 + 教师驱动的数据飞轮。</strong> 它说明主流模型的竞争重点已经从单一网络结构转向“如何生产可靠训练轨迹”。对于个人知识库，最可迁移的不是 405B 规模，而是把原始材料、结构化检索、引用证据与质量筛选串成可回归的加工流程。</p>
+<h2 id="限制与关系">限制与关系</h2>
+<p>15T 数据、完整配方、标注内容与权重训练细节并未公开；工具测试依赖 Meta 定义的环境，不能视为裸模型的普适能力。它继承 <span class="wiki-token">Transformer：用自注意力重写序列建模</span> 的 decoder 计算骨架，并将 <span class="wiki-token">InstructGPT：SFT 如何让预训练模型开始遵循指令</span> 的 SFT/偏好优化扩展到长上下文、推理和工具轨迹。</p>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/2407.21783">arXiv</a>，本地快照 <code>raw/papers/m14-llama-3-herd/</code>。</li>
+<li>规模、架构、长上下文、工具与后训练流程来自原论文；“训练轨迹生产线”的概括为整理者归纳。</li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2407.21783" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

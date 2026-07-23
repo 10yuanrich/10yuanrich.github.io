@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Qwen3-VL：将长上下文多模态理解扩展到图像、视频与代理决策 · 拾贝</title>
+  <meta name="description" content="拾贝对 Qwen3-VL：将长上下文多模态理解扩展到图像、视频与代理决策 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Qwen Team / arXiv / CURATED NOTE</div>
+      <h1 id="qwen3-vl将长上下文多模态理解扩展到图像视频与代理决策">Qwen3-VL：将长上下文多模态理解扩展到图像、视频与代理决策</h1>
+<blockquote>
+<p>主题：Qwen、视觉语言模型、长上下文、MoE</p>
+<p>对应材料：Qwen Team，<em>M32 Qwen3-VL Technical Report</em>（arXiv:2511.21631，2025）</p>
+</blockquote>
+<h2 id="这篇报告解决了什么问题">这篇报告解决了什么问题</h2>
+<p>处理长文档、多图和长视频时，系统不仅要看懂单帧，还要在很长的交错文本-视觉上下文中保留、检索和交叉引用信息；普通图文对模型容易在时间和空间关系上丢失精度。</p>
+<h2 id="原作者的论证方法与核心机制">原作者的论证、方法与核心机制</h2>
+<p>Qwen3-VL 同时提供 2B 到 32B dense 与 30B-A3B、235B-A22B MoE 版本，原生支持 256K 的文本、图像和视频交错上下文，并引入 enhanced interleaved-MRoPE、DeepStack 和文本式时间对齐。</p>
+<p>MRoPE 强化空间与时间位置表达，DeepStack 将多层 ViT 特征接入语言侧以减少视觉语义对齐损失；从 T-RoPE 到文本时间戳的变化，是把视频中“什么时候发生”变成模型可直接引用和解释的离散语义。</p>
+<h2 id="实验或适用场景">实验或适用场景</h2>
+<p>作者报告其在 MMMU、MathVista、MathVision 等多模态与视觉数学评测上领先，并主张长上下文可支持长文档和视频中的保留、检索与交叉引用。评测结果需与 token 预算和延迟条件一起解释。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>这条路线对知识处理很重要：长上下文不等于把整段视频或整份文档塞进去即可。可用方案仍要先切分、保留页码或时间戳、让回答回指证据，再由外部检索控制输入规模；模型的长窗口提供的是更大的关联空间。</p>
+<h2 id="限制">限制</h2>
+<p>256K 上下文会带来预填充成本和注意力资源压力，且长输入中的关键事实仍可能被遗漏或错误关联；视觉数学与基准成绩不能替代真实业务中的版式、扫描质量和权限控制测试。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li>与 <span class="wiki-token">Transformer：用自注意力重写序列建模</span> 相连：长交错上下文仍受注意力计算与状态管理约束；与 <span class="wiki-token">Qwen2.5-VL：把图像、文档和视频变成可定位、可执行的输入</span> 形成从定位到长程关联的延展。</li>
+<li><span class="wiki-token">Transformer：用自注意力重写序列建模</span>：所有这些报告仍以 Transformer 系列为基础；实际差异主要落在数据、后训练、稀疏化、模态编码和服务工作流。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/2511.21631">arXiv:2511.21631</a></li>
+<li>本地原始页面：<code>raw/papers/m32/source.html</code></li>
+<li>本地 PDF：<code>raw/papers/m32/source-2.pdf</code></li>
+<li>本地 UTF-8 文本：<code>raw/papers/m32/source-2.txt</code></li>
+<li>PDF SHA-256：<code>ee075d08e67de1148d6437c6c1d481f7894183b8793905a2deb5f62664f49380</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2511.21631" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RAG：让生成模型从外部知识库取证再回答 · 拾贝</title>
+  <meta name="description" content="拾贝对 RAG：让生成模型从外部知识库取证再回答 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">arXiv / Facebook AI Research / CURATED NOTE</div>
+      <h1 id="rag让生成模型从外部知识库取证再回答">RAG：让生成模型从外部知识库取证再回答</h1>
+<blockquote>
+<p>主题：检索增强生成、参数化记忆、非参数化记忆、开放域问答</p>
+<p>对应论文：Patrick Lewis 等，<em>Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks</em>（2020）</p>
+</blockquote>
+<h2 id="解决什么问题">解决什么问题</h2>
+<p>仅靠预训练参数回答事实问题有三个结构性缺口：知识更新要重训，答案难显示依据，且模型可能把不确定内容流畅地补全。RAG 将知识拆为两部分：seq2seq 模型的<strong>参数化记忆</strong>负责理解和生成，外部向量索引的<strong>非参数化记忆</strong>负责按问题取回文档。它要解决的是让生成式系统也能使用显式、可替换的知识源。</p>
+<h2 id="原作者的方法与论证">原作者的方法与论证</h2>
+<p>论文使用 BART 作为生成器，使用 DPR 双编码器为问题与文档编码，在 Wikipedia passage 向量索引中取 top-K 文档。文档 <code>z</code> 不是一个固定上下文，而是潜变量：训练目标对候选文档的概率和给定文档生成答案的概率做边缘化。检索器可由 DPR 初始化并在任务上更新。</p>
+<p>作者提出两种分解：<strong>RAG-Sequence</strong> 假设整条输出共用同一检索文档；<strong>RAG-Token</strong> 允许不同输出 token 依赖不同文档。前者更像“选定证据后写作”，后者更灵活但推理近似与计算更复杂。两者都不是简单把检索文本硬拼给 prompt，而是在生成概率模型中显式结合检索分布。</p>
+<h2 id="核心机制">核心机制</h2>
+<p><code>问题 -&gt; DPR 召回 top-K passages -&gt; BART 条件生成 -&gt; 对候选文档概率边缘化</code>。系统同时拥有参数化语言能力和可替换文档索引；Sequence 与 Token 的差别在于一段输出是否共享同一潜在证据文档。</p>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>论文在 Natural Questions、WebQuestions、TriviaQA、CuratedTREC 等开放域 QA，MS MARCO 生成式回答、Jeopardy 问题生成和 FEVER 上评估。作者报告 RAG 在四个开放域 QA 基准达到当时强结果，并显示相较仅参数化 BART，答案更具多样性；替换不同版本 Wikipedia 索引会改变输出，说明知识确实存在索引侧。</p>
+<p>适合有明确文档语料、知识会更新、需要回答可回链的问答、企业知识库与研究辅助。落地时最重要的不是“是否叫 RAG”，而是语料边界、切块、召回、重排、生成约束和引用呈现能否形成可审计链路。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>RAG 最持久的架构价值是把错误分层：先问“没检到”还是“读错/编错”。这比把所有失败都归于模型幻觉更可操作。检索不是事实担保，生成器仍可能误读、混合多篇文档或无视证据；反过来，回答正确也不代表检索证据充分。因此生产系统应记录 query、候选、排序、实际注入片段与最终引用。</p>
+<h2 id="限制与关系">限制与关系</h2>
+<ul>
+<li>原文索引是旧版英文 Wikipedia，覆盖、时效和领域适配均受限；检索不到时生成器仍会回答。</li>
+<li>RAG-Token 的“不同 token 取不同文档”是模型表述，不应等同于现代 agent 的多轮搜索工作流。</li>
+<li>与 <span class="wiki-token">REALM：检索感知的语言模型预训练</span>：REALM 把检索纳入预训练，RAG 主要给出通用生成任务的微调配方。</li>
+<li>与 <span class="wiki-token">Mamba：用选择性状态空间模型线性处理长序列</span>：RAG 用外部可寻址文档扩充知识，Mamba 用压缩状态传递历史，二者解决不同访问瓶颈。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/2005.11401">arXiv:2005.11401</a></li>
+<li>本地 PDF：<code>raw/papers/retrieval-augmented-generation/2005.11401.pdf</code></li>
+<li>本地文本：<code>raw/papers/retrieval-augmented-generation/2005.11401.txt</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2005.11401" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

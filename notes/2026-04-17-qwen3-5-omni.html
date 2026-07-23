@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Qwen3.5-Omni：用混合注意力 MoE 处理超长音视频与流式语音 · 拾贝</title>
+  <meta name="description" content="拾贝对 Qwen3.5-Omni：用混合注意力 MoE 处理超长音视频与流式语音 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Qwen Team / arXiv / CURATED NOTE</div>
+      <h1 id="qwen35-omni用混合注意力-moe-处理超长音视频与流式语音">Qwen3.5-Omni：用混合注意力 MoE 处理超长音视频与流式语音</h1>
+<blockquote>
+<p>主题：Qwen、全模态、流式语音、长上下文</p>
+<p>对应材料：Qwen Team，<em>M34 Qwen3.5-Omni Technical Report</em>（arXiv:2604.15804，2026）</p>
+</blockquote>
+<h2 id="这篇报告解决了什么问题">这篇报告解决了什么问题</h2>
+<p>长音频、视频和实时语音同时要求更大上下文、低延迟和稳定韵律；文本 tokenizer 与语音 tokenizer 的编码效率不一致时，流式生成容易出现停顿、节奏不自然或内容漂移。</p>
+<h2 id="原作者的论证方法与核心机制">原作者的论证、方法与核心机制</h2>
+<p>Qwen3.5-Omni 扩展到数百亿参数和 256K 上下文，使用 Hybrid Attention MoE 作为 Thinker 与 Talker 的共同框架，并以异构图文数据和超过一亿小时的音视内容训练；报告提出 ARIA 来动态对齐文本与语音单元。</p>
+<p>混合注意力试图在超长序列里平衡局部计算与全局关联，MoE 降低每 token 激活量；ARIA 处理文本和语音 token 单位的速度差，目标是在流式输出中保持语音稳定与韵律，同时不显著损失首包延迟。</p>
+<h2 id="实验或适用场景">实验或适用场景</h2>
+<p>作者报告 plus 版本在 215 项音频和音视理解、推理、交互子任务上表现突出，支持超过 10 小时音频理解、400 秒 720P 视频和十种语言的语音生成，并提出音视指令驱动编码这一新任务。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>这说明全模态代理的难点已从“能否接收所有模态”转向时序控制：何时听完、何时推理、何时开始说，以及输出如何与视频时间线对齐。产品评估应记录转写错误、时间定位误差、首包延迟和中途打断恢复，而不只听语音是否自然。</p>
+<h2 id="限制">限制</h2>
+<p>大规模音视训练数据的来源、覆盖和偏差未完全公开；SOTA 主张来自作者评测。长音视频处理还涉及版权、个人信息与误操作风险，不能因模型可以处理而默认允许采集或执行。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li>与 <span class="wiki-token">Qwen3-Omni：让一个模型同时理解与生成文本、图像、音频和视频</span> 相连：两者均采用 Thinker/Talker 分工，Qwen3.5-Omni 将重点推进到更长序列、混合注意力和文本-语音对齐。</li>
+<li><span class="wiki-token">Transformer：用自注意力重写序列建模</span>：所有这些报告仍以 Transformer 系列为基础；实际差异主要落在数据、后训练、稀疏化、模态编码和服务工作流。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/2604.15804">arXiv:2604.15804</a></li>
+<li>本地原始页面：<code>raw/papers/m34/source.html</code></li>
+<li>本地 PDF：<code>raw/papers/m34/source-2.pdf</code></li>
+<li>本地 UTF-8 文本：<code>raw/papers/m34/source-2.txt</code></li>
+<li>PDF SHA-256：<code>ddd68086e90fa908d65731effdc345a1ac2d9a0c8ef8a15fb73463de95bcf364</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2604.15804" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MiMo-V2-Flash：以稀疏架构和蒸馏换取快速 Agent 推理 · 拾贝</title>
+  <meta name="description" content="拾贝对 MiMo-V2-Flash：以稀疏架构和蒸馏换取快速 Agent 推理 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Xiaomi LLM-Core / arXiv / CURATED NOTE</div>
+      <h1 id="mimo-v2-flash以稀疏架构和蒸馏换取快速-agent-推理">MiMo-V2-Flash：以稀疏架构和蒸馏换取快速 Agent 推理</h1>
+<blockquote>
+<p>主题：MoE、滑动窗口注意力、MTP、在线蒸馏、Agent RL</p>
+<p>对应材料：Xiaomi LLM-Core Team，<em>MiMo-V2-Flash Technical Report</em>（arXiv:2601.02780，2026）</p>
+</blockquote>
+<h2 id="这篇报告解决了什么问题">这篇报告解决了什么问题</h2>
+<p>做 Agent 时，模型既要长上下文、连续调用工具，又要控制每一步的延迟和成本。全局注意力让长输入的 KV cache 和预填充代价持续上升；用大教师直接蒸馏，学生又容易只学到静态回答而没有在当前策略轨迹上的纠错信号。MiMo-V2-Flash 希望在 309B 总参数、15B 激活参数的 MoE 下，兼顾推理质量、快速解码和 Agent 后训练。</p>
+<h2 id="原作者的方法与核心机制">原作者的方法与核心机制</h2>
+<p>架构将滑动窗口注意力与全局注意力按 5:1 交错：局部层主要看 128-token 窗口，全局层维持跨段信息通路。它减少多数层的注意力状态，但不是取消全局依赖。模型在 27T token 上预训练，原生上下文为 32K，随后扩到 256K；三层轻量 <strong>MTP</strong> 在训练时预测未来 token，在推理时可充当投机解码的草稿模型。</p>
+<p>后训练提出 <strong>Multi-Teacher On-Policy Distillation（MOPD）</strong>。不同领域教师在学生自己的采样轨迹上给出更密集、甚至 token 级的反馈，意图缓解结果奖励稀疏和教师能力混杂的问题。报告还描述 Rollout Routing Replay（R3）等基础设施，用于让多类 Agent rollout 的训练更稳定。MOPD 的本质是把“老师给标准答案”改成“老师评当前策略正在走的路径”。</p>
+<h2 id="实验或适用场景">实验或适用场景</h2>
+<p>作者报告其与 DeepSeek-V3.2、Kimi-K2 等开放权重模型竞争，并称三层 MTP 在特定设置下达到最高 3.6 的接受长度和 2.6 倍解码加速。适合的场景是高并发代码 Agent、工具调用型工作流和长上下文任务，其中生成速度与单 token 成本直接影响总体验。调用方应在真实工具、上下文长度和并发量下重新测接受率，而不是按论文倍数预估成本。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>这份报告将“快”拆成三个层面：稀疏 MoE 控制激活计算，混合注意力控制状态，MTP 控制生成步数；而 MOPD 解决的是学生在复杂轨迹中学什么。它说明 Agent 模型的系统能力不能只由基准分数判断，还取决于解码、rollout 成本和失败轨迹能否回流训练。</p>
+<h2 id="限制">限制</h2>
+<p>滑动窗口会对跨很远但未被全局层充分连接的信息形成风险，256K 上限也不保证每种长任务都保持稳定。投机解码加速高度依赖草稿与目标模型的一致性、batch 和硬件。多教师奖励还可能引入教师偏差，且公开材料不足以独立复现其完整数据调度。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li><span class="wiki-token">Switch Transformer：用稀疏专家把参数规模与每 token 计算解耦</span>：MiMo-V2-Flash 延续按 token 只激活少数专家的经济性。</li>
+<li><span class="wiki-token">MiMo-7B：从预训练到强化学习保留推理潜力</span>：两者使用 MTP，但本篇更明确把它用于投机解码。</li>
+<li><span class="wiki-token">ReAct：让语言模型在推理与行动间交替</span>：MOPD 和 Agent RL 为工具轨迹提供训练信号，不替代 ReAct 的交互范式。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/2601.02780">arXiv:2601.02780</a></li>
+<li>本地 PDF：<code>raw/papers/m47/source-2.pdf</code></li>
+<li>本地文本：<code>raw/papers/m47/source-2.txt</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2601.02780" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

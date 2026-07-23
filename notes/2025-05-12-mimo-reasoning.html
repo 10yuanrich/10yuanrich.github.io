@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MiMo-7B：从预训练到强化学习保留推理潜力 · 拾贝</title>
+  <meta name="description" content="拾贝对 MiMo-7B：从预训练到强化学习保留推理潜力 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">Xiaomi LLM-Core / arXiv / CURATED NOTE</div>
+      <h1 id="mimo-7b从预训练到强化学习保留推理潜力">MiMo-7B：从预训练到强化学习保留推理潜力</h1>
+<blockquote>
+<p>主题：推理预训练、强化学习、代码奖励、多 token 预测</p>
+<p>对应材料：LLM-Core Xiaomi，<em>MiMo: Unlocking the Reasoning Potential of Language Model -- From Pretraining to Posttraining</em>（arXiv:2505.07608，2025）</p>
+</blockquote>
+<h2 id="这篇报告解决了什么问题">这篇报告解决了什么问题</h2>
+<p>小模型做数学和代码推理时，常见瓶颈并非只在后训练阶段：若预训练数据和目标没有留下足够的可验证推理模式，后续强化学习容易奖励稀疏、训练摇摆，且只能把模型推到较窄的题型。MiMo-7B 要回答的是：7B 级模型能否在从预训练到后训练的连续设计中，获得接近更大模型的推理表现。</p>
+<h2 id="原作者的方法与核心机制">原作者的方法与核心机制</h2>
+<p>作者先重做数据清洗，并采用三阶段数据混合，让训练后期逐步提高数学、代码和高质量推理材料的占比。MiMo-7B-Base 在 25T token 上预训练，并加入 <strong>Multi-Token Prediction（MTP）</strong>：除预测下一个 token 外，再预测后续 token。作者把它同时视为增强表征学习的训练目标和后续投机解码的潜在草稿模块。</p>
+<p>后训练以 13 万道可验证的数学与编程题构成 RL 任务池。代码任务中，测试难度驱动的奖励把不同难度测试的反馈纳入回报，目的不是只奖励“通过一个简单样例”的程序；再用策略性重采样降低稀疏奖励造成的训练不稳定。这里的关键不是单独发明某种 RL 算法，而是让可验证题目、奖励密度和采样调度配合。</p>
+<h2 id="实验或适用场景">实验或适用场景</h2>
+<p>作者报告 MiMo-7B-Base 在若干推理基准上超过部分 32B 比较模型，RL 版本在数学、编程和通用推理上优于 o1-mini。对实践更有价值的场景是可自动验真的任务，例如单元测试可判定的代码、答案唯一的数学题和结构化约束输出。团队可将其理解为一条小而强的推理训练路线，而非聊天模型的万能替代品。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>这篇报告的工程启发是：推理能力不能只靠“最后上一轮 RL”。预训练决定模型是否学到可展开的中间模式，任务池决定奖励是否可靠，重采样决定优化是否持续看到有效信号。若业务没有可靠验证器，应先投入评测和反馈设计；直接复制大规模可验证 RL 的表面流程通常不会得到同样效果。</p>
+<h2 id="限制">限制</h2>
+<p>成绩、数据配比和训练稳定性均为作者报告，完整数据、提示格式和训练实现未完全公开。数学与代码的可验证奖励也不能代表开放式写作、事实问答或长链工具任务。MTP 对推理质量和解码速度的贡献与其他训练改动耦合，不能把它当作独立保证。</p>
+<h2 id="与现有概念的关系">与现有概念的关系</h2>
+<ul>
+<li><span class="wiki-token">InstructGPT：SFT 如何让预训练模型开始遵循指令</span>：MiMo 将 SFT/RL 放在更强调推理预训练的底座之上。</li>
+<li><span class="wiki-token">Muon：面向大模型隐藏层的正交化优化器</span>：二者都关心训练效率，但一个优化训练目标和数据，另一个改变参数更新方式。</li>
+<li><span class="wiki-token">MiMo-V2-Flash：以稀疏架构和蒸馏换取快速 Agent 推理</span>：后续模型将 MTP 延伸为显式的推理解码加速组件。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/2505.07608">arXiv:2505.07608</a></li>
+<li>本地 PDF：<code>raw/papers/m45/source-2.pdf</code></li>
+<li>本地文本：<code>raw/papers/m45/source-2.txt</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2505.07608" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>

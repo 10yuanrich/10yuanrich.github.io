@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mamba：用选择性状态空间模型线性处理长序列 · 拾贝</title>
+  <meta name="description" content="拾贝对 Mamba：用选择性状态空间模型线性处理长序列 的中文知识笔记。">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="note-page">
+  <main class="note-shell">
+    <header class="note-header">
+      <a class="note-brand" href="../index.html">拾贝 <span>/ 深加工笔记</span></a>
+      <a class="note-back" href="../index.html#knowledge-map">返回知识地图</a>
+    </header>
+    <article class="note-content reading">
+      <div class="section-kicker">arXiv / Princeton University / CURATED NOTE</div>
+      <h1 id="mamba用选择性状态空间模型线性处理长序列">Mamba：用选择性状态空间模型线性处理长序列</h1>
+<blockquote>
+<p>主题：状态空间模型、选择性机制、线性序列建模、长上下文</p>
+<p>对应论文：Albert Gu、Tri Dao，<em>Mamba</em>（2023）</p>
+</blockquote>
+<h2 id="解决什么问题">解决什么问题</h2>
+<p>Transformer 的全注意力让任意 token 直接交互，却在长序列上付出二次计算和 KV cache 成本。此前状态空间模型（SSM）可线性扫描序列，但在语言等离散内容任务上常输给 attention：固定的状态更新无法根据当前 token 决定哪些信息应记住、忽略或取回。Mamba 的问题是：<strong>能否给 SSM 内容选择能力，又不丢掉线性时间和高吞吐。</strong></p>
+<h2 id="原作者的方法与论证">原作者的方法与论证</h2>
+<p>连续 SSM 可写成隐藏状态随输入递推、再读出输出的系统。传统高效实现让离散化步长和输入/输出投影不随 token 改变，因此很像固定滤波器。Mamba 让这些参数成为输入 <code>x</code> 的函数：当前 token 可以改变更新步长、写入状态的内容和读出的方式。作者称之为 selective SSM；它使模型能选择性传播或遗忘信息。</p>
+<p>这种输入依赖破坏了传统 SSM 的卷积并行化。论文于是设计硬件感知的 parallel scan，在递推视角下保留线性计算与并行执行；模型块还将选择性 SSM、门控、归一化和投影组合成端到端 Mamba，去除了 attention，论文版本也不使用传统 Transformer MLP 块。</p>
+<h2 id="核心机制">核心机制</h2>
+<p><code>当前 token -&gt; 生成本步 SSM 参数 -&gt; 更新压缩状态 -&gt; 从状态读出输出</code>。选择性在于每步参数随输入变动，scan 在于把这条递推以硬件友好的并行前缀计算执行；前者解决内容依赖，后者保留效率。</p>
+<h2 id="实验与适用场景">实验与适用场景</h2>
+<p>作者在复制、选择性复制、induction 等合成任务上检验内容选择能力，并在语言、音频、基因组等序列任务上评估。摘要报告 Mamba-3B 超过同规模 Transformer、匹配约两倍规模 Transformer 的语言模型表现；同时在其实现与基准上，推理吞吐可高于 Transformer，长度扩展保持线性。这里的实验支持其作为通用序列骨干的潜力，不等于所有 LLM 任务的替代结论。</p>
+<p>当输入极长、流式处理、缓存空间或每 token 延迟是约束时，SSM 路线尤其值得比较。若任务强依赖对任意历史片段做精确、动态的多对多关联，应单独验证其是否达到 attention 的效果。</p>
+<h2 id="整理者归纳">整理者归纳</h2>
+<p>Mamba 的核心不是“RNN 回归”，而是把可学习记忆变为<strong>按内容调节的递推状态</strong>。它将检索式的“看哪段上下文”换成“保留什么状态”；后者更省，但状态是压缩摘要，不能像 attention 一样随时显式回看每个 token。架构选择应先问信息访问模式，而不是只比较渐近复杂度。</p>
+<h2 id="限制与关系">限制与关系</h2>
+<ul>
+<li>线性复杂度不自动带来端到端更快；scan 内核、批量、硬件和训练实现决定实际优势。</li>
+<li>选择性状态容量有限，长程精确引用或证据追溯可能不如显式检索/attention 直接。</li>
+<li>与 <span class="wiki-token">Transformer：用自注意力重写序列建模</span>：Mamba 以状态扫描替代全局 attention，目标是改变长序列成本结构。</li>
+<li>与 <span class="wiki-token">检索增强生成</span>：二者都针对有限上下文与知识访问；Mamba 压缩内部历史，RAG 从外部文档显式取证，不能互相等同。</li>
+</ul>
+<h2 id="证据来源">证据来源</h2>
+<ul>
+<li>原始论文：<a href="https://arxiv.org/abs/2312.00752">arXiv:2312.00752</a></li>
+<li>本地 PDF：<code>raw/papers/mamba-selective-state-spaces/2312.00752.pdf</code></li>
+<li>本地文本：<code>raw/papers/mamba-selective-state-spaces/2312.00752.txt</code></li>
+</ul>
+
+    </article>
+    <footer class="note-footer">
+      <span>原始材料只作为证据来源保留。</span>
+      <a href="https://arxiv.org/abs/2312.00752" target="_blank" rel="noreferrer">查看原文 &nearr;</a>
+    </footer>
+  </main>
+</body>
+</html>
